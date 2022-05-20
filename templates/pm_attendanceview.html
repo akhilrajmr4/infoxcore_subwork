@@ -1,0 +1,89 @@
+{% extends 'promanagerindex.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="row mt-5">
+    <div class="col-12 col-sm-1 col-md-2 col-lg-2"></div>
+    <div class="col-12 col-sm-12 col-md-12 col-lg-8 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                
+                
+                    <div class="form-group">
+                        <label>Select Designation</label>
+                        <select class="form-control" id="proj_data" style="color:white;" name="project">
+                            <option selected="true" disabled="disabled" value="">-Not Selected-</option>
+                            {% for i in project_data %}
+                            <option value="{{i.id}}">{{i.designation}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Employee</label>
+                        <select class="form-control" id="empname" style="color:white;" name="emp">
+                        </select>
+                    </div>
+                    
+                    <button type="submit" style="float: right;" class="btn btn-outline-primary btn-icon-text" id="btnSearch">
+                        <i class="mdi mdi-file-check btn-icon-prepend"></i> Search 
+                    </button>
+                    
+                    
+                </div>
+            
+            </div>
+        </div>
+    </div>
+
+<div id ="hiddendiv"  style="padding-left:200px;">
+
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $("#proj_data").change(function () {
+        const deptId = $(this).val();
+        console.log(deptId);
+        $.ajax({
+            url: '{% url "pm_employeelist" %}',
+            data: {
+                'dept_id': deptId
+            },
+            success: function (data) {
+                $("#empname").html(data);
+                
+            }
+        });
+
+    });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+    $("#btnSearch").click(function() {
+        const desId = $("#empname").val();
+        console.log(desId);
+        $.ajax({
+            url: '{% url "pm_employees_attendance_view" %}',
+            data: {
+                'des_id': desId
+            },
+            success: function (data) {
+                $("#hiddendiv").html(data);
+                console.log(data);
+            }
+        });
+
+    });
+    function showDiv() {
+    document.getElementById('hiddendiv').style.display = "block ";
+}
+</script>
+{% if msg_success %}
+    <script>
+        alert('{{ msg_success }}')
+        javascript: history.go(-2);
+    </script>
+    {% endif %}
+
+{% endblock %}
