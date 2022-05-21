@@ -8581,11 +8581,14 @@ def account_payment_salary(request,id):
             abc.incentives = request.POST["ins"]
             abc.delay = request.POST["leaves"]
             abc.net_salary = request.POST["net_salary"]
-            # abc.leavesno= request.POST["leave"]
+            abc.leavesno= request.POST["commonleaves"]
             abc.fromdate= request.POST["efdate"]
             abc.tax = 0
+            abc.da = request.POST['DA']
             abc.pf = request.POST["pf"]
             abc.incometax = 0
+            abc.other_allovance = request.POST["other_allowance"]
+            abc.other_allovancetype = request.POST["other_allowance_type"]
             abc.basictype = request.POST["basictype"]
             abc.pftype = request.POST["pftype"]
             abc.esitype = request.POST["esitype"]
@@ -8594,12 +8597,23 @@ def account_payment_salary(request,id):
             abc.protype = request.POST["protype"]
             abc.instype = request.POST["instype"]
             abc.deltype = request.POST["deltype"]
-            # abc.leatype = request.POST["leatype"]
+            abc.leatype = request.POST["leatype"]
             abc.esi = request.POST["esi"] 
             abc.user_id_id = vars.id
             abc.department_id = vars.department.id
             abc.designation_id = vars.designation.id
+            
+            abc.account_no = vars.account_no
+            abc.bank_branch = vars.bank_branch
+            abc.bank_name = vars.bank_name
+            abc.ifsc = vars.ifsc
+            
+            
+            
+            
             abc.save()
+            msg = "Salary payslip generated"
+            return render(request, 'account_payment_salary.html',{'msg':msg, 'vars':vars,'z' : z})
         return render(request, 'account_payment_salary.html',{'vars':vars,'z' : z})
     else:
         return redirect('/')
@@ -13587,10 +13601,10 @@ def accounts_salary_leave(request):
                             diff = (end - d10).days
                             cnt =  Event.objects.filter(start_time__gte=d10,start_time__lte=end).values('start_time').count()
                             d18 = diff - cnt
-                            print(d18)
+                          
                     d19 = d19 + d18
                     
-                print(d18)  
+                 
                 delay_total = d19+d20 
                 total_delay =delay_total+k1
                 conf = user_registration.objects.get(id=his_id)
@@ -13664,5 +13678,314 @@ def BRadmin_projects_details(request):
 
 
         return render(request,'BRadmin_projects_details.html', {'names':names,'a':a })
+    else:
+        return redirect('/')
+
+
+
+# account payment head page
+def accounts_paymenthead(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        return render(request, 'account_paymenthead.html', {'z': z})
+    else:
+        return redirect('/')
+
+# add account payment head
+def accounts_addpaymenthead(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+
+        if request.method == "POST":
+            pay_table = payment_head()
+            pay_table.payment_head = request.POST.get('paymenthead')
+            pay_table.description_paymenthead = request.POST.get('description')
+            pay_table.save()
+            msg_success = "paymenthead successfully created"
+            return render(request, 'accounts_addpaymenthead.html', {'z': z, 'msg_success':msg_success})
+        else:
+            return render(request, 'accounts_addpaymenthead.html', {'z': z})
+    else:
+        return redirect('/')
+
+
+# view account payment head
+def accounts_viewpaymenthead(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        vars = payment_head.objects.all().order_by('-id')
+        if request.method == "POST":
+            uid = request.POST.get('paymenthead')
+            ext = payment_head.objects.get(id=uid)
+            ext.delete()
+            msg_success = "paymenthead deleted successfully"
+            return render(request, 'accounts_viewpaymenthead.html', {'z': z, 'msg_success':msg_success})
+        else:
+            return render(request, 'accounts_viewpaymenthead.html', {'z': z, 'vars':vars})
+    else:
+        return redirect('/')
+
+#  account income page
+def accounts_income(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        return render(request, 'accounts_income.html', {'z': z})
+    else:
+        return redirect('/')
+
+# add account income
+def accounts_addincome(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        dep = department.objects.all()
+        pay_head = payment_head.objects.all()
+        if request.method == "POST":
+            income_tab = income()
+            income_tab.pay_date = request.POST.get('paydate')
+            income_tab.party_name = request.POST.get('pay_name')
+            income_tab.amount = request.POST.get('pay_amount')
+            income_tab.pay_method = request.POST.get('pay_method')
+            income_tab.pay_description = request.POST.get('pay_description')
+            income_tab.department_id = request.POST.get('pay_department')
+            income_tab.payment_head_id = request.POST.get('pay_type')
+            income_tab.save()
+            msg_success = "Income added successfully"
+            return render(request, 'accounts_addincome.html', {'z': z, 'msg_success':msg_success})
+
+        return render(request, 'accounts_addincome.html', {'z': z, 'pay_head':pay_head,'dep':dep })
+    else:
+        return redirect('/')
+
+
+# add account view all income
+def accounts_viewallincome(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        
+        inc = income.objects.all().order_by('-id')
+        return render(request, 'accounts_viewallincome.html', {'z': z, 'inc':inc})
+    else:
+        return redirect('/')
+
+
+
+# add account filter income
+def accounts_filterincome(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        
+        dep = department.objects.all()
+        return render(request, 'accounts_filterincome.html', {'z': z, 'dep':dep})
+    else:
+        return redirect('/')
+
+
+
+# add account filter income ajax
+def accounts_filterincome_ajax(request):
+        dept_id = request.GET.get('dept_id')
+        fdate = request.GET.get('fdate')
+        tdate = request.GET.get('tdate')
+
+        start = datetime.strptime(fdate, '%Y-%m-%d').date()
+        end = datetime.strptime(tdate, '%Y-%m-%d').date()
+        inc = income.objects.filter(pay_date__range=(start,end)).filter(department_id=dept_id)
+        
+        
+        tot = 0
+        tot_inc = income.objects.filter(pay_date__range=(start,end)).filter(department_id=dept_id).values('amount')
+        for x in tot_inc:
+            tot = tot + int(x['amount'])
+
+        return render(request, 'accounts_filterincome_ajax.html', {'inc':inc,'tot':tot })
+
+
+
+
+# Bradmin_income
+def BRadmin_income(request):
+    if 'Adm_id' in request.session:
+        if request.session.has_key('Adm_id'):
+            Adm_id = request.session['Adm_id']
+        else:
+            return redirect('/')
+        Adm = user_registration.objects.filter(id=Adm_id)
+        inc_cont = income.objects.filter(pay_status=0).count()
+        return render(request, 'BRadmin_income.html', {'Adm': Adm, 'inc_cont':inc_cont})
+    else:
+        return redirect('/')
+
+
+# Bradmin view all income
+def BRadmin_viewallincome(request):
+    if 'Adm_id' in request.session:
+        if request.session.has_key('Adm_id'):
+            Adm_id = request.session['Adm_id']
+        else:
+            return redirect('/')
+        Adm = user_registration.objects.filter(id=Adm_id)
+        
+        inc = income.objects.all().order_by('-id')
+        return render(request, 'BRadmin_viewallincome.html', {'Adm': Adm, 'inc':inc})
+    else:
+        return redirect('/')
+
+
+# Bradmin view all pending income
+def BRadmin_pendingincome(request):
+    if 'Adm_id' in request.session:
+        if request.session.has_key('Adm_id'):
+            Adm_id = request.session['Adm_id']
+        else:
+            return redirect('/')
+        Adm = user_registration.objects.filter(id=Adm_id)
+
+        if request.method=="POST":
+            uid = request.POST.get('pay_verify')
+            inc = income.objects.get(id=uid)
+            inc.pay_status = 1
+            inc.save()
+            msg_success = "Payment verified"
+            return render(request, 'accounts_viewpaymenthead.html', {'Adm': Adm, 'msg_success':msg_success})
+            
+        else:
+            inc = income.objects.filter(pay_status=0)
+            return render(request, 'BRadmin_pendingincome.html', {'Adm': Adm, 'inc':inc})
+    else:
+        return redirect('/')
+
+
+# Bradmin search income
+def BRadmin_searchincome(request):
+    if 'Adm_id' in request.session:
+        if request.session.has_key('Adm_id'):
+            Adm_id = request.session['Adm_id']
+        else:
+            return redirect('/')
+        Adm = user_registration.objects.filter(id=Adm_id)
+
+        dep = department.objects.all()
+        return render(request, 'BRadmin_searchincome.html', {'Adm': Adm, 'dep':dep})
+    else:
+        return redirect('/')
+
+
+
+# add account filter income ajax
+def BRadmin_filterincome_ajax(request):
+    dept_id = request.GET.get('dept_id')
+    fdate = request.GET.get('fdate')
+    tdate = request.GET.get('tdate')
+
+    start = datetime.strptime(fdate, '%Y-%m-%d').date()
+    end = datetime.strptime(tdate, '%Y-%m-%d').date()
+    inc = income.objects.filter(pay_date__range=(start,end)).filter(department_id=dept_id)
+    
+    
+    tot = 0
+    tot_inc = income.objects.filter(pay_date__range=(start,end)).filter(department_id=dept_id).values('amount')
+    for x in tot_inc:
+        tot = tot + int(x['amount'])
+
+    return render(request, 'BRadmin_searchincome_ajax.html', {'inc':inc,'tot':tot })
+
+
+# accounts main expences
+def accounts_mainexpenses(request):
+
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        
+        return render(request, 'accounts_mainexpenses.html', {'z': z})
+    else:
+        return redirect('/')
+
+
+
+# add account filter income
+def accounts_salaryexpense(request):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        
+        dep = department.objects.all()
+        return render(request, 'accounts_salaryexpense.html', {'z': z, 'dep':dep})
+    else:
+        return redirect('/')
+
+
+def accounts_salaryexpense_ajax(request):
+
+    dept_id = request.GET.get('dept_id')
+    fdate = request.GET.get('fdate')
+    tdate = request.GET.get('tdate')
+
+    start = datetime.strptime(fdate, '%Y-%m-%d').date()
+    end = datetime.strptime(tdate, '%Y-%m-%d').date()
+
+    inc = acntspayslip.objects.filter(fromdate__range=(start,end)).filter(department_id=dept_id)
+    
+    
+    conf = 0
+    net_sal = 0
+    tot_sum = 0
+    tot_inc = acntspayslip.objects.filter(fromdate__range=(start,end)).filter(department_id=dept_id).values('basic_salary','net_salary','hra','incentives', 'conveyns', 'other_allovance')
+    for x in tot_inc:
+        conf = conf + int(x['basic_salary']) + int(x['hra']) + int(x['other_allovance']) + int(x['conveyns'])
+        net_sal = net_sal + int(x['net_salary'])
+        
+    tot_sum = conf - net_sal
+
+    return render(request, 'accounts_salaryexpense_ajax.html', {'inc':inc,'conf':conf, 'net_sal':net_sal, 'tot_sum':tot_sum })
+
+
+
+
+# BRadmin main expences
+def BRadmin_mainexpenses(request):
+
+    if 'Adm_id' in request.session:
+        if request.session.has_key('Adm_id'):
+            Adm_id = request.session['Adm_id']
+        else:
+            return redirect('/')
+
+        Adm = user_registration.objects.filter(id=Adm_id)
+        
+        return render(request, 'BRadmin_mainexpenses.html', {'Adm': Adm})
+    else:
+        return redirect('/')
+
+
+
+# BRadmin filter income
+def BRadmin_salaryexpense(request):
+    if 'Adm_id' in request.session:
+        if request.session.has_key('Adm_id'):
+            Adm_id = request.session['Adm_id']
+        else:
+            return redirect('/')
+
+        Adm = user_registration.objects.filter(id=Adm_id)
+        
+        dep = department.objects.all()
+        return render(request, 'BRadmin_salaryexpense.html', {'Adm': Adm, 'dep':dep})
     else:
         return redirect('/')

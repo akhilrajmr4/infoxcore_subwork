@@ -1419,6 +1419,35 @@ re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accoun
     re_path(r'^pm_leave/$', views.pm_leave, name='pm_leave'),
     re_path(r'^accounts_salary_netsalarydelay/$', views.accounts_salary_netsalarydelay, name='accounts_salary_netsalarydelay'),
     re_path(r'^acntpaypdf/(?P<id>\d+)/(?P<tid>\d+)/$', views.acntpaypdf, name='acntpaypdf'),
+
+
+
+
+
+
+   re_path(r'^accounts_paymenthead/$', views.accounts_paymenthead, name='accounts_paymenthead'),
+   re_path(r'^accounts_addpaymenthead/$', views.accounts_addpaymenthead, name='accounts_addpaymenthead'),
+   re_path(r'^accounts_viewpaymenthead/$', views.accounts_viewpaymenthead, name='accounts_viewpaymenthead'),
+   re_path(r'^accounts_income/$', views.accounts_income, name='accounts_income'),
+   re_path(r'^accounts_addincome/$', views.accounts_addincome, name='accounts_addincome'),
+   re_path(r'^accounts_viewallincome/$', views.accounts_viewallincome, name='accounts_viewallincome'),
+   re_path(r'^accounts_filterincome/$', views.accounts_filterincome, name='accounts_filterincome'),
+   re_path(r'^accounts_filterincome_ajax/$', views.accounts_filterincome_ajax, name='accounts_filterincome_ajax'),
+   
+   re_path(r'^BRadmin_income/$', views.BRadmin_income, name='BRadmin_income'),
+   re_path(r'^BRadmin_viewallincome/$', views.BRadmin_viewallincome, name='BRadmin_viewallincome'),
+   re_path(r'^BRadmin_pendingincome/$', views.BRadmin_pendingincome, name='BRadmin_pendingincome'),
+   re_path(r'^BRadmin_searchincome/$', views.BRadmin_searchincome, name='BRadmin_searchincome'),
+   re_path(r'^BRadmin_filterincome_ajax/$', views.BRadmin_filterincome_ajax, name='BRadmin_filterincome_ajax'),
+
+
+   re_path(r'^accounts_mainexpenses/$', views.accounts_mainexpenses, name='accounts_mainexpenses'),
+   re_path(r'^accounts_salaryexpense/$', views.accounts_salaryexpense, name='accounts_salaryexpense'),
+   re_path(r'^accounts_salaryexpense_ajax/$', views.accounts_salaryexpense_ajax, name='accounts_salaryexpense_ajax'),
+
+   re_path(r'^BRadmin_mainexpenses/$', views.BRadmin_mainexpenses, name='BRadmin_mainexpenses'),
+   re_path(r'^BRadmin_salaryexpense/$', views.BRadmin_salaryexpense, name='BRadmin_salaryexpense'),
+
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

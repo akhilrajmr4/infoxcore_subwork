@@ -508,8 +508,10 @@ class acntspayslip(models.Model):
     leavesno = models.IntegerField(default='0') 
     pf_tax = models.IntegerField(default='0')
     delay = models.IntegerField(default='0')
+    other_allovance = models.IntegerField(default='0')
     basictype =  models.CharField(max_length=255,default='')
     hratype = models.CharField(max_length=255,default='')
+    other_allovancetype = models.CharField(max_length=255,default='')
     contype = models.CharField(max_length=255,default='')
     protype = models.CharField(max_length=255,default='')
     instype = models.CharField(max_length=255,default='')
@@ -519,7 +521,12 @@ class acntspayslip(models.Model):
     esitype =  models.CharField(max_length=255,default='')
     # duedate = models.DateField(auto_now_add=False, auto_now=False,  null=True, blank=True)
     pending_status = models.CharField(max_length=25, default='0')
-    net_salary = models.IntegerField(default=0)
+    net_salary = models.IntegerField(null=True, default=0)
+    da = models.IntegerField(null=True, default=0)
+    account_no = models.CharField(max_length=200, null=True,blank=True, default='')
+    ifsc =  models.CharField(max_length=200, null=True, default='')
+    bank_name = models.CharField(max_length=240, null=True,blank=True, default='')
+    bank_branch = models.CharField(max_length=240, null=True, default='')
     
 class acntexpensest (models.Model):
     payee =models.CharField(max_length=100)
@@ -612,3 +619,19 @@ class project_table(models.Model):
     module_name_id = models.CharField(max_length=255,null=True, blank=True)
     description = models.TextField()
 
+
+class payment_head(models.Model):
+    payment_head = models.CharField(max_length=255,null=True, blank=True, default='')
+    description_paymenthead = models.TextField()
+
+
+class income(models.Model):
+     
+    pay_date = models.DateField(auto_now_add=False, auto_now=False,  null=True, blank=True)
+    party_name = models.CharField(max_length=255,null=True, blank=True)
+    amount = models.IntegerField(default=0)
+    pay_method = models.CharField(max_length=255,null=True, blank=True)
+    pay_description = models.TextField(null=True, blank=True, default='')
+    department = models.ForeignKey(department, on_delete=models.SET_NULL,related_name='accounts_department_name', null=True, blank=True)
+    payment_head = models.ForeignKey(payment_head, on_delete=models.SET_NULL,related_name='accounts_payment_head', null=True, blank=True)
+    pay_status = models.IntegerField(default=0)
