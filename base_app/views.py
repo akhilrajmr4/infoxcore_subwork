@@ -926,6 +926,19 @@ def applyleavesub(request):
             vars.leaveapprovedstatus = 0
             vars.user = cut
             vars.designation_id = des1.id
+
+
+            start = datetime.strptime(vars.from_date, '%Y-%m-%d').date() 
+            end = datetime.strptime(vars.to_date, '%Y-%m-%d').date()
+
+            diff = (end  - start).days
+            
+            cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+            
+            if diff == 0:
+                vars.days = 1
+            else:
+                vars.days = diff - cnt
      
             vars.save()
             return redirect('Applyleave')
@@ -1490,6 +1503,18 @@ def trainer_applyleave_form(request):
         mem.user = le
         mem.designation_id = des1.id
         mem.leaveapprovedstatus=0       
+
+        start = datetime.strptime(mem.from_date, '%Y-%m-%d').date() 
+        end = datetime.strptime(mem.to_date, '%Y-%m-%d').date()
+
+        diff = (end  - start).days
+        
+        cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+        
+        if diff == 0:
+            mem.days = 1
+        else:
+            mem.days = diff - cnt
         mem.save()
         return render(request, 'trainer_applyleave.html', {'z': z})
     return render(request, 'trainer_applyleave_form.html', {'z': z})
@@ -2552,6 +2577,18 @@ def trainee_applyleave_form(request):
             mem.user = le
             mem.designation_id=usernametrns
             mem.leaveapprovedstatus=0
+
+            start = datetime.strptime(mem.from_date, '%Y-%m-%d').date() 
+            end = datetime.strptime(mem.to_date, '%Y-%m-%d').date()
+
+            diff = (end  - start).days
+            
+            cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+            
+            if diff == 0:
+                mem.days = 1
+            else:
+                mem.days = diff - cnt
             mem.save()
             return render(request, 'trainee_applyleave_form.html', {'z': z})
         return render(request, 'trainee_applyleave_form.html', {'z': z})
@@ -5627,6 +5664,7 @@ def projectmanager_assignproject(request):
             var.user_id = prid
             var.tl_id = request.POST['pname']
             var.task = request.POST['task']
+            var.subtask = request.POST['task']
             var.description=request.POST.get('desc')
             var.startdate=request.POST.get('sdate')
             var.enddate=request.POST.get('edate')
@@ -6090,6 +6128,19 @@ def projectMANleavereq(request):
             mem.reason = request.POST.get('reason')
             mem.user_id = request.POST.get('pr_id')
             mem.status = "pending"
+
+            start = datetime.strptime(mem.from_date, '%Y-%m-%d').date() 
+            end = datetime.strptime(mem.to_date, '%Y-%m-%d').date()
+
+            diff = (end  - start).days
+            
+            cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+            
+            if diff == 0:
+                mem.days = 1
+            else:
+                mem.days = diff - cnt
+
             mem.save()
         return render(request, 'projectMANleavereq.html',{'pro':pro})  
     else:
@@ -6515,7 +6566,7 @@ def TLprojects(request):
             return redirect('/')
         mem = user_registration.objects.filter(id=tlid)
         display1 = project.objects.all()
-        display=project_taskassign.objects.filter(tl_id=tlid).values('project_id').distinct()
+        display=project_taskassign.objects.filter(developer_id=tlid).values('project_id').distinct()
         return render(request, 'TLprojects.html',{'display':display,'mem':mem,'display1':display1})
     else:
         return redirect('/')
@@ -6565,7 +6616,7 @@ def tlprojecttasks(request,id):
             time=datetime.now()
             taskstatus = test_status.objects.all()
             display = project_taskassign.objects.filter(tl_id=tlid).filter(project_id=id)
-            tasks = project_taskassign.objects.filter(project_id=id,tl_id = tlid,developer_id = tlid)
+            tasks = project_taskassign.objects.filter(project_id=id, developer_id = tlid)
             mem3 = user_registration.objects.get(id=tlid)
             display1=mem3.fullname
            
@@ -6704,19 +6755,19 @@ def tlgivetask(request):
             var.project_id = splitid
             var.description = new.description
             var.save()
-            v = request.POST.get('ename')
-            em=user_registration.objects.get(id=v)
-            print(em.email)
-            subject = 'Greetings from iNFOX TECHNOLOGIES'
-            message = 'Congratulations,\n' \
-            'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
-            'following is your Project Details\n'\
-            'Project :'+str(var.project.project)+'\n' 'Task :'+str(var.task) +'\n' 'Description :'+str(var.tl_description)+'\n' 'SubTask :'+str(var.subtask)+'\n''Start Date :'+bb+'\n' 'End Date :'+cc+'\n'\
-            '\n' 'Complete your project on or before Enddate \n'\
-                'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
-            recepient = str(em.email)
-            send_mail(subject, message, EMAIL_HOST_USER,
-                  [recepient], fail_silently=False)
+            # v = request.POST.get('ename')
+            # em=user_registration.objects.get(id=v)
+            # print(em.email)
+            # subject = 'Greetings from iNFOX TECHNOLOGIES'
+            # message = 'Congratulations,\n' \
+            # 'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
+            # 'following is your Project Details\n'\
+            # 'Project :'+str(var.project.project)+'\n' 'Task :'+str(var.task) +'\n' 'Description :'+str(var.tl_description)+'\n' 'SubTask :'+str(var.subtask)+'\n''Start Date :'+bb+'\n' 'End Date :'+cc+'\n'\
+            # '\n' 'Complete your project on or before Enddate \n'\
+            #     'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
+            # recepient = str(em.email)
+            # send_mail(subject, message, EMAIL_HOST_USER,
+            #       [recepient], fail_silently=False)
             msg_success = "Task split successfully"
             return render(request, 'TLgivetask.html',{'msg_success':msg_success})
         else:
@@ -6952,6 +7003,18 @@ def tl_leave_form(request):
             leaves.status = "submitted"
             leaves.designation_id = des1.id
             leaves.leaveapprovedstatus=0
+
+            start = datetime.strptime(leaves.from_date, '%Y-%m-%d').date() 
+            end = datetime.strptime(leaves.to_date, '%Y-%m-%d').date()
+
+            diff = (end  - start).days
+            
+            cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+            
+            if diff == 0:
+                leaves.days = 1
+            else:
+                leaves.days = diff - cnt
             leaves.save()
         return render(request, 'TLleavereq.html',{'mem':mem})   
     else:
@@ -7313,6 +7376,18 @@ def dev_leave_form(request):
         leaves.leaveapprovedstatus=0
         leaves.user_id = request.POST['dev_id']
         leaves.designation_id = des1.id
+
+        start = datetime.strptime(leaves.from_date, '%Y-%m-%d').date() 
+        end = datetime.strptime(leaves.to_date, '%Y-%m-%d').date()
+
+        diff = (end  - start).days
+        
+        cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+        
+        if diff == 0:
+            leaves.days = 1
+        else:
+            leaves.days = diff - cnt
         leaves.save()
         return render(request, 'Devapplyleav.html')
     else:
@@ -12114,7 +12189,19 @@ def HR_leaveapply(request):
             apply_leave.user =user_registration.objects.get(id=hr_id)
             apply_leave.designation_id =hr_des_id
             apply_leave.leaveapprovedstatus = 0
-            apply_leave.save()
+
+            start = datetime.strptime(apply_leave.from_date, '%Y-%m-%d').date() 
+            end = datetime.strptime(apply_leave.to_date, '%Y-%m-%d').date()
+
+            diff = (end  - start).days
+            
+            cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+            
+            if diff == 0:
+                apply_leave.days = 1
+            else:
+                apply_leave.days = diff - cnt
+                apply_leave.save()
             msg_success = "leave applied"
             return render(request, 'hr_module/HR_leaveapply.html',{"msg_success":msg_success})
         else:
@@ -13076,6 +13163,18 @@ def tester_apply_leave(request):
             apply_leave.designation_id =usernamets
             apply_leave.leaveapprovedstatus = 0
             apply_leave.save()
+
+            start = datetime.strptime(apply_leave.from_date, '%Y-%m-%d').date() 
+            end = datetime.strptime(apply_leave.to_date, '%Y-%m-%d').date()
+
+            diff = (end  - start).days
+            
+            cnt =  Event.objects.filter(start_time__range=(start,end)).count()
+            
+            if diff == 0:
+                apply_leave.days = 1
+            else:
+                apply_leave.days = diff - cnt
             msg_success = "leave applied"
             return render(request, 'tester_apply_leave.html',{'mem':mem,"msg_success":msg_success})
         else:

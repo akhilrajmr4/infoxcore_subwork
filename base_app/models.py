@@ -355,6 +355,7 @@ class leave(models.Model):
     designation_id = models.CharField(max_length=200)
     leaveapprovedstatus = models.CharField(max_length=200)
     leave_rejected_reason = models.CharField(max_length=300)
+    days = models.IntegerField(default=0)
 
     
     def __str__(self):
