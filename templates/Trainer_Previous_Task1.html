@@ -33,9 +33,11 @@
                                 <th>Task Name</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
+                                <th>Submitted Date</th>
                                 <th>Task File</th>
                                 <th>Trainee File</th>
                                 <th>Status</th>
+                                <th>Delay</th>
                             </tr>
                         </thead>
                         <tbody>{% if tsk %} {% for i in tsk %}
@@ -48,6 +50,9 @@
                                     <a href="/Ptdetails/{{i.id}} " style="text-decoration: none; color: whitesmoke;">{{i.startdate|date:"d-m-Y"}} </a></td>
                                 <td>
                                     <a href="/Ptdetails/{{i.id}} " style="text-decoration: none; color: whitesmoke;">{{i.enddate|date:"d-m-Y"}} </a>
+                                </td>
+                                <td>
+                                    <a href="/Ptdetails/{{i.id}} " style="text-decoration: none; color: whitesmoke;">{{i.submitteddate|date:"d-m-Y"}} </a>
                                 </td>
                                <td>
                                     {% if i.files %}
@@ -68,6 +73,10 @@
                                     {% else %}
                                     <button type="button" class="btn btn-outline-danger  mr-2 ml-6 mt-2" >Not complete</i></button>
                                     {% endif %}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-danger  mr-2 ml-6 mt-2" >{{i.delay}} </i></a>
                                     </a>
                                 </td>
                             </tr>

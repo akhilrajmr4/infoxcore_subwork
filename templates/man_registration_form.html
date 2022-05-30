@@ -33,10 +33,12 @@
         input[type=date],
         input[type=number],
         input[type=email],
+        input[type=tel],
         input[type=password]:focus,
         input[type=date]:focus,
         input[type=email]:focus,
-        input[type=text]:focus {
+        input[type=text]:focus, 
+        input[type=tel]:focus {
             background: none !important;
             border: 1px solid #636d87 !important;
             color: white !important;
@@ -167,9 +169,9 @@
                     <option class="Other">Other</option>
                 </select>
                 <label>Mobile Number</label>
-                <input type="number" class="form-control" name="mobile" required>
+                <input type="tel" maxlength="12" class="form-control" name="mobile" required>
                 <label>Alternative Number</label>
-                <input type="number" class="form-control" name="alternative" required>
+                <input type="tel" maxlength="12" class="form-control" name="alternative" required>
                  <label>Department</label>                        
                                 <select class="form-control" name="department" required style="background:transparent;border: 1px solid #636d87;color:white;">
                                     

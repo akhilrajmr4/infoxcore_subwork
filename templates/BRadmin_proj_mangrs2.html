@@ -32,7 +32,7 @@
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
-              <h3 class="card-title">Team members</h3>
+              <h3 class="card-title">Team members work</h3>
               <div class="form-group">
                 <input type="text" class="form-control"id="myInput" placeholder="Search for names.." title="Type in a name" style="color:white;">
                  </div>
@@ -41,12 +41,14 @@
                   <thead>
                     <tr>
                      
-                      <th> Project task </th>
+                      <th> Project </th>
+                      <th> Task </th>
                       <th> Employee </th>
                       <th> Start Date </th>
                       <th> End Date </th>
+                      <th> Submission Date </th>
+                      <th> Git Link </th>
                       <th> Delay </th>
-                      <th> Status </th>
                       
                      
                     </tr>
@@ -58,11 +60,15 @@
                     <!--<tr data-href="{% url 'BRadmin_developers' i.id  %}">-->
                     <tr>
                         <td> {{i.project}} </td>
+                        <td> {{i.task}} </td>
                         <td> {{i.developer}}</td>
                         <td> {{i.startdate|date:'d-m-Y'}}</td>
                         <td> {{i.enddate|date:'d-m-Y'}}</td>
-                        <td> {{i.delay}} </td>
-                        <td> {{i.status}} </td>
+                        <td> {{i.submitted_date|date:'d-m-Y'}}</td>
+                      <td><a href="{{i.git_link}}" target="_blank" style="text-decoration: none;">
+                    <div class="badge badge-outline-success">Link</div>
+                  </a></td>
+                        <td>  <div class="badge badge-outline-danger">{{i.delay}}</div></td>
                       </tr>
                     
                    
@@ -82,12 +88,6 @@
   </body>
 </html>
 <script>
-//   $(document).ready(function() {
-//       $('table tr').click(function() {
-//           window.location = $(this).data('href');
-//           return false;
-//       });
-//   });
 $(document).ready(function(){
   $("#myInput").on("keyup", function() {
     var value = $(this).val().toLowerCase();

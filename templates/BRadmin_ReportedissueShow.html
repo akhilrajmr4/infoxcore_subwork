@@ -21,6 +21,7 @@
 
                                 <th> Name </th>
                                 <th> Date </th>
+                                <th> Issue </th>
                                 <th> Status </th>
 
                             </tr>
@@ -36,6 +37,7 @@
                                     {{i.reporter}}
                                 </td>
                                 <td> {{i.reported_date|date:'d-m-Y'}} </td>
+                                <td> {{i.issue}} </td>
                                 <td>
                                     {% if i.issuestatus == '1' %}
                                     <div class="badge badge-outline-success">Solved</div>

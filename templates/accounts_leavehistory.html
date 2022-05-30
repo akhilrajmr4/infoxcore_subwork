@@ -13,7 +13,7 @@
                         <label>Select Department</label>
                         <select class="form-control" id="regdetailsDesig" style="color:white;" name="Department">
                             <option selected="true" disabled="disabled" value="">-Not Selected-</option>
-                            {% for i in dep %}
+                            {% for i in d %}
                             <option value="{{i.id}}">{{i.department}}</option>
                             {% endfor %}
                         </select>

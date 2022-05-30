@@ -29,6 +29,7 @@
                                 <th>Task Name</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
+                                <th>submitted Date</th>
                                 <th>Task File</th>
                                 <th>Trainee File</th>
                                 <th>Status</th>
@@ -39,12 +40,16 @@
                             {% if tsk %} {% for i in tsk %}
                             <tr>
                                 <td>
-                                    <a href="/tdetails/{{i.id}} " style="text-decoration: none; color: whitesmoke;"> <span class="ps-2 "> {{i.taskname}} </span></a>
+                                    <a style="text-decoration: none; color: whitesmoke;"> <span class="ps-2 "> {{i.taskname}} </span></a>
                                 </td>
                                 <td>
-                                    <a href="/tdetails/{{i.id}}" style="text-decoration: none; color: whitesmoke;"> {{i.startdate|date:"d-m-Y"}} </a></td>
+                                    <a  style="text-decoration: none; color: whitesmoke;"> {{i.startdate|date:"d-m-Y"}} </a></td>
                                 <td>
-                                    <a href="/tdetails/{{i.id}}" style="text-decoration: none; color: whitesmoke;"> {{i.enddate|date:"d-m-Y"}} </a>
+                                    <a  style="text-decoration: none; color: whitesmoke;"> {{i.enddate|date:"d-m-Y"}} </a>
+                                   
+                                </td>
+                                <td>
+                                    <a  style="text-decoration: none; color: whitesmoke;"> {{i.submitteddate|date:"d-m-Y"}} </a>
                                    
                                 </td>
                                 <td>

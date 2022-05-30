@@ -25,7 +25,11 @@
               <tr data-href="#">
                 <th>SlNo</th>
                 <th>Name</th>
-                <th>Join Date</th>
+                 <th> Designation</th>
+                  <th> Department</th>
+                  <th> Join date</th>
+                  <th> Mobile</th>
+                  <th> Email</th>
                 
               </tr>
             </thead>
@@ -39,7 +43,11 @@
                   <img src="{{media_url}}{{i.photo.url}}" class="img-fluid rounded-circle " alt="image"  >                    
                     {{i.fullname}}</a>
                 </td>
+                <td>{{i.designation}}</td>
+                <td>{{i.department}}</td>
                 <td>{{i.joiningdate|date:'d-m-Y'}}</td>
+                <td>{{i.mobile}}</td>
+                <td>{{i.email}}</td>
               
                 
               </tr>

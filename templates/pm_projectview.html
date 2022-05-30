@@ -11,7 +11,13 @@
           <form>
             <div class="input-group input-group-sm mb-3">
               <input
-                type="text" class="form-control text-white" id="myInput" onkeyup="myFunction()" placeholder="Search . . ." style="border: green"/>
+                type="text"
+                class="form-control text-white"
+                id="myInput"
+                onkeyup="myFunction()"
+                placeholder="Search . . ."
+                style="border: green"
+              />
             </div>
           </form>
         </div>
@@ -52,7 +58,12 @@
       });
     });
   });
+    $(document).ready(function () {
+            $('table tr').click(function () {
+                window.location = $(this).data('href');
+                return false;
+            });
+        });
 </script>
-
 
 {%endblock%}

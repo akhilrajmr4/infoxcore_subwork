@@ -33,16 +33,14 @@
                   <td>{{i.from_date|date:'d-m-Y'}}</td>
                   <td>{{i.to_date|date:'d-m-Y'}}</td>
                   <td>{{i.reason}}</td>
-                  <td>{% if i.leaveapprovedstatus == '0' %}
-                    <div class="badge badge-outline-warning">Pending</div>
-                    {%elif i.leaveapprovedstatus == '1' %}
-
+                  <td>
+                      {% if i.leaveapprovedstatus == '1' %}
                     <div class="badge badge-outline-success">Approved</div>
-
                     {%else%}
+                    <div class="badge badge-outline-warning">Pending</div>
 
 
-                    <div class="badge badge-outline-danger">Rejected</div>
+
                   {% endif %}</td>
                   
                   

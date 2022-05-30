@@ -24,18 +24,16 @@
                         <thead>
                             <tr>
 
+                                <th> Slno </th>
                                 <th> Date </th>
-                                <th> Login Time </th>
-                                <th> Logout Time </th>
                                 <th> Status </th>
                             </tr>
                         </thead>
                         <tbody>
                             {% if vars %} {% for i in vars %}
                             <tr>
+                                <td>{{forloop.counter}}</td>
                                 <td>{{i.date|date:"d-m-Y"}}</td>
-                                <td></td>
-                                <td></td>
 
                                 <td>
                                     {% if i.attendance_status == '1' %}

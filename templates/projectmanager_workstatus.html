@@ -23,14 +23,14 @@
                     </div>
                     <div class="form-group">
                         <label>Select Designation</label>
-                        <select class="form-control" style="color:white;" name="designation" id="designation">
+                        <select class="form-control" style="color:white;" name="designation" id="designation" required>
                            
                         </select>
 
                     </div>
                     <div class="form-group">
                         <label>Select Employee</label>
-                        <select class="form-control" id="empname" style="color:white;" name="emp">
+                        <select class="form-control" id="empname" style="color:white;" name="emp" required>
                             
                         </select>
 
@@ -41,7 +41,7 @@
                             <div class="form-group row ">
                                 <label class="col-6 col-sm-6 col-md-6 col-lg-5 col-form-label ">FROM</label>
                                 <div class="col-6 col-sm-6 col-md-6 col-lg-6 ">
-                                    <input type="Date" class="form-control text-light " name="start " id="txtDate">
+                                    <input type="Date" class="form-control text-light " name="start " id="txtDate" required>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                             <div class="form-group row ">
                                 <label class="col-6 col-sm-6 col-md-6 col-lg-5 col-form-label ">TO</label>
                                 <div class="col-6 col-sm-6 col-md-6 col-lg-6 ">
-                                    <input type="Date" class="form-control text-light" name="start " id="txtDate1">
+                                    <input type="Date" class="form-control text-light" name="start " id="txtDate1" required>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +148,7 @@ if (mm < 10) {
 } 
     
 today = yyyy + '-' + mm + '-' + dd;
-document.getElementById("txtDate1").setAttribute("max", today);
+document.getElementById("txtDate").setAttribute("max", today);
 </script>
 
 {% endblock %}

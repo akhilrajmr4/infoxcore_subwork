@@ -6,9 +6,7 @@
         <div class="card">
             <div class="card-body">
                 
-                    {% csrf_token %}
-                    
-                    
+      {% csrf_token %}
 
                     <div class="form-group">
                         <label>Select Trainees</label>
@@ -26,7 +24,7 @@
                    <br>
                     <div class="form-check form-check-flat form-check-primary">
                         <center>
-                        <button type="submit" class="btn btn-primary  me-2"  id="btnSearch" >Submit</button>
+                        <button type="button" class="btn btn-primary  me-2"  id="btnSearch" >Submit</button>
                         </center>
                     </div>
                 
@@ -36,58 +34,16 @@
 </div>
 
     <div id="hiddendiv"></div>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-<!--<script type="text/javascript">
-    $("#regdetailsDesig").change(function () {
-        const deptId = $(this).val();
-        console.log(deptId);
-        $.ajax({
-            url: '{% url "BRadmin_designations" %}',
-            data: {
-                'dept_id': deptId
-            },
-
-            success: function (data) {
-                $("#designation").html(data);
-                console.log(data);
-            }
-        });
-
-    });
-
-</script>
-
-<script type="text/javascript">
-    $("#designation").change(function () {
-        const deptId = $("#regdetailsDesig").val();
-        const desigId = $("#designation").val();
-        console.log(deptId,desigId);
-        $.ajax({
-            url: '{% url "BRadmin_emp_ajax" %}',
-            data: {
-                'dept_id': deptId,
-                'desigId':desigId,
-            },
-            success: function (data) {
-                $("#empname").html(data);
-                console.log(data);
-            }
-        });
-
-    });
-</script>-->
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
 <script type="text/javascript ">
+ $(document).ready(function() {
     $("#btnSearch").click(function() {
         const emp = $("#empname").val();
        
         console.log( emp);
-        jQuery.ajax({
+        $.ajax({
             
             url: '{% url "tm_trainee_details" %}',
-            method: 'post',
             data: {
 
                 'emp': emp,
@@ -98,6 +54,7 @@
                 $("#hiddendiv").html(data);
             }
         });
+    });
     });
 
     function showDiv() {

@@ -21,9 +21,12 @@
                 <th> Task </th>
                 <th> Start Date </th>
                 <th> End Date </th>
+                <th> Submitted Date </th>
+                <th> Delay </th>
                 <th> Trainer File </th>
                 <th> Trainee File </th>
-                <th> status </th>
+                <th> Status </th>
+                
 
 
               </tr>
@@ -33,24 +36,29 @@
               <tr>
                 <td>
                   <img src="{{ i.user.photo.url }}" />
-                  <span class="ps-2">{{ i.user.fullname }}</span></a>
+                  <span class="ps-2">{{ i.user.fullname }}</span>
                 </td>
                 <td> {{ i.taskname }} </td>
                 <td> {{ i.startdate|date:"d-m-Y" }} </td>
                 <td> {{ i.enddate|date:"d-m-Y" }} </td>
+                <td> {{ i.submitteddate|date:"d-m-Y" }} </td>
+                  <td><div class="badge badge-outline-danger">{{ i.delay}}</div></td>
                 <td>  <div class="col-6 col-sm-6 col-md-6 col-lg-6 mt-1">
                           <a href="{{i.files.url}}" class="btn btn-outline-primary mdi mdi-format-vertical-align-bottom"
-                          style="font-size: 15px;overflow: hidden  mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100;" download>Download</a>
+                          style="font-size: 15px;overflow: hidden  mr-2 ml-6 mt-2;font-size: 15px; font-weight: 100;" download>Download</a>
                       </div> </td>
                 <td>  <div class="col-6 col-sm-6 col-md-6 col-lg-6 mt-1">
                           <a href="{{i.files.url}}" class="btn btn-outline-primary mdi mdi-format-vertical-align-bottom"
-                          style="font-size: 15px;overflow: hidden  mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100;" download>Download</a>
+                          style="font-size: 15px;overflow: hidden  mr-2 ml-6 mt-2;font-size: 15px; font-weight: 100;" download>Download</a>
                       </div> </td>
                 <td> {% if i.task_status == "1" %}
                               <div class="badge badge-outline-success">Completed</div>
                             {% else %}
-                               <div class="badge badge-outline-danger">Incomplete</div></td>
+                               <div class="badge badge-outline-danger">Incomplete</div>
                             {% endif %} 
+                            </td>
+                          
+                              
               </tr>
               {% endfor %}
             </tbody>

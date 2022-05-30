@@ -35,19 +35,18 @@
                     </div>
 
                     <div class="row mt-0 ">
-                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 ">
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-6 ">
                             <div class="form-group row ">
-                                <label class="col-6 col-sm-6 col-md-6 col-lg-5 col-form-label ">FROM</label>
-                                <div class="col-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <label class="col-4 col-sm-4 col-md-4 col-lg-4 col-form-label ">FROM</label>
+                                <div class="col-8 col-sm-8 col-md-8 col-lg-8 ">
                                     <input type="Date" class="form-control text-light " name="start " id="txtDate">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-2 col-sm-2 col-md-2 col-lg-2 "></div>
-                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 ">
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-6 ">
                             <div class="form-group row ">
-                                <label class="col-6 col-sm-6 col-md-6 col-lg-5 col-form-label ">TO</label>
-                                <div class="col-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <label class="col-4 col-sm-4 col-md-4 col-lg-4 col-form-label ">TO</label>
+                                <div class="col-8 col-sm-8 col-md-8 col-lg-8 ">
                                     <input type="Date" class="form-control text-light" name="start " id="txtDate1">
                                 </div>
                             </div>
@@ -138,6 +137,23 @@
     function showDiv() {
         document.getElementById('hiddendiv').style.display = "block ";
     }
+</script>
+<script>
+var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth() + 1; //January is 0!
+var yyyy = today.getFullYear();
+
+if (dd < 10) {
+   dd = '0' + dd;
+}
+
+if (mm < 10) {
+   mm = '0' + mm;
+} 
+    
+today = yyyy + '-' + mm + '-' + dd;
+document.getElementById("txtDate").setAttribute("max", today);
 </script>
 
 {% endblock %}

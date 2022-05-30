@@ -67,7 +67,25 @@
 
 </script>
 
+<!--<script type="text/javascript">
+    $("#designation").change(function () {
+        const deptId = $("#regdetailsDesig").val();
+        const desigId = $("#designation").val();
+        console.log(deptId,desigId);
+        $.ajax({
+            url: '{% url "BRadmin_emp_ajax" %}',
+            data: {
+                'dept_id': deptId,
+                'desigId':desigId,
+            },
+            success: function (data) {
+                $("#empname").html(data);
+                console.log(data);
+            }
+        });
 
+    });
+</script>-->
 
 <script type="text/javascript ">
     $("#btnSearch").click(function() {

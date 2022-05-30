@@ -49,6 +49,7 @@
             <table class="table " id="myTable">
               <thead>
                 <tr data-href="#">
+                  <th>Slno</th>
                   <th>Date</th>
                   
                   <th>Status</th>
@@ -59,6 +60,7 @@
                  
                 
                 <tr data-href="#">
+                  <td>{{forloop.counter}}</td>
                   <td>{{i.date|date:"d-m-Y"}}</td>
                 
                   {% if i.attendance_status == "1" %}

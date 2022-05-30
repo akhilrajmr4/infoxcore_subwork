@@ -1,43 +1,35 @@
-import qrcode
+import json
+import math
+import os
 import random
-import os, json, math
-# import psycopg2
-from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse
-from urllib.parse import urlencode
-from django.views.decorators.csrf import csrf_exempt
-from django. contrib import messages
-from unicodedata import name
-from django.shortcuts import render
-from django.shortcuts import render, redirect
-from base_app.models import *
-from datetime import datetime,date, timedelta
-from django.http import HttpResponse, HttpResponseRedirect
-from django.db.models import Q
+from datetime import date, datetime, timedelta
 from io import BytesIO
-from django.core.files import File
-from django.conf import settings
-from django.db.models import Q
-from num2words import num2words
-
-from django.core.mail import send_mail
-
-from django.core.files.storage import FileSystemStorage
-# import qrcode.image.svg
-# from io import BytesIO
-# from django.views.generic import View
-# # from xhtml2pdf import pisa
-# # from coreapp.utils import render_to_pdf ,get_template
-# from django.db.models import Q
-# import os
-
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-
+from types import NoneType
+from unicodedata import name
+from urllib.parse import urlencode
+from django.template import RequestContext
+import qrcode
 from cal.models import *
+from core.settings import EMAIL_HOST_USER
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.core.files import File
+from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.template.loader import get_template
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from num2words import num2words
+from xhtml2pdf import pisa
+from base_app.models import *
 
 # Create your views here.
+
+
 def login(request):
     des = designation.objects.get(designation='trainingmanager')
     des1 = designation.objects.get(designation='trainer')
@@ -49,13 +41,9 @@ def login(request):
     design = designation.objects.get(designation="team leader")
     design1 = designation.objects.get(designation="project manager")
     design3 = designation.objects.get(designation="developer")
-    design4 = designation.objects.get(designation="hr")
-    
-    
-    
+
     if request.method == 'POST':
-        
-        email  = request.POST['email']
+        email = request.POST['email']
         password = request.POST['password']
         user = authenticate(username=email, password=password)
         if user is not None:
@@ -63,19 +51,18 @@ def login(request):
                 Num1 = project.objects.count()
                 Num = user_registration.objects.count()
                 Trainer = designation.objects.get(designation='trainer')
-                trcount=user_registration.objects.filter(designation=Trainer).count()
-                return redirect( 'SuperAdmin_dashboard')
-        elif user_registration.objects.filter(email=email, password=password, designation_id=des.id,status="active").exists():
+                trcount = user_registration.objects.filter(
+                    designation=Trainer).count()
+                return redirect('SuperAdmin_dashboard')
+        elif user_registration.objects.filter(email=email, password=password, designation_id=des.id, status="active").exists():
             member = user_registration.objects.get(
             email=request.POST['email'], password=request.POST['password'])
             request.session['usernametm'] = member.designation_id
             request.session['usernametm1'] = member.fullname
             request.session['usernametm2'] = member.id
-            #request.session['usernamehr2'] = member.branch
+            # request.session['usernamehr2'] = member.branch
             return render(request, 'dashsec.html', {'member': member})
-            
-
-        elif user_registration.objects.filter(email=email, password=password, designation_id=des1.id,status="active").exists():
+        elif user_registration.objects.filter(email=email, password=password, designation_id=des1.id, status="active").exists():
                 member = user_registration.objects.get(
                 email=request.POST['email'], password=request.POST['password'])
                 request.session['usernametrnr'] = member.designation_id
@@ -83,59 +70,52 @@ def login(request):
                 request.session['usernametrnr2'] = member.team_id
                 request.session['usernametrnr2'] = member.id
                 return render(request, 'trainersec.html', {'member': member})
-    
-        elif user_registration.objects.filter(email=request.POST['email'], password=password, designation_id=des2.id,status="active").exists():
+        elif user_registration.objects.filter(email=request.POST['email'], password=password, designation_id=des2.id, status="active").exists():
                 member = user_registration.objects.get(
-                email=request.POST['email'],password=request.POST['password'])
+                email=request.POST['email'], password=request.POST['password'])
                 request.session['usernametrns'] = member.designation_id
                 request.session['usernametrns1'] = member.fullname
                 request.session['usernametrns2'] = member.id
                 request.session['usernametrns3'] = member.team_id
                 return render(request, 'traineesec.html', {'member': member})
-                
-        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'], designation_id=des3.id,status="active").exists():
+        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'], designation_id=des3.id, status="active").exists():
                 member = user_registration.objects.get(
                 email=request.POST['email'], password=request.POST['password'])
                 request.session['usernameacnt'] = member.designation_id
                 request.session['usernameacnt1'] = member.fullname
                 request.session['usernameacnt2'] = member.id
                 return render(request, 'accountsec.html', {'member': member})
-    
-            
-            
-        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'],designation=manag.id,status="active").exists():
-                
-                member=user_registration.objects.get(email=request.POST['email'], password=request.POST['password'])
+        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'], designation=manag.id, status="active").exists():
+                member = user_registration.objects.get(
+                    email=request.POST['email'], password=request.POST['password'])
                 request.session['m_id'] = member.designation_id
                 request.session['usernamets1'] = member.fullname
                 request.session['usernamehr2'] = member.branch_id
-                request.session['m_id'] = member.id 
-                mem=user_registration.objects.filter(id= member.id)
+                request.session['m_id'] = member.id
+                mem = user_registration.objects.filter(id=member.id)
                 Num = user_registration.objects.count()
                 Num1 = project.objects.count()
                 Trainer = designation.objects.get(designation='trainer')
-                trcount=user_registration.objects.filter(designation=Trainer).count()
-                return render(request,'MAN_profiledash.html',{'mem':mem,'num':Num,'Num1':Num1,'trcount':trcount})
-    
-            
-        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'],designation=Adm1.id,status="active").exists():
-                
-                member=user_registration.objects.get(email=request.POST['email'], password=request.POST['password'])
+                trcount = user_registration.objects.filter(
+                    designation=Trainer).count()
+                return render(request, 'MAN_profiledash.html', {'mem': mem, 'num': Num, 'Num1': Num1, 'trcount': trcount})
+        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'], designation=Adm1.id, status="active").exists():
+                member = user_registration.objects.get(
+                    email=request.POST['email'], password=request.POST['password'])
                 request.session['Adm_id'] = member.designation_id
                 request.session['usernamets1'] = member.fullname
                 request.session['usernamehr2'] = member.branch_id
-                request.session['Adm_id'] = member.id 
-                Adm=user_registration.objects.filter(id= member.id)
+                request.session['Adm_id'] = member.id
+                Adm = user_registration.objects.filter(id=member.id)
                 Num = user_registration.objects.count()
                 Num1 = project.objects.count()
                 Trainer = designation.objects.get(designation='trainer')
-                trcount=user_registration.objects.filter(designation=Trainer).count()
-                return redirect('BRadmin_profiledash')
-            
-            
-        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'],designation_id=design2.id,status="active").exists():
-               
-                member=user_registration.objects.get(email=request.POST['email'], password=request.POST['password'])
+                trcount = user_registration.objects.filter(
+                    designation=Trainer).count()
+                return render(request, 'BRadmin_profiledash.html', {'num': Num, 'Num1': Num1, 'Adm': Adm, 'trcount': trcount})
+        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'], designation_id=design2.id, status="active").exists():
+                member = user_registration.objects.get(
+                    email=request.POST['email'], password=request.POST['password'])
                 request.session['usernamets'] = member.designation_id
                 request.session['usernamets1'] = member.fullname
                 request.session['usernamehr2'] = member.branch_id
@@ -146,34 +126,41 @@ def login(request):
                     usernamets1 = request.session['usernamets1']
                 else:
                    return redirect('/')
-                mem=user_registration.objects.filter(designation_id=usernamets) .filter(fullname=usernamets1)
-                return render(request,'TSdashboard.html',{'mem':mem})
-    
-            
-        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'],designation=design.id,status="active").exists():
-                 member=user_registration.objects.get(email=request.POST['email'], password=request.POST['password'])
-                 request.session['tlid'] = member.id
-                 
-                 return redirect('TLdashboard')
+                mem = user_registration.objects.filter(
+                    designation_id=usernamets) .filter(fullname=usernamets1)
+                return render(request, 'TSdashboard.html', {'mem': mem})
+        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'], designation=design.id, status="active").exists():
+                member = user_registration.objects.get(
+                     email=request.POST['email'], password=request.POST['password'])
+                request.session['tlid'] = member.id
+                if request.session.has_key('tlid'):
+                    tlid = request.session['tlid']
+                else:
+                    return redirect('/')
+                    
+                return redirect( 'TLdashboard')
+              
             
         elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'],designation=design1.id,status="active").exists():
                 member=user_registration.objects.get(email=request.POST['email'], password=request.POST['password'])
                 request.session['prid'] = member.id
                
-                return redirect('pmanager_dash')
+                if request.session.has_key('prid'):
+                    prid = request.session['prid']
+                else:
+                   return redirect('/')
+                return redirect( 'pmanager_dash')
             
             
         elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'],designation=design3.id,status="active").exists():
                 member=user_registration.objects.get(email=request.POST['email'], password=request.POST['password'])
                 request.session['devid'] = member.id
-                
-                return redirect('devdashboard')
-        elif user_registration.objects.filter(email=request.POST['email'], password=request.POST['password'],designation=design4.id,status="active").exists():
-                member=user_registration.objects.get(email=request.POST['email'], password=request.POST['password'])
-                request.session['hr_id'] = member.id
-                
-                return redirect('HR_Dashboard')
                
+                if request.session.has_key('devid'):
+                    devid = request.session['devid']
+                else:
+                   return redirect('/')
+                return redirect('devdashboard')
             
         else:
                 context = {'msg_error': 'Invalid data'}
@@ -232,15 +219,15 @@ def newtraineeesteam(request):
         if request.session.has_key('usernametm1'):
             usernametm1 = request.session['usernametm1']
         else:
-            return redirect('/')
+            usernametm1 = "dummy"
         mem = user_registration.objects.filter(
             designation_id=usernametm).filter(fullname=usernametm1)
         tid = request.GET.get('tid')
         register = user_registration()
         des  = course.objects.all()
         dept = department.objects.all()
-        team = create_team.objects.all()
-        mem1 = designation.objects.get(designation="trainee")
+        team = create_team.objects.filter(team_status = 0)
+        mem1 = designation.objects.get(designation="trainee").order_by('id')
         memm = user_registration.objects.filter(designation_id=mem1)
         print(memm)
         if request.method == 'POST':
@@ -259,21 +246,7 @@ def newtraineeesteam(request):
     else:
         return redirect('/')
 
-# def new_team(request):
-#     if 'usernametm2' in request.session:
-#         if request.session.has_key('usernametm'):
-#             usernametm = request.session['usernametm']
-#         if request.session.has_key('usernametm1'):
-#             usernametm1 = request.session['usernametm1']
-#         else:
-#             return redirect('/')
-#         mem = user_registration.objects.filter(designation_id=usernametm) .filter(fullname=usernametm1)
-#         var = create_team.objects.all().order_by('-id')
-#         des = designation.objects.get(designation='trainer')
-#         var1 = user_registration.objects.filter(designation_id=des.id)
-#         return render(request, 'new_team.html', {'mem': mem, 'var': var, 'var1': var1})
-#     else:
-#         return redirect('/')
+
 
 def new_team(request):
     if 'usernametm2' in request.session:
@@ -507,7 +480,7 @@ def Trainees_Attendancetable(request):
             start=request.POST['startdate']
             end=request.POST['enddate']
             user = request.POST['trainee']
-            attend=attendance.objects.filter(date__gte=start,date__lte=end,user_id=user).order_by('-id')
+            attend=attendance.objects.filter(date__gte=start,date__lte=end,user_id=user)
         return render(request, 'Trainees_Attendancetable.html',{'mem':mem,'vars':attend})
     else:
         return redirect('/')
@@ -937,8 +910,8 @@ def applyleavesub(request):
             vars.leaveapprovedstatus = 0
             vars.user = cut
             vars.designation_id = des1.id
-     
-     
+
+
             start = datetime.strptime(vars.from_date, '%Y-%m-%d').date() 
             end = datetime.strptime(vars.to_date, '%Y-%m-%d').date()
 
@@ -950,8 +923,7 @@ def applyleavesub(request):
                 vars.days = 1
             else:
                 vars.days = diff - cnt
-                
-                
+     
             vars.save()
             return redirect('Applyleave')
     
@@ -1134,12 +1106,7 @@ def Trainer_Currenttrainee(request, id):
         d = create_team.objects.get(id=id)
         des = designation.objects.get(designation='trainee')
         vars = user_registration.objects.filter(team=d.id,designation=des.id).order_by('-id')
-        # .filter(designation=des.id)
-        # for item in vars:
-        #     import pdb;pdb.set_trace()
-        #     item['avg']=(item['attitude']+item['creativity']+item['workperformance'])/100
-    
-    
+        
         return render(request, 'Trainer_Currenttrainees.html', {'vars': vars, 'mem': mem})
     else:
         return redirect('/')
@@ -1305,7 +1272,7 @@ def Trainer_Previous_Trainees(request, id):
         if request.session.has_key('usernametm1'):
             usernametm1 = request.session['usernametm1']
         else:
-            return redirect('/')
+            usernametm1 = "dummy"
     
         mem = user_registration.objects.filter(
             designation_id=usernametm) .filter(fullname=usernametm1)
@@ -1519,8 +1486,8 @@ def trainer_applyleave_form(request):
         mem.reason = request.POST['reason']
         mem.user = le
         mem.designation_id = des1.id
-        mem.leaveapprovedstatus=0
-        
+        mem.leaveapprovedstatus=0       
+
         start = datetime.strptime(mem.from_date, '%Y-%m-%d').date() 
         end = datetime.strptime(mem.to_date, '%Y-%m-%d').date()
 
@@ -1532,8 +1499,6 @@ def trainer_applyleave_form(request):
             mem.days = 1
         else:
             mem.days = diff - cnt
-            
-            
         mem.save()
         return render(request, 'trainer_applyleave.html', {'z': z})
     return render(request, 'trainer_applyleave_form.html', {'z': z})
@@ -1566,34 +1531,7 @@ def trainer_reportissue(request):
     else:
         return redirect('/')
 
-# def trainer_reportissue_form(request):
-#     if request.session.has_key('usernametrnr'):
-#         usernametrnr = request.session['usernametrnr']
-#     if request.session.has_key('usernametrnr1'):
-#         usernametrnr1 = request.session['usernametrnr1']
-#     if request.session.has_key('usernametrnr2'):
-#         usernametrnr2 = request.session['usernametrnr2']
-#     else:
-#         return redirect('/')
-#     z = user_registration.objects.filter(designation_id=usernametrnr) .filter(
-#         fullname=usernametrnr1) .filter(id=usernametrnr2)
 
-#     mem = reported_issue()
-#     des = designation.objects.get(designation='trainingmanager')
-#     cut = user_registration.objects.get(designation_id=des.id)
-#     mem1 = user_registration.objects.get(id=usernametrnr2)
-#     des1 = designation.objects.get(designation='trainer')
-#     print(mem1)
-#     if request.method == "POST":
-#         mem.issue = request.POST['issues']
-#         mem.reported_date = datetime.now()
-#         mem.reported_to = cut
-#         mem.reporter = mem1
-#         mem.designation_id = des1.id
-#         mem.issuestatus =0
-#         mem.save()
-#         return render(request, 'trainer_reportissue.html', {'z': z})
-#     return render(request, 'trainer_reportissue_form.html', {'mem': mem, 'z': z})
 def trainer_reportissue_form(request):
     if 'usernametrnr2' in request.session:
         
@@ -2099,28 +2037,18 @@ def trainer_taskgivenpage(request, id):
        
         if request.session.has_key('usernametrnr2'):
             usernametrnr2 = request.session['usernametrnr2']
-            
-            
-        if request.method == 'POST':
-            id = request.POST['uid']
-            abc = trainer_task.objects.get(id=id)
-            abc.task_progress = request.POST['sele']
-            abc.save()
-            msg_success = "progress added"
-            return render(request,'trainer_taskgiven.html',{'msg_success':msg_success})
-        else:
-            
-            z = user_registration.objects.filter(id=usernametrnr2)
+       
+        z = user_registration.objects.filter(id=usernametrnr2)
+    
         
-            
-            d = create_team.objects.get(id=id)
-            c = trainer_task.objects.filter(team_name_id=d.id)
-            des = designation.objects.get(designation='trainee')
-            mem1 = user_registration.objects.filter(designation_id=des.id).filter(team_id=d).order_by('-id')
-            mem = user_registration.objects.filter(designation_id=des.id).filter(team_id=d).values_list('id')
-            tsk = trainer_task.objects.filter(team_name_id=d.id).filter(user_id__in=mem).order_by('-id')
-            
-            return render(request, 'trainer_taskgiven.html', {'mem': mem,'mem1': mem1, 'tsk': tsk, 'z': z})
+        d = create_team.objects.get(id=id)
+        c = trainer_task.objects.filter(team_name_id=d.id)
+        des = designation.objects.get(designation='trainee')
+        mem1 = user_registration.objects.filter(designation_id=des.id).filter(team_id=d).order_by('-id')
+        mem = user_registration.objects.filter(designation_id=des.id).filter(team_id=d).values_list('id')
+        tsk = trainer_task.objects.filter(team_name_id=d.id).filter(user_id__in=mem).order_by('-id')
+        
+        return render(request, 'trainer_taskgiven.html', {'mem': mem,'mem1': mem1, 'tsk': tsk, 'z': z})
     else:
         return redirect('/')
 
@@ -2232,7 +2160,7 @@ def trainer_current_trainees(request):
         else:
             return redirect('/')
     
-        # import pdb;pdb.set_trace()
+     
         
         z = user_registration.objects.filter(fullname=usernametrnr1,id=usernametrnr2) 
         cut = create_team.objects.filter(trainer=usernametrnr1).values_list('id',flat=True)
@@ -2524,6 +2452,8 @@ def trainee_task_details(request, id):
                 mem.delay=(akm-de).days
                 mem.task_status = 1
                 mem.save()
+            mem.task_status = 1
+            mem.save()
             return render(request, 'trainee_task_details.html', {'mem': mem, 'z': z})
         return render(request, 'trainee_task_details.html', {'mem': mem, 'z': z})
     else:
@@ -2631,7 +2561,7 @@ def trainee_applyleave_form(request):
             mem.user = le
             mem.designation_id=usernametrns
             mem.leaveapprovedstatus=0
-            
+
             start = datetime.strptime(mem.from_date, '%Y-%m-%d').date() 
             end = datetime.strptime(mem.to_date, '%Y-%m-%d').date()
 
@@ -2643,8 +2573,6 @@ def trainee_applyleave_form(request):
                 mem.days = 1
             else:
                 mem.days = diff - cnt
-                
-                
             mem.save()
             return render(request, 'trainee_applyleave_form.html', {'z': z})
         return render(request, 'trainee_applyleave_form.html', {'z': z})
@@ -2975,7 +2903,7 @@ def BRadmin_emp_ajax(request):
         dept_id = request.GET.get('dept_id')
         desigId = request.GET.get('desigId')
         br_id = department.objects.get(id=dept_id)
-        Desig = user_registration.objects.filter(branch_id=br_id.branch_id, designation=desigId, status="active")
+        Desig = user_registration.objects.filter(branch_id=br_id.branch_id, designation=desigId)
 
         return render(request,'BRadmin_emp_ajax.html',{'Adm': Adm,'Desig': Desig,})
     else:
@@ -2995,12 +2923,12 @@ def BRadmin_designations(request):
         br_id = department.objects.get(id=dept_id)
         print('haii')
         print(br_id)
-        Desig = designation.objects.filter(~Q(designation="admin"),~Q(designation="manager"),~Q(designation="project manager"),~Q(designation="tester"),~Q(designation="trainingmanager"),~Q(designation="trainer"),~Q(designation="trainee"),~Q(designation="account"),~Q(designation="hr")).filter(branch_id=br_id.branch_id)
+        Desig = designation.objects.filter(~Q(designation="admin"),~Q(designation="manager"),~Q(designation="project manager"),~Q(designation="tester"),~Q(designation="trainingmanager"),~Q(designation="trainer"),~Q(designation="trainee"),~Q(designation="account")).filter(branch_id=br_id.branch_id)
         return render(request,'BRadmin_designations.html',{'Adm': Adm,'Desig': Desig, })
     else:
         return redirect('/')
 
-#********************Admin account setting****************************
+# ********************Admin account setting****************************
 def BRadmin_accsetting(request):
     if 'Adm_id' in request.session:
         
@@ -3028,7 +2956,7 @@ def BRadmin_accsettingimagechange(request,id):
     else:
         return redirect('/')
 
-#********************Manager account setting****************************
+# ********************Manager account setting****************************
 
 def MAN_accsetting(request):
     if 'm_id' in request.session:
@@ -3057,7 +2985,7 @@ def MAN_accsettingimagechange(request,id):
         return redirect('/')
 
 
-#***************Admin change password*****************
+# ***************Admin change password*****************
 def BRadmin_changepwd(request):
     
     if 'Adm_id' in request.session:
@@ -3090,7 +3018,7 @@ def BRadmin_changepwd(request):
     else:
         return redirect('/')
 
-#***************Manager change password*****************
+# ***************Manager change password*****************
 
 def MAN_changepwd(request):
     if 'm_id' in request.session:
@@ -3126,7 +3054,7 @@ def MAN_changepwd(request):
         return redirect('/')
 
 
-#***********************anandu*****************************************
+# ***********************anandu*****************************************
 def MAN_index(request):
     if 'm_id' in request.session:
         if request.session.has_key('m_id'):
@@ -3279,7 +3207,7 @@ def BRadmin_profiledash(request):
         if request.session.has_key('Adm_id'):
             Adm_id = request.session['Adm_id']
         else:
-            return redirect('/')
+            variable = "dummy"
         Adm = user_registration.objects.filter(id=Adm_id)
         Num = user_registration.objects.count()
         Num1 = project.objects.count()
@@ -3336,7 +3264,7 @@ def BRadmin_projectman(request,id,did):
         Adm = user_registration.objects.filter(id=Adm_id)
         Project_man= designation.objects.get(id = id)
         project_name = project.objects.filter(designation=Project_man).filter(department=did)
-        Project_man_data=user_registration.objects.filter(designation=Project_man).filter(department=did,status="active").order_by("-id")
+        Project_man_data=user_registration.objects.filter(designation=Project_man).filter(department=did).order_by("-id")
         return render(request,'BRadmin_projectman.html',{'pro_man_data':Project_man_data,'Adm':Adm,'project_name':project_name,'Project_man':Project_man})
     else:
         return redirect('/')
@@ -3397,13 +3325,13 @@ def BRadmin_promanattendsort(request,id):
             fromdate = request.POST.get('fromdate')
             todate = request.POST.get('todate') 
             # mem1 = attendance.objects.raw('select * from app_attendance where user_id and date between "'+fromdate+'" and "'+todate+'"')
-            mem1 = attendance.objects.filter(date__range=[fromdate, todate]).filter(user_id = id).order_by('-id')
+            mem1 = attendance.objects.filter(date__range=[fromdate, todate]).filter(user_id = id)
         return render(request, 'BRadmin_promanattendsort.html',{'mem1':mem1,'Adm':Adm,'id':id})
     else:
         return redirect('/') 
 
 
-#***********************praveen************************
+# ***********************praveen************************
 def BRadmin_trainerstable(request,did):
     if 'Adm_id' in request.session:
         if request.session.has_key('Adm_id'):
@@ -3429,11 +3357,11 @@ def BRadmin_Training(request,id):
         else:
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
-        #team=create_team.objects.filter(user_id=id)
-        #return render(request,'BRadmin_Training.html',{'team':team})
-            #team=create_team.objects.all()
+        # team=create_team.objects.filter(user_id=id)
+        # return render(request,'BRadmin_Training.html',{'team':team})
+            # team=create_team.objects.all()
         user=user_registration.objects.filter(id=id)
-        team=create_team.objects.all().order_by('-id')
+        team=create_team.objects.all()
         return render(request,'BRadmin_Training.html',{'team':team,'user':user,'Adm':Adm})
     else:
         return redirect('/') 
@@ -3474,8 +3402,8 @@ def BRadmin_trainingprofile(request,id):
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
         trainees_data=user_registration.objects.get(id=id)
-        #Trainee = designation.objects.get(designation='Trainee')
-        #trainees_data=user_registration.objects.filter(designation=Trainee)
+        # Trainee = designation.objects.get(designation='Trainee')
+        # trainees_data=user_registration.objects.filter(designation=Trainee)
         user=user_registration.objects.get(id=id)
         num=trainer_task.objects.filter(user=user).filter(task_status='1').count()
         return render(request,'BRadmin_trainingprofile.html',{'trainees_data':trainees_data,'num':num,'Adm':Adm})
@@ -3490,7 +3418,7 @@ def BRadmin_completedtasktable(request,id):
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
         user=user_registration.objects.get(id=id)
-        task=trainer_task.objects.filter(user=user).order_by('-id')
+        task=trainer_task.objects.filter(user=user)
         return render(request,'BRadmin_completedtasktable.html',{'task_data':task,'Adm':Adm})   
     else:
         return redirect('/')
@@ -3529,9 +3457,9 @@ def MAN_Training(request,id):
         else:
             return redirect('/')
         mem = user_registration.objects.filter(id=m_id)
-        #team=create_team.objects.filter(user_id=id)
-        #return render(request,'BRadmin_Training.html',{'team':team})
-            #team=create_team.objects.all()
+        # team=create_team.objects.filter(user_id=id)
+        # return render(request,'BRadmin_Training.html',{'team':team})
+            # team=create_team.objects.all()
         user=user_registration.objects.filter(id=id)
         team=create_team.objects.all()
         return render(request,'MAN_Training.html',{'team':team,'user':user,'mem':mem})
@@ -3574,8 +3502,8 @@ def MAN_trainingprofile(request,id):
             return redirect('/')
         mem = user_registration.objects.filter(id=m_id)
         trainees_data=user_registration.objects.get(id=id)
-        #Trainee = designation.objects.get(designation='Trainee')
-        #trainees_data=user_registration.objects.filter(designation=Trainee)
+        # Trainee = designation.objects.get(designation='Trainee')
+        # trainees_data=user_registration.objects.filter(designation=Trainee)
         user=user_registration.objects.get(id=id)
         num=trainer_task.objects.filter(user=user).filter(status='Completed').count()
         return render(request,'MAN_trainingprofile.html',{'trainees_data':trainees_data,'num':num,'mem':mem})
@@ -3609,7 +3537,7 @@ def MAN_topictable(request,id):
 
 
 
-#*******************    anwar     ****************************
+# *******************    anwar     ****************************
 
 def BRadmin_View_Trainers(request,id,did):
     if 'Adm_id' in request.session:
@@ -3809,7 +3737,7 @@ def admin_page1(request):
         Adm = user_registration.objects.filter(id=Adm_id)
         if request.method == "POST":
             empname1=request.POST.get('empname')
-            atten=attendance.objects.filter(user_id=empname1).order_by('-id')
+            atten=attendance.objects.filter(user_id=empname1)
             return render(request,'BRadmin_attendanceshow.html',{'Adm':Adm,'atten':atten,'empname1':empname1}) 
         dpt=department.objects.all()
         dsg=designation.objects.all()
@@ -4091,12 +4019,12 @@ def man_emp(request):
     desig_id = request.GET.get('desig_id')
     dept=department.objects.filter(id=dept_id)
     desi=designation.objects.filter(id=desig_id)
-    user=user_registration.objects.filter(designation_id=desig_id, department_id=dept_id, status="active")
+    user=user_registration.objects.filter(designation_id=desig_id).filter(department_id=dept_id)
     print(dept)
     print(desi)
     return render(request, 'MAN_employee.html',{'user':user,'dept':dept,'desi':desi})
 
-#************************  anwar end  *********************************************
+# ************************  anwar end  *********************************************
 
 
  # current projects- sharon
@@ -4594,7 +4522,7 @@ def MAN_training_department(request):
 ############## end ##########
 
 
-#reported issue- akhil-admin mod
+# reported issue- akhil-admin mod
 
 def BRadmin_Reportedissue_department(request):
     if 'Adm_id' in request.session:
@@ -4648,7 +4576,7 @@ def BRadmin_ReportedissueShow1(request,id):
     else:
         return redirect('/')
 
-#reported issue- akhil-man mod
+# reported issue- akhil-man mod
 
 def MAN_Reportedissue_department(request):
     if 'm_id' in request.session:
@@ -4720,7 +4648,7 @@ def MAN_ReportedissueShow1(request,id):
 ############## end ##########
 
 
-#task section-nimisha- man mod
+# task section-nimisha- man mod
 
 def MAN_tasks(request):
     if 'm_id' in request.session:
@@ -4813,7 +4741,7 @@ def MAN_previoustasks(request):
     else:
         return redirect('/')
 
-#task section-nimisha- admin mod
+# task section-nimisha- admin mod
 
 def BRadmin_tasks(request):
     if 'Adm_id' in request.session:
@@ -4910,7 +4838,7 @@ def BRadmin_trainersdepartment(request):
 
 ############## end ##########
 
-#upcoming projects -safdhar -admin mod
+# upcoming projects -safdhar -admin mod
 
 
 def BRadmin_upcoming(request):
@@ -5042,7 +4970,7 @@ def BRadmin_selectproject(request):
     print(proj)
     return render(request, 'BRadmin_selectproject.html',{'project':proj})
     
-#upcoming projects -safdhar -man mod
+# upcoming projects -safdhar -man mod
 
 
 def MAN_upcoming(request):
@@ -5184,7 +5112,7 @@ def Manager_selectproject(request):
     return render(request,'manager_selectproject.html',{'project':proj})
     
     
-#*************************meenu**********************
+# *************************meenu**********************
 def newdept(request):
     if 'Adm_id' in request.session:
         if request.session.has_key('Adm_id'):
@@ -5419,7 +5347,7 @@ def man_registration_form(request):
             a.designation_id = des.id
             a.password= random.SystemRandom().randint(100000, 999999)
             
-            #a.branch_id = request.POST['branch']
+            # a.branch_id = request.POST['branch']
             a.photo = request.FILES['photo']
             a.idproof = request.FILES['idproof']
             a.save()
@@ -5487,12 +5415,12 @@ def man_registration_form(request):
             c.skill3 = request.POST['skill3']
             c.save()
             
-            # subject = 'Greetings from iNFOX TECHNOLOGIES'
-            # message = 'Congratulations,\nYou have successfully registered iNFOX TECHNOLOGIES.\nYour login credentials \n\nEmail :'+str(email_id)+'\nPassword :'+str(passw)+'\n\nNote: This is a system generated email, do not reply to this email id.'
-            # email_from = settings.EMAIL_HOST_USER
+            subject = 'Greetings from iNFOX TECHNOLOGIES'
+            message = 'Congratulations,\nYou have successfully registered iNFOX TECHNOLOGIES.\nYour login credentials \n\nEmail :'+str(email_id)+'\nPassword :'+str(passw)+'\n\nNote: This is a system generated email, do not reply to this email id.'
+            email_from = settings.EMAIL_HOST_USER
             
-            # recipient_list = [email_id, ]
-            # send_mail(subject,message , email_from, recipient_list, fail_silently=True)
+            recipient_list = [email_id, ]
+            send_mail(subject,message , email_from, recipient_list, fail_silently=True)
             msg_success = "Registration successfully Check Your Registered Mail"
             return render(request, 'man_registration_form.html',{'msg_success': msg_success,'branch':branch})
         
@@ -5527,7 +5455,7 @@ def render_pdfof_view(request,id):
     }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="certificate.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -5557,7 +5485,7 @@ def render_pdfre_view(request,id):
     }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="certificate.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -5587,7 +5515,7 @@ def render_pdfex_view(request,id):
     }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="certificate.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -5615,7 +5543,7 @@ def render_pdfau_view(request,id):
     }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="certificate.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -5663,7 +5591,7 @@ def pmanager_dash(request):
         if request.session.has_key('prid'):
             prid = request.session['prid']
         else:
-            return redirect('/')
+            variable = "dummy"
         pro = user_registration.objects.filter(id=prid)
         labels = []
         data = []
@@ -5694,7 +5622,7 @@ def projectmanager_projects(request):
     else:
         return redirect('/')
 
-#nirmal
+# nirmal
 def projectmanager_assignproject(request):
     if 'prid' in request.session:
         if request.session.has_key('prid'):
@@ -5720,6 +5648,7 @@ def projectmanager_assignproject(request):
             var.user_id = prid
             var.tl_id = request.POST['pname']
             var.task = request.POST['task']
+            var.subtask = request.POST['task']
             var.description=request.POST.get('desc')
             var.startdate=request.POST.get('sdate')
             var.enddate=request.POST.get('edate')
@@ -5746,11 +5675,11 @@ def projectmanager_assignproject(request):
             # message = 'Congratulations,\n' \
             # 'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
             # 'following is your Project Details\n'\
-            # 'Project : '+str(new.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.description)+'\n''Start Date : '+bb+'\n' 'End Date : '+cc+'\n'\
+            # 'Project :'+str(new.project)+'\n' 'Task :'+str(var.task) +'\n' 'Description :'+str(var.description)+'\n''Start Date :'+bb+'\n' 'End Date :'+cc+'\n'\
             # '\n' 'Complete your project on or before Enddate \n'\
             #     'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
             # recepient = str(em.email)
-            # send_mail(subject, message, settings.EMAIL_HOST_USER,
+            # send_mail(subject, message, EMAIL_HOST_USER,
             #       [recepient], fail_silently=False)
             msg_success = "Project assigned successfully"
             
@@ -5768,7 +5697,7 @@ def projectmanager_projectstatus(request,id):
         pro = user_registration.objects.filter(id=prid)
         des = designation.objects.get(designation="team leader")
         dev = designation.objects.get(designation="developer")
-        var = project_taskassign.objects.filter(project_id=id).order_by('-id')
+        var = project_taskassign.objects.filter(project_id=id,subtask__isnull = True).order_by('-id')
         data = test_status.objects.filter(project_id=id).order_by('-id')
         data1 = tester_status.objects.filter(project_id=id).order_by('-id')
         newdata = project_taskassign.objects.filter(project_id=id,subtask__isnull = False).order_by('-id')
@@ -5787,8 +5716,7 @@ def projectmanager_projectlist(request):
         return render(request, 'projectmanager_projectlist.html',{'pro':pro,'var':var})
     else:
         return redirect('/')
-   
-#jensin
+
 def projectmanager_createproject(request):
     if 'prid' in request.session:
         if request.session.has_key('prid'):
@@ -5796,7 +5724,8 @@ def projectmanager_createproject(request):
       
             
         mem = user_registration.objects.filter(id=prid)  
-        br_id = user_registration.objects.get(id=prid)  
+        br_id = user_registration.objects.get(id=prid)
+         
         if request.method =='POST':
             mem = user_registration.objects.filter(id=prid)
             mem2 = user_registration.objects.get(id=prid)
@@ -5809,32 +5738,15 @@ def projectmanager_createproject(request):
             var.description=request.POST.get('desc')
             var.files=request.FILES.get('pfile')
             var.branch_id=br_id.branch_id
-            
             var.save()
+            
+
             msg_success = "Project created successfully"
             return render(request, 'projectmanager_createproject.html',{'msg_success':msg_success})
         return render(request, 'projectmanager_createproject.html',{'pro':mem})
     else:
         return redirect('/')
 
-    # if 'prid' in request.session:
-    #     if request.session.has_key('prid'):
-    #         prid = request.session['prid']
-       
-    #     else:
-    #        return redirect('/')
-    #     pro = user_registration.objects.filter(id=prid)
-    #     if request.method == 'POST':
-    #         prj =  project()
-    #         prj.projectmanager = prid
-    #         prj.department = pro.department
-         
-
-    #     return render(request, 'projectmanager_createproject.html',{'pro':pro})
-    # else:
-    #     return redirect('/')
-
-#maneesh
 def projectmanager_description(request,id):
     if 'prid' in request.session:
         if request.session.has_key('prid'):
@@ -5910,7 +5822,7 @@ def projectmanager_upprojects(request):
     else:
         return redirect('/')
 
-#praveesh
+# praveesh
 
 def projectmanager_accepted_projects(request):
     if 'prid' in request.session:
@@ -5986,7 +5898,7 @@ def projectmanager_rejected_projects(request):
         return redirect('/')
 
 
-#bibin #amal #abin #rohit
+# bibin #amal #abin #rohit
 def manindex(request):
     return render(request, 'manager_index.html')
 
@@ -6127,10 +6039,11 @@ def projectman_team_attandance(request,id):
         if request.method == "POST":
             fromdate = request.POST.get('fromdate')
             todate = request.POST.get('todate') 
-            mem1 = attendance.objects.filter(date__range=[fromdate, todate]).filter(user_id=id) .order_by('-id')
+            mem1 = attendance.objects.filter(date__range=[fromdate, todate]).filter(user_id=id) 
         return render(request, 'projectman_team_attandance.html', {'pro': pro,'mem1':mem1,'man':man})
     else:
         return redirect('/')
+
 def projectMANattendance(request):
     if 'prid' in request.session:
         if request.session.has_key('prid'):
@@ -6140,7 +6053,8 @@ def projectMANattendance(request):
         pro = user_registration.objects.filter(id=prid)
         return render(request, 'projectMANattendance.html',{'pro':pro})
     else:
-        return redirect('/')  
+        return redirect('/')
+
 def projectMANattandance(request):
     if 'prid' in request.session:
         if request.session.has_key('prid'):
@@ -6205,7 +6119,7 @@ def projectMANleavereq(request):
             mem.reason = request.POST.get('reason')
             mem.user_id = request.POST.get('pr_id')
             mem.status = "pending"
-            
+
             start = datetime.strptime(mem.from_date, '%Y-%m-%d').date() 
             end = datetime.strptime(mem.to_date, '%Y-%m-%d').date()
 
@@ -6217,8 +6131,7 @@ def projectMANleavereq(request):
                 mem.days = 1
             else:
                 mem.days = diff - cnt
-                
-                
+
             mem.save()
         return render(request, 'projectMANleavereq.html',{'pro':pro})  
     else:
@@ -6593,16 +6506,16 @@ def projectMANreportedissues(request):
         return redirect('/')
 
 
-#-------------------------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------
 
-#TL module
+# TL module
 
 def TLdashboard(request):
     if 'tlid' in request.session:
         if request.session.has_key('tlid'):
             tlid = request.session['tlid']
         else:
-            return redirect('/')
+            variable = "dummy"
         mem = user_registration.objects.filter(id=tlid)
         labels = []
         data = []
@@ -6693,8 +6606,8 @@ def tlprojecttasks(request,id):
             mem2 = tester_status.objects.filter(tester_id=tlid)
             time=datetime.now()
             taskstatus = test_status.objects.all()
-            display = project_taskassign.objects.filter(developer_id=tlid).filter(project_id=id)
-            tasks = project_taskassign.objects.filter(project_id=id,developer_id = tlid)
+            display = project_taskassign.objects.filter(tl_id=tlid).filter(project_id=id)
+            tasks = project_taskassign.objects.filter(project_id=id, developer_id = tlid)
             mem3 = user_registration.objects.get(id=tlid)
             display1=mem3.fullname
            
@@ -6807,9 +6720,9 @@ def tlgivetask(request):
         dev_id = designation.objects.get(designation="developer")
         e1 = e.id
         spa = user_registration.objects.filter(tl_id=dept_id.id, status="active")
-        spa1 = user_registration.objects.filter(designation_id=e1, status="active")
+        spa1 = user_registration.objects.filter(designation_id=e1)
         time=datetime.now().date()
-        tasks = project_taskassign.objects.filter(developer_id=tlid,project_id=splitid).values('task').distinct()
+        tasks = project_taskassign.objects.filter(tl_id=tlid,project_id=splitid).values('task').distinct()
         new = project.objects.get(id=splitid)
         
         if request.method =='POST':
@@ -6833,18 +6746,18 @@ def tlgivetask(request):
             var.project_id = splitid
             var.description = new.description
             var.save()
-            v = request.POST.get('ename')
-            em=user_registration.objects.get(id=v)
+            # v = request.POST.get('ename')
+            # em=user_registration.objects.get(id=v)
             # print(em.email)
             # subject = 'Greetings from iNFOX TECHNOLOGIES'
             # message = 'Congratulations,\n' \
             # 'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
             # 'following is your Project Details\n'\
-            # 'Project :'+str(var.project.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.tl_description)+'\n' 'SubTask : '+str(var.subtask)+'\n''Start Date : '+bb+'\n' 'End Date : '+cc+'\n'\
+            # 'Project :'+str(var.project.project)+'\n' 'Task :'+str(var.task) +'\n' 'Description :'+str(var.tl_description)+'\n' 'SubTask :'+str(var.subtask)+'\n''Start Date :'+bb+'\n' 'End Date :'+cc+'\n'\
             # '\n' 'Complete your project on or before Enddate \n'\
             #     'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
             # recepient = str(em.email)
-            # send_mail(subject, message, settings.EMAIL_HOST_USER,
+            # send_mail(subject, message, EMAIL_HOST_USER,
             #       [recepient], fail_silently=False)
             msg_success = "Task split successfully"
             return render(request, 'TLgivetask.html',{'msg_success':msg_success})
@@ -7025,7 +6938,7 @@ def TLtaskformsubmit(request,id):
             for i in range((var-task.enddate).days):
                 n = (x + i*day_delta)
                 if n in event:
-                    z=z+1
+                    z=z+1 
             delta = datetime.now().date() - task.enddate
             delay = delta.days - z
             if delay > 0:
@@ -7081,7 +6994,7 @@ def tl_leave_form(request):
             leaves.status = "submitted"
             leaves.designation_id = des1.id
             leaves.leaveapprovedstatus=0
-            
+
             start = datetime.strptime(leaves.from_date, '%Y-%m-%d').date() 
             end = datetime.strptime(leaves.to_date, '%Y-%m-%d').date()
 
@@ -7093,8 +7006,6 @@ def tl_leave_form(request):
                 leaves.days = 1
             else:
                 leaves.days = diff - cnt
-                
-                
             leaves.save()
         return render(request, 'TLleavereq.html',{'mem':mem})   
     else:
@@ -7138,9 +7049,9 @@ def TLleave(request):
         return redirect('/')
 
 
-#------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
 
-#tester module
+# tester module
 
 def TSdashboard(request):
     if 'usernametsid' in request.session:
@@ -7324,9 +7235,9 @@ def TSsucess(request):
     else:
         return redirect('/')
 
-#-----------------------------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------------------------
 
-#developer module
+# developer module
 
 def devindex(request):
     if request.session.has_key('devid'):
@@ -7456,7 +7367,7 @@ def dev_leave_form(request):
         leaves.leaveapprovedstatus=0
         leaves.user_id = request.POST['dev_id']
         leaves.designation_id = des1.id
-        
+
         start = datetime.strptime(leaves.from_date, '%Y-%m-%d').date() 
         end = datetime.strptime(leaves.to_date, '%Y-%m-%d').date()
 
@@ -7468,7 +7379,6 @@ def dev_leave_form(request):
             leaves.days = 1
         else:
             leaves.days = diff - cnt
-            
         leaves.save()
         return render(request, 'Devapplyleav.html')
     else:
@@ -7690,18 +7600,20 @@ def DEVtaskformsubmit(request, id):
         var = datetime.now().date()
         x = task.enddate
         y = var
+        delta = y - x
+        for i in range(delta.days + 1):
+            day = x + timedelta(days=i)
         event = Event.objects.values_list('start_time',flat=True)
         z = 0
-        day_delta = timedelta(days=1)
-        for i in range((var-task.enddate).days):
-            n = (x + i*day_delta)
-            if n in event:
+        for i in event:
+            if i in event:
                 z=z+1
         delta = datetime.now().date() - task.enddate
         delay = delta.days - z
         if delay > 0:
             task.delay = delay
             task.save()
+            
         else:
             task.delay = 0
             task.save()
@@ -7752,7 +7664,7 @@ def DEVtasksumitted(request):
     
     
     
-    #**********************internship****************
+    # **********************internship****************
     
 def man_internship_view(request):
     if request.session.has_key('m_id'):
@@ -7864,7 +7776,7 @@ def render_pdf_view(request,id):
     }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="certificate.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -7896,7 +7808,7 @@ def internshipupdatesave(request,id):
     var.course = request.POST['course']
     var.stream = request.POST['stream']        
     var.platform = request.POST['platform']        
-    #var.branch_id  =  request.POST['branch']        
+    # var.branch_id  =  request.POST['branch']        
     var.start_date =  request.POST['startdate']        
     var.end_date  =  request.POST['enddate']        
     var.mobile  =  request.POST['mobile']        
@@ -7934,7 +7846,7 @@ def certificate_intrn(request,id):
     }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="certificate.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -7945,7 +7857,7 @@ def certificate_intrn(request,id):
        html, dest=response)
        
 
-#*****************************registration********
+# *****************************registration********
 
 
 # def man_registration_update(request,id):
@@ -8007,37 +7919,23 @@ def BRadmin_registration(request):
         Adm_id = request.session['Adm_id']
     else:
         return redirect('/')   
-        
-    if 'stop_status' in request.POST:
-        uid = request.POST.get("His_id")
-        user = user_registration.objects.get(id=uid)
-        if user.status=="active":
-            user.status="stop"
-            user.save()
-            return redirect("BRadmin_registration")
-        else:
-            user.status="active"
-            user.save()
-            return redirect("BRadmin_registration")
-    else:    
-        if  request.method=="POST":
-            u_id = request.POST.get("id")
-            dept_id = request.POST.get("dept")
-            desi_id = request.POST.get("des")
-            res = request.POST.get("stat")
-       
-            user = user_registration.objects.get(id=u_id)
-            user.department_id = dept_id 
-            user.status = res
-            user.designation_id = desi_id
-            user.save()
-            return redirect("BRadmin_registration")
-        
-        Adm = user_registration.objects.filter(id=Adm_id)
-        mem1 = user_registration.objects.filter(~Q(status="resigned")).order_by("-id")
-        mem2 = designation.objects.filter(~Q(designation="admin"))
-        mem3 = department.objects.all()
-        return render(request,'BRadmin_registration.html',{'mem3':mem3,'mem2':mem2,'Adm':Adm,'mem1':mem1})
+    if request.method=="POST":
+        u_id = request.POST.get("id")
+        dept_id = request.POST.get("dept")
+        desi_id = request.POST.get("des")
+        res = request.POST.get("stat")
+   
+        user = user_registration.objects.get(id=u_id)
+        user.department_id = dept_id 
+        user.status = res
+        user.designation_id = desi_id
+        user.save()
+        return redirect("BRadmin_registration")
+    Adm = user_registration.objects.filter(id=Adm_id)
+    mem1 = user_registration.objects.filter(~Q(status="resigned")).order_by("-id")
+    mem2 = designation.objects.filter(~Q(designation="admin"))
+    mem3 = department.objects.all()
+    return render(request,'BRadmin_registration.html',{'mem3':mem3,'mem2':mem2,'Adm':Adm,'mem1':mem1})
 
 def BRadmin_resign(request):
     if request.session.has_key('Adm_id'):
@@ -8214,75 +8112,20 @@ def trainee_payment_viewpayment(request):
         return redirect('/')
 
 
-
-
-def pm_leavestatus(request):
-    if 'prid' in request.session:
-        if request.session.has_key('prid'):
-            prid = request.session['prid']
-        else:
-            return redirect('/')
-        pro = user_registration.objects.filter(id=prid)
-        dept  = user_registration.objects.get(id=prid)
-
-        dep = department.objects.filter(id=dept.department_id)
-        des = designation.objects.all()
-        emp = user_registration.objects.all()
-        return render(request,'pm_leavestatus.html',{'pro':pro,'dep':dep,'des':des,'emp':emp,})
-    else:
-        return redirect('/')
-        
-@csrf_exempt
-def pm_leave(request):
-    
-    emp = request.GET.get('emp')
-    fdate = request.GET.get('fdate')
-    tdate = request.GET.get('tdate')
-    leaves = leave.objects.filter(user_id=emp,from_date__gte=fdate,to_date__lte=tdate)
-    return render(request,'pm_leave.html', {'names':leaves})
-
-#########################  Accounts New ##########################################################################################################
-
-# def accounts_leavehistory(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         d = department.objects.all()
-#         return render(request,'accounts_leavehistory.html',{'z' : z,'d':d})
-#     else:
-#         return redirect('/')
-
-@csrf_exempt
-def accounts_leave(request):
-    
-    emp = request.GET.get('emp')
-    fdate = request.GET.get('fdate')
-    tdate = request.GET.get('tdate')
-    leaves = leave.objects.filter(user_id=emp,from_date__gte=fdate,to_date__lte=tdate)
-    return render(request,'accounts_leave.html', {'names':leaves})
-    
 def accounts_leavehistory(request):
     if 'usernameacnt2' in request.session:
         if request.session.has_key('usernameacnt2'):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
-        d = department.objects.all()
-        return render(request, 'accounts_leavehistory.html', {'z': z, 'd': d})
+        cous = course.objects.all()
+        dep = department.objects.all()
+        des = designation.objects.all()
+        emp = user_registration.objects.all()
+        return render(request, 'accounts_leavehistory.html', {'z': z, 'cous': cous,'dep':dep,'des':des,'emp':emp})
     else:
         return redirect('/')
 
-        
-# def accounts_leavehistory_department(request,id):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         var = department.objects.get(id=id)
-#         de = designation.objects.filter(~Q(designation='account'))
-#         return render(request,'accounts_leavehistory_department.html',{'z' : z,'de':de,'var':var})
-#     else:
-#         return redirect('/')
+
 
 def accounts_leavehistory_department(request, id):
     if 'usernameacnt2' in request.session:
@@ -8295,15 +8138,7 @@ def accounts_leavehistory_department(request, id):
     else:
         return redirect('/')
 
-# def accounts_leavehistory_employees(request,id,id1):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         var=user_registration.objects.filter(designation_id=id,department_id=id1)
-#         return render(request,'accounts_leavehistory_employees.html',{'z' : z,'var':var})
-#     else:
-#         return redirect('/')
+
     
 def accounts_leavehistory_employees(request, id, id1):
     if 'usernameacnt2' in request.session:
@@ -8311,20 +8146,11 @@ def accounts_leavehistory_employees(request, id, id1):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
         var = user_registration.objects.filter(
-            designation_id=id, department_id=id1, status="active")
+            designation_id=id, department_id=id1)
         return render(request, 'accounts_leavehistory_employees.html', {'z': z, 'var': var})
     else:
         return redirect('/')
         
-# def accounts_emp_leavehistory(request,id):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         var = leave.objects.filter(user=id)
-#         return render(request,'accounts_emp_leavehistory.html',{'z' : z,'var':var})
-#     else:
-#         return redirect('/')
 
 def accounts_emp_leavehistory(request, id):
     if 'usernameacnt2' in request.session:
@@ -8337,28 +8163,7 @@ def accounts_emp_leavehistory(request, id):
         return redirect('/')
 
 
-# def accounts_Dashboard(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         year = date.today().year
-#         month = date.today().month
-#         vars = vars = acntspayslip.objects.filter(~Q(fromdate__year=year,
-#                                           fromdate__month=month)).count()
-#         vars1 = user_registration.objects.filter(confirm_salary_status=1).count()
-#         des2 = designation.objects.get(designation='trainee')
-#         Adm1 = designation.objects.get(designation="Admin")
-#         vars2 = user_registration.objects.exclude(designation=des2.id).exclude(designation=Adm1.id).count()
-#         vars3 = acntspayslip.objects.filter(fromdate__year=year,
-#                                           fromdate__month=month).count()
-#         deta = user_registration.objects.filter(designation=des2.id,payment_status=0).count()
-#         deta2 = user_registration.objects.filter(designation=des2.id).count()
-#         deta2 = user_registration.objects.filter(designation=des2.id,).count()
-#         icount=internship.objects.all().count()
-#         return render(request, 'accounts_Dashboard.html', {'z': z,'vars':vars,'vars1':vars1,'vars2':vars2,'vars3':vars3,'deta':deta,'deta2':deta2,'icount':icount})
-#     else:
-#         return redirect('/')
+
 
 def accounts_Dashboard(request):
     if 'usernameacnt2' in request.session:
@@ -8474,7 +8279,7 @@ def accounts_emp_list(request,id,pk):
         z = user_registration.objects.filter(id=usernameacnt2)  
         mem = department.objects.get(id=id)
         mem1 = designation.objects.get(pk=pk)
-        use=user_registration.objects.filter(department_id=mem.id,designation=mem1, status="active")
+        use=user_registration.objects.filter(department_id=mem.id,designation=mem1)
         context = {'use':use,'z' : z,}
         return render(request,'accounts_emp_list.html', context)
     else:
@@ -8520,7 +8325,7 @@ def accounts_payment_list(request,id,pk):
         z = user_registration.objects.filter(id=usernameacnt2) 
         mem = department.objects.get(id=id)
         mem1 = designation.objects.get(pk=pk)
-        use=user_registration.objects.filter(department_id=mem.id,designation=mem1,status="active")
+        use=user_registration.objects.filter(department_id=mem.id,designation=mem1)
         context = {'use':use,'z' : z,}
         return render(request,'accounts_payment_list.html', context)
     else:
@@ -8587,7 +8392,7 @@ def accounts_registration_details(request):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
         des = designation.objects.get(designation='trainee')
-        deta = user_registration.objects.filter(designation=des.id).order_by('-id')
+        deta = user_registration.objects.filter(designation=des.id)
         vars = paymentlist.objects.all()
         return render(request,'accounts_registration_details.html', { 'z' : z, 'deta':deta , 'vars':vars})
     else:
@@ -8738,6 +8543,94 @@ def account_payment_details(request,id):
     else:
         return redirect('/')
 
+# @csrf_exempt
+# def accounts_salary_leave(request):
+#         fdate = request.GET.get('fdate')
+#         tdate = request.GET.get('tdate')
+#         his_id = request.GET.get('his_id')
+#         global k1
+#         global d14
+#         global d5
+#         global d4
+#         try:
+#             date_exe = acnt_monthdays.objects.get(month_fromdate__gte=fdate,month_todate__lte=tdate)
+            
+#             if date_exe:
+#                 work_day = date_exe.month_workingdays
+#                 start = datetime.strptime(fdate, '%Y-%m-%d')
+#                 end = datetime.strptime(tdate, '%Y-%m-%d').date()
+#                 event = Event.objects.filter(start_time__gte=start,start_time__lte=end).values('start_time')
+#                 day_delta = timedelta(days=1)
+#                 pro = project_taskassign.objects.filter(developer_id= his_id,startdate__range=(start,end),enddate__range =(start,end),submitted_date__range=(start,end))
+#                 pro_delay = project_taskassign.objects.filter(id__in = pro,submitted_date__isnull = True).values('delay','enddate')
+#                 # pro_delay_list = list(pro_delay)
+#                 # print(pro_delay_list)
+#                 pro_delay_value = project_taskassign.objects.filter(id__in = pro,submitted_date__isnull = False).values('delay','enddate','submitted_date')
+#                 leave_emp = leave.objects.filter(user_id = his_id,from_date__gte = start,to_date__lte = end).values('from_date','to_date')
+#                 k1=0
+#                 for k in leave_emp:
+#                     k2 = (k['to_date']-k['from_date']).days
+#                     if k2 == 0:
+#                         k2 = 1
+#                     k1 = k1 + k2
+                
+#                 d14 =0
+#                 for i in pro_delay_value:
+#                     d10 = (i['enddate'])
+#                     d11 = (i['submitted_date'])
+#                     if d11 >= end:
+#                         d11 = end
+#                     d13 = (d11-d10).days
+#                     if d13 == 1:
+#                         d13=1
+#                     delta1 = d11-d10
+#                     z1 = 0
+
+#                     cnt =  Event.objects.filter(start_time__gte=d10,start_time__lte=d11).values('start_time').count()
+#                     # for g in range((delta1).days):
+#                     #     n = (d10 + g*day_delta)
+#                     #     if n in event:
+#                     #         z1=z1+1
+#                     d14 = d13 - cnt
+#                     print(cnt,d14,d13)
+#                 d5 = 0
+#                 d4=0
+#                 for j in pro_delay:
+#                     d2 = (j['enddate'])
+#                     if d2 >= end:
+#                         d5 = 0
+#                     else:
+#                         d4=0
+#                         z = 0
+#                         d3 = (end - d2).days
+#                         delta = end - d2
+#                         cnt =  Event.objects.filter(start_time__gte=d2,start_time__lte=end).values('start_time').count()
+#                         # for i in range((delta).days):
+#                         #     n = (d2 + i*day_delta)
+#                         #     if n in event:
+#                         #         z=z+1
+#                         d4 = d3 - cnt
+#                         print(cnt,d4,d3)
+#                 delay_total = d14+d5+d4
+#                 total_delay =delay_total+k1
+#                 conf = user_registration.objects.get(id=his_id)
+#                 conf_salary = conf.confirm_salary
+#                 if conf_salary == "":
+#                     conf_salary = 0
+#                 one_day_sal = int(conf_salary) / int(work_day)
+#                 total_delay_amt = float(one_day_sal) * float(total_delay)
+#                 net_salary = float(conf_salary) - float(total_delay_amt)
+#                 if net_salary <= 0:
+#                     net_salary = 0
+#                 return HttpResponse(json.dumps({'net_salary':net_salary, 'delay_total':delay_total,'k1':k1,'work_day':work_day,'conf_salary':conf_salary}))
+#             else:
+#                 msg = "please add month days"
+#                 return HttpResponse(json.dumps({'msg':msg}))
+#         except acnt_monthdays.DoesNotExist:
+#             msg = "please add month days"
+#             return HttpResponse(json.dumps({'msg':msg}))
+
+
 def account_payment_salary(request,id):
     if 'usernameacnt2' in request.session:
         if request.session.has_key('usernameacnt2'):
@@ -8854,13 +8747,8 @@ def accounts_acntpay(request):
         tdate = request.POST['tdate']
         dept_id = int(request.POST['depmt'])
         desig_id = int(request.POST['desi'])  
-        names = acntspayslip.objects.filter(fromdate__range=(fdate,tdate),designation_id= desig_id, department_id= dept_id)
-        print(fdate)
-        print(tdate)
-        print(dept_id)
-        print(desig_id)
-        print(names)
-                
+        names = acntspayslip.objects.filter(fromdate__range=(fdate,tdate),designation_id= desig_id, department_id= dept_id).values('user_id__fullname','eno', 'user_id__account_no', 'user_id__bank_name', 'user_id__bank_branch','user_id__id', 'user_id__email','id')  
+        
         return render(request,'accounts_acntpay.html', {'names':names})
     else:
         return redirect('/')
@@ -8875,6 +8763,7 @@ def accounts_payslip(request):
         return render(request,'accounts_payslip.html', {'dept':dept, 'des':des,'z':z})      
     else:
         return redirect('/')
+
 def accounts_paydetails(request,id,tid):
     if 'usernameacnt2' in request.session:
         if request.session.has_key('usernameacnt2'):
@@ -8886,6 +8775,7 @@ def accounts_paydetails(request,id,tid):
         return render(request,'accounts_paydetails.html', {'acc':acc, 'user':user,'z':z})
     else:
         return redirect('/')
+        
 def accounts_print(request,id,tid):
     if 'usernameacnt2' in request.session:
         if request.session.has_key('usernameacnt2'):
@@ -8901,10 +8791,9 @@ def acntpaypdf(request, id, tid):
     date = datetime.now()
     user = user_registration.objects.get(id=tid)
     acc = acntspayslip.objects.get(id=id)
-    print
-    f_date = acc.fromdate
-    year = f_date.year
-    month = f_date.month
+    print(acc)
+    year = date.today().year
+    month = date.today().month
 
     leave = acnt_monthdays.objects.get(month_fromdate__year__gte=year,
                                        month_fromdate__month__gte=month,
@@ -8915,24 +8804,18 @@ def acntpaypdf(request, id, tid):
     print(mm)
     abc = int(user.confirm_salary)
     print(abc)
-    c = abc - acc.net_salary
-    if c == 0:
-        c=0
+    c = abc/mm
     v = acc.leavesno
     z = v-m
     mem = mm-z
-    leaves_tot = acc.delay+acc.leavesno
-    wrk_days = mm -leaves_tot
     if mem == '-':
         mem = 0
-        conf = abc-acc.net_salary
-        if conf == 0:
-            conf=abc
+        conf = abc-c
         words = num2words(conf)
         template_path = 'acntpaypdf.html'
         context = {'acc': acc, 'user': user, 'c': c, 'mm': mm, 'mem': mem, 'conf': conf, 'words': words,
                    'media_url': settings.MEDIA_URL,
-                   'date': date, 'leaves_tot':leaves_tot, 'wrk_days':wrk_days
+                   'date': date,
                    }
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="Payslip.pdf"'
@@ -8950,7 +8833,7 @@ def acntpaypdf(request, id, tid):
         template_path = 'acntpaypdf.html'
         context = {'acc': acc, 'user': user, 'c': c, 'mm': mm, 'mem': mem, 'conf': conf, 'words': words,
                    'media_url': settings.MEDIA_URL,
-                   'date': date, 'leaves_tot':leaves_tot, "wrk_days":wrk_days
+                   'date': date,
                    }
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="Payslip.pdf"'
@@ -8963,7 +8846,7 @@ def acntpaypdf(request, id, tid):
         return response      
         
         
-    #************************Reset password*****************************
+    # ************************Reset password*****************************
 def reset_password(request):
     if request.method == "POST":
         email_id = request.POST.get('email')
@@ -8992,7 +8875,7 @@ def reset_password(request):
     
     
     
-#**************************christin account settings and change password**************************
+# **************************christin account settings and change password**************************
 def tlaccountset(request):
     if request.session.has_key('tlid'):
         tlid = request.session['tlid']
@@ -9248,7 +9131,7 @@ def superadmin_logout(request):
 
 
 
-#**************************Anandhu Super-Admin Dashboard section**************************
+# **************************Anandhu Super-Admin Dashboard section**************************
 
 def SuperAdmin_index(request):
     # if 'Adm_id' in request.session:
@@ -9385,7 +9268,7 @@ def SuperAdmin_completedtasktable(request,id):
         return redirect('/')
    
 
-#**************************subeesh akhil sharon  Super-Admin Dashboard-project section**************************
+# **************************subeesh akhil sharon  Super-Admin Dashboard-project section**************************
 
 
 # current projects- sharon
@@ -9645,7 +9528,7 @@ def SuperAdmin_daily_report_new(request, id):
         return redirect('/')
 
 
-    #**************************meenu nimisha  Super-Admin Dashboard-employee section**************************
+    # **************************meenu nimisha  Super-Admin Dashboard-employee section**************************
 
 def SuperAdmin_employees(request,id):
     if 'SAdm_id' in request.session:
@@ -10290,21 +10173,7 @@ def BRadmin_accounts(request):
         else:
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
-        year = date.today().year
-        month = date.today().month
-        vars = acntspayslip.objects.filter(~Q(fromdate__year=year,
-                                          fromdate__month=month)).count()
-        vars1 = user_registration.objects.filter(confirm_salary_status=1).count()
-        des2 = designation.objects.get(designation='trainee')
-        Adm1 = designation.objects.get(designation="Admin")
-        vars2 = user_registration.objects.exclude(designation=des2.id).exclude(designation=Adm1.id).count()
-        vars3 = acntspayslip.objects.filter(fromdate__year=year,
-                                          fromdate__month=month).count()
-        deta = user_registration.objects.filter(designation=des2.id,payment_status=0).count()
-        deta2 = user_registration.objects.filter(designation=des2.id).count()
-        deta2 = user_registration.objects.filter(designation=des2.id,).count()
-        icount=internship.objects.all().count()
-        return render(request, 'BRadmin_accounts.html', {'Adm': Adm,'vars':vars,'vars1':vars1,'vars2':vars2,'vars3':vars3,'deta':deta,'deta2':deta2,'icount':icount})
+        return render(request, 'BRadmin_accounts.html', {'Adm': Adm})
     else:
         return redirect('/')
 
@@ -10342,7 +10211,7 @@ def BRadmin_accounts_newtrainees(request):
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
         des = designation.objects.get(designation='trainee')
-        deta = user_registration.objects.filter(designation=des.id).order_by('-id')
+        deta = user_registration.objects.filter(designation=des.id)
         return render(request,'BRadmin_accounts_newtrainees.html', { 'Adm': Adm, 'deta':deta })
     else:
         return redirect('/')
@@ -10368,7 +10237,7 @@ def BRadmin_accounts_salary_employees(request):
         Adm = user_registration.objects.filter(id=Adm_id)
         des2 = designation.objects.get(designation='trainee')
         Adm1 = designation.objects.get(designation="Admin")
-        vars = user_registration.objects.exclude(designation=des2.id).exclude(designation=Adm1.id, status="active").order_by("-id")
+        vars = user_registration.objects.exclude(designation=des2.id).exclude(designation=Adm1.id).order_by("-id")
         return render(request,'BRadmin_accounts_salary_employees.html', {'Adm': Adm,'vars':vars})
     else:
         return redirect('/')   
@@ -10431,7 +10300,7 @@ def BRadmin_accounts_internship_dateview(request):
             Adm_id = request.session['Adm_id']
         Adm = user_registration.objects.filter(id=Adm_id)
     reg_date = request.GET.get('date')  
-    #empid = internship.objects.get(id=id)  
+    # empid = internship.objects.get(id=id)  
     empid = internship.objects.filter(reg_date=reg_date)  
     return render(request, 'BRadmin_accounts_internship_dateview.html',{'Adm': Adm, 'empid':empid})  
 
@@ -10464,7 +10333,7 @@ def BRadmin_accounts_internshipupdatesave(request, id):
         var.course = request.POST['course']
         var.stream = request.POST['stream']
         var.platform = request.POST['platform']
-        #var.branch_id  =  request.POST['branch']
+        # var.branch_id  =  request.POST['branch']
         var.start_date = request.POST['startdate']
         var.end_date = request.POST['enddate']
         var.mobile = request.POST['mobile']
@@ -10541,7 +10410,7 @@ def BRadmin_project_list(request,id):
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
         project_details = project.objects.filter(
-            ~Q(status='Rejected'), department_id=id).order_by('-id')
+            ~Q(status='Rejected'), department_id=id)
         return render(request, 'BRadmin_project_list.html', {'proj_det': project_details, 'Adm': Adm})
     else:
         return redirect('/')
@@ -10713,7 +10582,7 @@ def accounts_internshipupdatesave(request, id):
         var.course = request.POST['course']
         var.stream = request.POST['stream']
         var.platform = request.POST['platform']
-        #var.branch_id  =  request.POST['branch']
+        # var.branch_id  =  request.POST['branch']
         var.start_date = request.POST['startdate']
         var.end_date = request.POST['enddate']
         var.mobile = request.POST['mobile']
@@ -10914,7 +10783,7 @@ def accounts_internship_viewbydate(request):
     newdata = internship.objects.all().values('reg_date').distinct()
     return render(request, 'accounts_internship_viewbydate.html', {'z':z,'newdata':newdata})
     
-#################Emil
+# Emil
 def accounts_internship_dateview(request):  
     if 'usernameacnt2' in request.session:  
         if request.session.has_key('usernameacnt2'):  
@@ -11109,7 +10978,7 @@ def projectmanager_designation(request):
         dept_id = request.GET.get('dept_id')
         
         br_id = department.objects.get(id=dept_id)
-        Desig = designation.objects.filter(~Q(designation="admin"),~Q(designation="manager"),~Q(designation="project manager"),~Q(designation="trainingmanager"),~Q(designation="trainer"),~Q(designation="trainee"),~Q(designation="account"), ~Q(designation="hr")).filter(branch_id=br_id.branch_id)
+        Desig = designation.objects.filter(~Q(designation="admin"),~Q(designation="manager"),~Q(designation="project manager"),~Q(designation="tester"),~Q(designation="trainingmanager"),~Q(designation="trainer"),~Q(designation="trainee"),~Q(designation="account"),~Q(designation="hr")).filter(branch_id=br_id.branch_id)
         return render(request,'projectmanager_designation.html',{'pro':pro,'Desig': Desig, })
     else:
         return redirect('/')
@@ -11126,7 +10995,7 @@ def projectmanager_emp_ajax(request):
 
         dept_id = request.GET.get('dept_id')
         desigId = request.GET.get('desigId')
-        Desig = user_registration.objects.filter(department_id=dept_id, designation_id=desigId, status="active")
+        Desig = user_registration.objects.filter(department_id=dept_id, designation_id=desigId)
 
         return render(request,'projectmanager_emp_ajax.html',{'pro':pro,'Desig': Desig,})
     else:
@@ -11138,7 +11007,7 @@ def projectmanager_projects_details(request):
         emp = request.POST['emp']
         fdate = request.POST['fdate']
         tdate = request.POST['tdate']
-        names = project_taskassign.objects.filter(developer=emp,startdate__gte=fdate, enddate__lte=tdate).order_by('-id')
+        names = project_taskassign.objects.filter(developer=emp,startdate__gte=fdate, enddate__lte=tdate) 
         print(emp)
         print(fdate)
         print(tdate)
@@ -11349,7 +11218,7 @@ def accounts_salary_employees(request):
         des2 = designation.objects.get(designation='trainee')
         Adm1 = designation.objects.get(designation="Admin")
         vars = user_registration.objects.exclude(
-            designation=des2.id).exclude(designation=Adm1.id).filter(status="active").order_by("-id")
+            designation=des2.id).exclude(designation=Adm1.id).order_by("-id")
         return render(request, 'accounts_salary_employees.html', {'z': z, 'vars': vars})
     else:
         return redirect('/')
@@ -11533,7 +11402,7 @@ def TL_leavehistory(request):
             tlteam = request.session['tlteam']
 
         else:
-            return redirect('/')
+            variable = "dummy"
 
         mem = user_registration.objects.filter(id=tlid)
 
@@ -11553,7 +11422,7 @@ def TL_leaveapprovedstatus(request, id):
         if request.session.has_key('tlid'):
             tlid = request.session['tlid']
         else:
-            return redirect('/')
+            variable = "dummy"
         mem = user_registration.objects.filter(id=tlid)
 
         le = leave.objects.get(id=id)
@@ -11570,7 +11439,7 @@ def TL_rejectedstatus(request, id):
         if request.session.has_key('tlid'):
             tlid = request.session['tlid']
         else:
-            return redirect('/')
+            variable = "dummy"
         mem = user_registration.objects.filter(id=tlid)
 
         le = leave.objects.get(id=id)
@@ -11653,7 +11522,7 @@ def tm_leavehistory(request):
         if request.session.has_key('usernametm2'):
             usernametm2 = request.session['usernametm2']
         else:
-            return redirect('/')
+            usernametm1 = "dummy"
         mem = user_registration.objects.filter(id=usernametm2)
         des = designation.objects.get(designation="trainer")
         des1 = designation.objects.get(designation="trainee")
@@ -11674,7 +11543,7 @@ def tm_leaveapprovedstatus(request, id):
         if request.session.has_key('usernametm2'):
             usernametm2 = request.session['usernametm2']
         else:
-            return redirect('/')
+            usernametm1 = "dummy"
         mem = user_registration.objects.filter(id=usernametm2)
 
         le = leave.objects.get(id=id)
@@ -11696,7 +11565,7 @@ def tm_rejectedstatus(request, id):
         if request.session.has_key('usernametm2'):
             usernametm2 = request.session['usernametm2']
         else:
-            return redirect('/')
+            usernametm1 = "dummy"
         mem = user_registration.objects.filter(id=usernametm2)
 
         le = leave.objects.get(id=id)
@@ -11735,7 +11604,7 @@ def BRadmin_leaveapprovedstatus(request, id):
         le = leave.objects.get(id=id)
         le.leaveapprovedstatus = 1
         le.save()
-        msg_success = "Leave approved Successfully"
+        msg_success = "Leave aprroved Successfully"
         return render(request, 'BRadmin_leavehistory.html', {'Adm': Adm, 'msg_success': msg_success})
     else:
         return redirect('/')
@@ -11757,322 +11626,6 @@ def BRadmin_rejectedstatus(request, id):
         return render(request, 'BRadmin_leavehistory.html', {'Adm': Adm, 'msg_warning': msg_warning})
     else:
         return redirect('/')
-
-# def accounts_account_salary(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)          
-#         mem1 = user_registration.objects.get(id=usernameacnt2)
-#         var = acntspayslip.objects.filter(user_id=usernameacnt2)
-#         return render(request, 'accounts_account_salary.html', {'z': z,'mem1': mem1, 'var': var })
-#     else:
-#         return redirect('/')
-
-
-
-# def accounts_accout_salary_slip(request, id):
-#     date = datetime.now()
-#     user = user_registration.objects.get(id=id)
-#     acc = acntspayslip.objects.get(user_id=id)
-#     print(acc)
-#     year = date.today().year
-#     month = date.today().month
-
-#     leave = acnt_monthdays.objects.get(month_fromdate__year__gte=year, month_fromdate__month__gte=month,
-#                                       month_todate__year__lte=year, month_todate__month__lte=month)
-#     mm = leave.month_workingdays
-#     print(mm)
-#     abc = int(user.confirm_salary)
-#     print(abc)
-#     c = abc/mm
-#     v = acc.leavesno
-#     mem = mm-v
-#     print(v)
-#     conf = abc-c
-#     template_path = 'accounts_accout_salary_slip.html'
-#     context = {'acc': acc, 'user': user, 'c': c, 'mm': mm, 'mem': mem, 'conf': conf, 'media_url': settings.MEDIA_URL, 'date': date,
-#               }
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'filename="Payslip.pdf"'
-#     template = get_template(template_path)
-#     html = template.render(context)
-#     pisa_status = pisa.CreatePDF(html, dest=response)
-#     if pisa_status.err:
-#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
-#     return response
-
-
-
-# def accounts_salary_pending(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         year = date.today().year
-#         month = date.today().month
-#         vars = acntspayslip.objects.filter(~Q(fromdate__year=year,
-#                                           fromdate__month=month))
-
-#         return render(request, 'accounts_salary_pending.html', {'z': z, 'vars': vars})
-#     else:
-#         return redirect('/')
-
-
-# def salarysubmit(request, id):
-#     if request.method == 'POST':
-#         m = user_registration.objects.get(id=id)
-#         m.salary_status = 1
-#         m.save()
-#         return redirect('/accounts_salary_pending')
-#     return redirect('/accounts_salary_pending')
-
-
-
-# def accounts_salary_given(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         year = date.today().year
-#         month = date.today().month
-
-#         vars = acntspayslip.objects.filter(fromdate__year=year,
-#                                           fromdate__month=month)
-        
-#         return render(request, 'accounts_salary_given.html', {'z': z, 'vars': vars})
-#     else:
-#         return redirect('/')
-
-# def accounts_promissory(request, id):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         user = user_registration.objects.get(id=id)
-
-#     return render(request, 'accounts_promissory.html', {'z': z, 'user': user})
-
-
-# def accounts_download_promissory(request, id):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         user = user_registration.objects.get(id=id)
-        
-        
-#         try:
-#           c = Promissory.objects.filter(user_id=id).latest('id')
-#         except Promissory.DoesNotExist:
-#           c = None
-#           msg_success="No Data in Database Pleace Add Promissory"
-#           return render(request, 'accounts_promissory.html', {'z': z,'msg_success':msg_success})
-#         print(c)
-#     return render(request, 'accounts_download_promissory.html', {'z': z, 'user': user, 'c': c})
-
-
-# def accounts_promissory_complete_pfd(request, id):
-#     date = datetime.now()
-#     mem = Promissory.objects.filter(user_id=id).latest('id')
-#     template_path = 'accounts_promissory_complete_pfd.html'
-#     context = {'mem': mem,
-#               'media_url': settings.MEDIA_URL,
-#               'date': date
-#               }
-#     # Create a Django response object, and specify content_type as pdf
-#     response = HttpResponse(content_type='application/pdf')
-#     #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
-#     response['Content-Disposition'] = 'filename="PROMISSORY.pdf"'
-#     # find the template and render it.
-#     template = get_template(template_path)
-#     html = template.render(context)
-
-#     # create a pdf
-#     pisa_status = pisa.CreatePDF(
-#         html, dest=response)
-
-#     # if error then show some funy view
-#     if pisa_status.err:
-#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
-#     return response
-#     # return render(request,'accounts_promissory_complete_pfd.html')
-
-
-# def accounts_promissory_notcomplete_pfd(request, id):
-#     date = datetime.now()
-#     mem = Promissory.objects.filter(user_id=id).latest('id')
-#     a = num2words(mem.user_id.total_pay)
-#     b = (u'u20B9')
-
-#     template_path = 'accounts_promissory_notcomplete_pfd.html'
-#     context = {'mem': mem, 'a': a, 'b': b,
-#               'media_url': settings.MEDIA_URL,
-#               'date': date
-#               }
-#     # Create a Django response object, and specify content_type as pdf
-#     response = HttpResponse(content_type='application/pdf')
-#     #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
-#     response['Content-Disposition'] = 'filename="PROMISSORY.pdf"'
-#     # find the template and render it.
-#     template = get_template(template_path)
-#     html = template.render(context)
-
-#     # create a pdf
-#     pisa_status = pisa.CreatePDF(
-#         html, dest=response)
-
-#     # if error then show some funy view
-#     if pisa_status.err:
-#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
-#     return response
-
-
-# def accounts_promissory_add(request, id):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#     mem = user_registration.objects.get(id=id)
-
-#     print(mem)
-#     if request.method == "POST":
-
-#         user = Promissory()
-#         user.user_id = user_registration.objects.get(id=id)
-#         user.inital_amount = request.POST['in_amt']
-#         user.inital_paid_on = request.POST['in_paid_on']
-#         user.inital_paid_amount = request.POST['in_paid_amt']
-#         user.inital_paid_date = request.POST['in_paid_date']
-#         user.inital_balance_amount = request.POST['in_bal_amt']
-#         user.inital_due_date = request.POST['in_due_date']
-#         user.inital_total_payment = request.POST['in_tot_pay']
-
-#         user.second_amount = request.POST['sec_amt']
-#         user.second_due_on = request.POST['sec_paid_on']
-#         user.second_paid_amount = request.POST['sec_paid_amt']
-#         user.second_paid_date = request.POST['sec_paid_date']
-#         user.second_balance_amount = request.POST['sec_bal_amt']
-#         user.second_due_date = request.POST['sec_due_date']
-#         user.second_total_payment = request.POST['sec_tot_pay']
-
-#         user.final_amount = request.POST['fnl_amt']
-#         user.final_due_on = request.POST['fnl_paid_on']
-#         user.final_paid_amount = request.POST['fnl_paid_amt']
-#         user.final_paid_date = request.POST['fnl_paid_date']
-#         user.final_balance_amount = request.POST['fnl_bal_amt']
-#         user.final_due_date = request.POST['fnl_due_date']
-#         user.final_total_payment = request.POST['fnl_tot_pay']
-#         user.save()
-#         msg_success = "Add Successfully"
-#         return render(request, 'accounts_promissory_add.html', {'z': z, 'msg_success': msg_success})
-
-#     return render(request, 'accounts_promissory_add.html', {'z': z})
-
-
-# def test(request, id):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#     user = user_registration.objects.get(id=id)
-#     c = Promissory.objects.filter(user_id=id).latest('id')
-
-#     user = Promissory.objects.filter(user_id=id).latest('id')
-#     user.complete_status = 1
-#     user.save()
-#     msg_success = "Status Change To Completed"
-
-#     return render(request, 'accounts_download_promissory.html', {'z': z, 'user': user, 'c': c, 'msg_success': msg_success, })
-
-
-# def accounts_workstatus(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         cous = course.objects.all()
-#         dep = department.objects.all()
-#         des = designation.objects.all()
-#         emp = user_registration.objects.all()
-
-#         return render(request,'accounts_workstatus.html',{'z':z, 'cous':cous,'dep':dep,'des':des,'emp':emp,})
-#     else:
-#         return redirect('/')
-
-# @csrf_exempt
-# def accounts_designation(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-
-#         dept_id = request.GET.get('dept_id')
-#         Desig = designation.objects.filter(department = dept_id).exclude(designation = 'admin').exclude(designation ='manager').exclude(designation ='trainee').exclude(designation ='project manager').exclude(designation ='tester').exclude(designation ='trainingmanager').exclude(designation ='account').exclude(designation ='trainer')
-       
-#         return render(request,'accounts_designation.html',{'z':z,'Desig': Desig, })
-#     else:
-#         return redirect('/')
-
-# @csrf_exempt
-# def accounts_emp_ajax(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-
-#         dept_id = request.GET.get('dept_id')
-#         courseId = request.GET.get('courseId')
-#         desigId = request.GET.get('desigId')
-#         Desig = user_registration.objects.filter(course=courseId, department=dept_id, designation=desigId)
-
-#         return render(request,'accounts_emp_ajax.html',{'z':z,'Desig': Desig,})
-#     else:
-#         return redirect('/')
-
-# @csrf_exempt
-# def accounts_project_details(request):
-#     if 'usernameacnt2' in request.session:
-#         emp = request.POST['emp']
-#         names = user_registration.objects.get(id=emp) 
-
-#         year = date.today().year
-#         month = date.today().month
-
-#         leave = project_taskassign.objects.filter(tl_id=emp,startdate__year__gte=year,
-#                                           startdate__month__gte=month,
-#                                           submitted_date__year__lte=year,
-#                                           submitted_date__month__lte=month)
-#         mm = leave.values_list('delay', flat='true')
-#         a=0
-#         for i in mm:
-            
-#             a=a+int(i)
-#         print(emp)
-#         return render(request,'accounts_project_details.html', {'names':names,'mm':mm,'a':a})
-#     else:
-#         return redirect('/')
-
-
-# def accounts_add_bank_acnt_update(request,id):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         mem1=user_registration.objects.filter(id=id)
-#         if request.method == 'POST':
-#             vars = user_registration.objects.get(id=id)
-#             vars.account_no = request.POST['account_no']
-#             vars.ifsc = request.POST['ifsc']
-#             vars.bank_branch = request.POST['bank_branch']
-#             vars.bank_name= request.POST['bank_name']
-#             vars.save()
-#             msg_success = "Updated"
-#             return render(request,'accounts_add_bank_acnt_update.html',{'mem1':mem1,'z': z,'msg_success':msg_success})
-#         return render(request,'accounts_add_bank_acnt_update.html',{'mem1':mem1,'z': z})
-#     else:
-        
-#         return render(request,'accounts_add_bank_acnt_update.html',{'mem1':mem1,'z': z})
 
 def accounts_account_salary(request):
     if 'usernameacnt2' in request.session:
@@ -12195,7 +11748,7 @@ def accounts_promissory_complete_pfd(request, id):
                }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="PROMISSORY.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -12225,7 +11778,7 @@ def accounts_promissory_notcomplete_pfd(request, id):
                }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+    # response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
     response['Content-Disposition'] = 'filename="PROMISSORY.pdf"'
     # find the template and render it.
     template = get_template(template_path)
@@ -12321,7 +11874,7 @@ def accounts_designation(request):
         z = user_registration.objects.filter(id=usernameacnt2)
 
         dept_id = request.GET.get('dept_id')
-        Desig = designation.objects.filter(~Q(designation="admin"),~Q(designation="manager"),~Q(designation="project manager"),~Q(designation="tester"),~Q(designation="trainingmanager"),~Q(designation="trainer"),~Q(designation="trainee"),~Q(designation="account"),~Q(designation="hr"))
+        Desig = designation.objects.filter(department = dept_id).exclude(designation = 'HR manager').exclude(designation = 'HR').exclude(designation = 'admin').exclude(designation ='manager').exclude(designation ='trainee').exclude(designation ='project manager').exclude(designation ='tester').exclude(designation ='trainingmanager').exclude(designation ='account').exclude(designation ='trainer')
        
         return render(request,'accounts_designation.html',{'z':z,'Desig': Desig, })
     else:
@@ -12333,11 +11886,10 @@ def accounts_emp_ajax(request):
         if request.session.has_key('usernameacnt2'):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
-
         dept_id = request.GET.get('dept_id')
         courseId = request.GET.get('courseId')
         desigId = request.GET.get('desigId')
-        Desig = user_registration.objects.filter(course=courseId, department=dept_id, designation=desigId, status="active")
+        Desig = user_registration.objects.filter(department_id=dept_id, designation_id=desigId)
 
         return render(request,'accounts_emp_ajax.html',{'z':z,'Desig': Desig,})
     else:
@@ -12349,7 +11901,7 @@ def accounts_project_details(request):
         emp = request.POST['emp']
         fdate = request.POST['fdate']
         tdate = request.POST['tdate']
-        names = project_taskassign.objects.filter(developer=emp,startdate__gte=fdate, enddate__lte=tdate).order_by('-id')
+        names = project_taskassign.objects.filter(developer=emp,startdate__gte=fdate, enddate__lte=tdate) 
 
         year = date.today().year
         month = date.today().month
@@ -12358,46 +11910,13 @@ def accounts_project_details(request):
                                           startdate__month__gte=month,
                                           submitted_date__year__lte=year,
                                           submitted_date__month__lte=month)
+        mm = leave.values_list('delay', flat='true')
+        a=0
+        for i in mm:
+            
+            a=a+int(i)
         
-        start = datetime.strptime(fdate, '%Y-%m-%d').date()
-        end = datetime.strptime(tdate, '%Y-%m-%d').date()
-        pro = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end), submitted_date__isnull = False).filter(developer_id= emp, ).values('startdate','enddate','submitted_date', 'delay')
-        pro_false = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end), submitted_date__isnull = True).filter(developer_id= emp).values('startdate','enddate')
-        tot = 0
-        tot1 = 0
-        xx=0
-        xx1 = 0
-        for i in pro:
-            d_end = (i['enddate'])
-            d_submitted = (i['submitted_date'])
-            differ = (d_submitted - d_end).days
-            if differ == 0:
-                tot=0
-            else:
-
-                if d_submitted <= end:
-                    diff = (d_submitted - d_end).days
-                    cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=d_submitted).values('start_time').count()
-                    xx = diff - cnt
-                else:
-                    diff = (end - d_end).days
-                    cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=end).values('start_time').count()
-                    xx = diff - cnt
-            tot = tot + xx
-                
-
-        for x in pro_false:
-            d_end = (x['enddate'])
-            diff =  (end - d_end).days
-            if diff <= 0:
-                tot1=0
-            cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=end).values('start_time').count()
-            xx1 = diff- cnt
-            tot1 = tot1 + xx1
-
-        a = tot + tot1
-
-        return render(request,'accounts_project_details.html', {'names':names,'a':a })
+        return render(request,'accounts_project_details.html', {'names':names,'mm':mm,'a':a ,})
     else:
         return redirect('/')
 
@@ -12426,7 +11945,7 @@ def DEVpayments(request):
     if request.session.has_key('devid'):
         devid = request.session['devid']
     else:
-        return redirect('/')
+        variable = "dummy"
     dev = user_registration.objects.filter(id=devid)
     mem1 = user_registration.objects.get(id=devid)
     var = acntspayslip.objects.filter(user_id =devid)
@@ -12438,7 +11957,7 @@ def TLpayment(request):
         if request.session.has_key('tlid'):
             tlid = request.session['tlid']
         else:
-            return redirect('/')
+            variable="dummy"
         mem = user_registration.objects.filter(id=tlid)
         mem1 = user_registration.objects.get(id=tlid)
         var = acntspayslip.objects.filter(user_id =tlid)
@@ -12451,7 +11970,7 @@ def projectmanager_payment_list(request):
         if request.session.has_key('prid'):
             prid = request.session['prid']
         else:
-            return redirect('/')
+            variable = "dummy"
         pro = user_registration.objects.filter(id=prid)
         var = acntspayslip.objects.filter(user_id = prid)
         b = user_registration.objects.get(id=prid)
@@ -12480,36 +11999,28 @@ def paypdf(request,id,tid):
     user = user_registration.objects.get(id=tid)
     acc = acntspayslip.objects.get(id=id)
     print(acc)
-    # year = date.today().year
-    # month = date.today().month
-
+    
     year = acc.fromdate.year
     month = acc.fromdate.month
 
     leave = acnt_monthdays.objects.get(month_fromdate__year__gte=year,month_fromdate__month__gte=month,month_todate__year__lte=year,month_todate__month__lte=month)
-    
     mm = leave.month_workingdays
     mem = leave.month_holidays
     v = acc.leavesno
     mam = mm-v
-    leaves_tot = acc.delay+acc.leavesno
-    wrk_days = mm -leaves_tot
     print(mm)
     abc = int(user.confirm_salary)
     print(abc)
-    c = abc - acc.net_salary
-    
-   
-    
+    c = math.ceil(abc/mam)
     print(v)
     
     add = acc.basic_salary+ int(acc.conveyns)+acc.hra+acc.pf_tax+acc.pf+int(acc.esi)+acc.delay+acc.leavesno+acc.incentives
     conf = add-c
-    words = num2words(acc.net_salary)
+    words = num2words(conf)
     template_path = 'paypdf.html'
     context = {'acc':acc, 'user':user,'c':c,'mm':mm,'mam':mam,'conf':conf,'words':words, 'add':add,
     'media_url':settings.MEDIA_URL,
-    'date':date, 'leaves_tot':leaves_tot, 'wrk_days':wrk_days
+    'date':date,
     }
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="Payslip.pdf"'
@@ -12530,7 +12041,7 @@ def MAN_payment_list(request):
         if request.session.has_key('m_id'):
             m_id = request.session['m_id']
         else:
-            return redirect('/')
+            variable="dummy"
         mem = user_registration.objects.filter(id=m_id)
         var = acntspayslip.objects.filter(user_id = m_id)
         return render(request, 'MAN_payment_list.html', {'mem': mem, 'var': var })
@@ -12561,7 +12072,7 @@ def TSpayment(request):
         if request.session.has_key('usernametsid'):
             usernametsid = request.session['usernametsid']
         else:
-            return redirect('/')
+            usernamets1 = "dummy"
         mem=user_registration.objects.filter(designation_id=usernamets).filter(id=usernametsid)
         mem1 = user_registration.objects.get(id=usernametsid)
         var = acntspayslip.objects.filter(user_id = usernametsid)
@@ -12602,9 +12113,9 @@ def projectmanager_trainee_status(request):
         pro = user_registration.objects.filter(id=prid)
         
         des = designation.objects.get(designation="trainee")
-        des1 = designation.objects.get(designation="developer")
-        var=user_registration.objects.filter(designation_id=des.id, status="active")
-        var1=user_registration.objects.filter(designation_id=des1.id, status="active")
+        des1 = designation.objects.get(designation="team leader")
+        var=user_registration.objects.filter(designation_id=des.id)
+        var1=user_registration.objects.filter(designation_id=des1.id)
         return render(request, 'projectmanager_trainee_status.html', {'pro': pro,'var':var,'var1':var1})
     else:
         return redirect('/')
@@ -12671,7 +12182,7 @@ def HR_leaveapply(request):
             apply_leave.user =user_registration.objects.get(id=hr_id)
             apply_leave.designation_id =hr_des_id
             apply_leave.leaveapprovedstatus = 0
-            
+
             start = datetime.strptime(apply_leave.from_date, '%Y-%m-%d').date() 
             end = datetime.strptime(apply_leave.to_date, '%Y-%m-%d').date()
 
@@ -12683,9 +12194,7 @@ def HR_leaveapply(request):
                 apply_leave.days = 1
             else:
                 apply_leave.days = diff - cnt
-                
-                
-            apply_leave.save()
+                apply_leave.save()
             msg_success = "leave applied"
             return render(request, 'hr_module/HR_leaveapply.html',{"msg_success":msg_success})
         else:
@@ -12793,7 +12302,7 @@ def HR_trainersteam(request,id):
             return redirect('/')
         mem = user_registration.objects.filter(id=hr_id)
         user = user_registration.objects.filter(id=id)
-        team = create_team.objects.filter(trainer_id=id).order_by('-id')
+        team = create_team.objects.filter(trainer_id=id)
         return render(request, 'hr_module/HR_trainersteam.html', {'mem': mem,'user': user, 'team': team})
     else:
         return redirect('/')
@@ -12984,7 +12493,7 @@ def HR_employeedetails(request,id,did):
         else:
             return redirect('/')
         mem = user_registration.objects.filter(id=hr_id)
-        emp_data = user_registration.objects.filter(designation_id=id,department=did, status="active")
+        emp_data = user_registration.objects.filter(designation_id=id,department=did)
         return render(request, 'hr_module/HR_employeedetails.html', {'mem': mem,'emp_data':emp_data})
     else:
         return redirect('/')
@@ -13057,7 +12566,7 @@ def HR_employeesattendancesort(request,id):
         if request.method == "POST":
             fromdate = request.POST.get('fromdate')
             todate = request.POST.get('todate')
-            mem1 = attendance.objects.filter(date__range=[fromdate, todate]).filter(user_id=id).order_by('-id')
+            mem1 = attendance.objects.filter(date__range=[fromdate, todate]).filter(user_id=id)
             return render(request, 'hr_module/HR_employeesattendancesort.html', {'mem1': mem1,'id': id,'mem':mem})
     else:
         return redirect('/')
@@ -13123,7 +12632,7 @@ def HR_logout(request):
     else:
         return redirect('/')
 
-#*******new******************************
+# *******new******************************
 
 def completedteam(request):
     if 'usernametm2' in request.session:
@@ -13270,7 +12779,7 @@ def probation_renew(request):
     
 def task_perform(request):
     if request.method == 'POST':
-        id = request.POST['uid']
+        id = request.GET.get('id')
         abc = trainer_task.objects.get(id=id)
         abc.task_progress = request.POST['sele']
         abc.save()
@@ -13308,7 +12817,7 @@ def tm_trainee_details(request):
             return redirect('/')
         mem = user_registration.objects.filter(
             designation_id=usernametm).filter(fullname=usernametm1)
-        emp = request.GET.get('emp')
+        emp = request.POST['emp']
         names = trainer_task.objects.filter(user_id=emp).order_by('-id')                                          
         mm = names.values_list('delay', flat='true')
         a=0
@@ -13397,11 +12906,9 @@ def BRadmin_trainess(request):
         Adm = user_registration.objects.filter(id=Adm_id)
         dept_id = request.GET.get('dept_id')
         des = designation.objects.get(designation="trainee")
-        des1 = designation.objects.get(designation="developer")
-        Desig = user_registration.objects.filter(department_id=dept_id,designation_id=des.id, status="active")
-        Desig1 = user_registration.objects.filter(department_id=dept_id,designation_id=des1.id, status="active")
+        Desig = user_registration.objects.filter(department_id=dept_id,designation_id=des.id)
        
-        return render(request,'BRadmin_trainess.html',{'Adm': Adm,'Desig': Desig, 'Desig1':Desig1 })
+        return render(request,'BRadmin_trainess.html',{'Adm': Adm,'Desig': Desig, })
     else:
         return redirect('/')
 
@@ -13467,8 +12974,7 @@ def BRadmin_leave_details(request):
     tdate = request.GET.get('tdate')
     leaves = leave.objects.filter(user_id=emp,from_date__gte=fdate,to_date__lte=tdate)
     return render(request,'BRadmin_leave_details.html',{'names':leaves})
-
-
+   
 def BRadmin_workstatus(request):
     if 'Adm_id' in request.session:
         if request.session.has_key('Adm_id'):
@@ -13486,68 +12992,7 @@ def BRadmin_workstatus(request):
     else:
         return redirect('/')
 
-
-
-@csrf_exempt
-def BRadmin_projects_details(request):
-    if 'Adm_id' in request.session:
-        emp = request.POST['emp']
-        fdate = request.POST['fdate']
-        tdate = request.POST['tdate']
-        names = project_taskassign.objects.filter(developer=emp,startdate__gte=fdate, enddate__lte=tdate).order_by('-id')
-        year = date.today().year
-        month = date.today().month
-
-        leave = project_taskassign.objects.filter(developer=emp,startdate__year__gte=year,
-                                          startdate__month__gte=month,
-                                          submitted_date__year__lte=year,
-                                          submitted_date__month__lte=month).order_by('-id')
-
-
-        start = datetime.strptime(fdate, '%Y-%m-%d').date()
-        end = datetime.strptime(tdate, '%Y-%m-%d').date()
-        pro = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end), submitted_date__isnull = False).filter(developer_id= emp, ).values('startdate','enddate','submitted_date', 'delay')
-        pro_false = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end), submitted_date__isnull = True).filter(developer_id= emp).values('startdate','enddate')
-        tot = 0
-        tot1 = 0
-        xx=0
-        xx1 = 0
-        for i in pro:
-            d_end = (i['enddate'])
-            d_submitted = (i['submitted_date'])
-            differ = (d_submitted - d_end).days
-            if differ == 0:
-                tot=0
-            else:
-
-                if d_submitted <= end:
-                    diff = (d_submitted - d_end).days
-                    cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=d_submitted).values('start_time').count()
-                    xx = diff - cnt
-                else:
-                    diff = (end - d_end).days
-                    cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=end).values('start_time').count()
-                    xx = diff - cnt
-            tot = tot + xx
-                
-
-        for x in pro_false:
-            d_end = (x['enddate'])
-            diff =  (end - d_end).days
-            if diff <= 0:
-                tot1=0
-            cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=end).values('start_time').count()
-            xx1 = diff- cnt
-            tot1 = tot1 + xx1
-
-        a = tot + tot1
-
-
-        return render(request,'BRadmin_projects_details.html', {'names':names,'a':a })
-    else:
-        return redirect('/')
-
-#---------------------PM updates------------------------------------------------
+# ---------------------PM updates------------------------------------------------
 
 def pm_projectcards(request):
     if 'prid' in request.session:
@@ -13656,7 +13101,7 @@ def pm_project_assigned(request,id):
         return render(request,'pm_project_assigned.html',{'pro': pro,'pro_data':pro_data,'display':display,'user':user,'com':com})
     else:
         return redirect('/')
-#-------------------------------TM ------------------------------------------------
+# -------------------------------TM ------------------------------------------------
 def trainer_progress_add(request,id):
     mem = user_registration.objects.get(id=id)
     if 'usernametm2' in request.session:
@@ -13679,7 +13124,7 @@ def trainer_progress_add(request,id):
     else:
         return redirect('/')
 
-#-----------------------------------tester-----------------------------
+# -----------------------------------tester-----------------------------
 
 def tester_leave(request):
     if 'usernametsid' in request.session:
@@ -13710,7 +13155,8 @@ def tester_apply_leave(request):
             apply_leave.user =user_registration.objects.get(id=usernametsid)
             apply_leave.designation_id =usernamets
             apply_leave.leaveapprovedstatus = 0
-            
+            apply_leave.save()
+
             start = datetime.strptime(apply_leave.from_date, '%Y-%m-%d').date() 
             end = datetime.strptime(apply_leave.to_date, '%Y-%m-%d').date()
 
@@ -13722,9 +13168,6 @@ def tester_apply_leave(request):
                 apply_leave.days = 1
             else:
                 apply_leave.days = diff - cnt
-                
-                
-            apply_leave.save()
             msg_success = "leave applied"
             return render(request, 'tester_apply_leave.html',{'mem':mem,"msg_success":msg_success})
         else:
@@ -13945,7 +13388,7 @@ def ts_DevDashboard(request,id):
     else:
         return redirect('/')
 
-#-----------------pm_attendence-----------------------
+# -----------------pm_attendence-----------------------
 def projectman_search(request):
     if 'prid' in request.session:
         if request.session.has_key('prid'):
@@ -13954,10 +13397,8 @@ def projectman_search(request):
             return redirect('/')
         pro = user_registration.objects.filter(id=prid)
         des = designation.objects.get(designation = "team leader")
-        des1 = designation.objects.get(designation = "tester")
         x = des.id
-        x1 = des1.id
-        tl_data = user_registration.objects.filter(Q(designation_id = x,status = 'active'))
+        tl_data = user_registration.objects.filter(designation_id = x,status = 'active')
         
         return render(request, 'projectman_search.html', {'pro': pro,'tl_data':tl_data})
     else:
@@ -14000,7 +13441,7 @@ def pm_employeelist(request):
         pro = user_registration.objects.filter(id=prid)
         pro_id = request.GET.get('dept_id')
 
-        Desig = user_registration.objects.filter(designation_id=pro_id,status = "active")
+        Desig = user_registration.objects.filter(designation_id=pro_id,status = "active",projectmanager_id=prid)
         
         return render(request,'pm_employeelist.html',{'pro': pro,'Desig': Desig})
     else:
@@ -14015,10 +13456,8 @@ def pm_employees_attendance_view(request):
            return redirect('/')
         pro = user_registration.objects.filter(id=prid)
         pro_id = request.GET.get('des_id')
-        from_date = request.GET.get('from_date')
-        to_date = request.GET.get('to_date')
         
-        Desig = attendance.objects.filter(date__gte=from_date,date__lte=to_date, user_id= pro_id).order_by('-id')
+        Desig = attendance.objects.filter(user_id= pro_id)
         return render(request,'pm_employees_attendance_view.html',{'pro': pro,'Desig': Desig})
     else:
         return redirect('/')
@@ -14030,7 +13469,7 @@ def tl_attendanceview(request):
         else:
            return redirect('/')
         mem = user_registration.objects.filter(id=tlid)
-        Desig = attendance.objects.filter(user_id = tlid).order_by('-id')
+        Desig = attendance.objects.filter(user_id = tlid)
         return render(request,'tl_attendanceview.html',{'mem': mem,'Desig': Desig})
     else:
         return redirect('/')
@@ -14060,7 +13499,7 @@ def tl_devattendanceview(request):
         x=int(pro_id)
         print(x)
         print(type(x))
-        Desig = attendance.objects.filter(user_id= x).order_by('-id')
+        Desig = attendance.objects.filter(user_id= x)
         print(Desig)
         return render(request,'tl_devattendenceview.html',{'mem': mem,'Desig':Desig})
     else:
@@ -14130,9 +13569,65 @@ def current_modules(request,id):
         return render(request,'current_modules.html',{'pro': pro,'data': data,'tab':tab})
     else:
         return redirect('/')
+
+def pm_modules_tables(request,id):
+    if 'prid' in request.session:
+        if request.session.has_key('prid'):
+            prid = request.session['prid']
+        else:
+           return redirect('/')
+        pro = user_registration.objects.filter(id=prid)
         
-        
-        
+@csrf_exempt
+def accounts_leave(request):
+    
+    emp = request.GET.get('emp')
+    fdate = request.GET.get('fdate')
+    tdate = request.GET.get('tdate')
+    leaves = leave.objects.filter(user_id=emp,from_date__gte=fdate,to_date__lte=tdate)
+    return render(request,'accounts_leave.html', {'names':leaves})
+    
+def pm_leavestatus(request):
+    if 'prid' in request.session:
+        if request.session.has_key('prid'):
+            prid = request.session['prid']
+        else:
+            return redirect('/')
+        pro = user_registration.objects.filter(id=prid)
+        dept  = user_registration.objects.get(id=prid)
+
+        dep = department.objects.filter(id=dept.department_id)
+        des = designation.objects.all()
+        emp = user_registration.objects.all()
+        return render(request,'pm_leavestatus.html',{'pro':pro,'dep':dep,'des':des,'emp':emp,})
+    else:
+        return redirect('/')
+
+@csrf_exempt
+def pm_leave(request):
+    
+    emp = request.GET.get('emp')
+    fdate = request.GET.get('fdate')
+    tdate = request.GET.get('tdate')
+    leaves = leave.objects.filter(user_id=emp,from_date__gte=fdate,to_date__lte=tdate)
+    return render(request,'pm_leave.html', {'names':leaves})
+
+@csrf_exempt
+def accounts_salary_netsalarydelay(request):
+    emp = request.GET.get('empname')
+    work_day = request.GET.get('work_day')
+    conf_salary = request.GET.get('conf_salary')
+    commonleave = request.GET.get('commonleave')
+    total_delay = int(emp)+int(commonleave)
+    one_day_sal = int(conf_salary) / int(work_day)
+    total_delay_amt = float(one_day_sal) * float(total_delay)
+    net_salary = float(conf_salary) - float(total_delay_amt)
+    if net_salary <= 0:
+        net_salary = 0
+    return HttpResponse(json.dumps({'net_salary':net_salary}))
+
+
+
 @csrf_exempt
 def accounts_salary_leave(request):
         fdate = request.GET.get('fdate')
@@ -14198,10 +13693,10 @@ def accounts_salary_leave(request):
                             diff = (end - d10).days
                             cnt =  Event.objects.filter(start_time__gte=d10,start_time__lte=end).values('start_time').count()
                             d18 = diff - cnt
-                            print(d18)
+                          
                     d19 = d19 + d18
                     
-                print(d18)  
+                 
                 delay_total = d19+d20 
                 total_delay =delay_total+k1
                 conf = user_registration.objects.get(id=his_id)
@@ -14220,12 +13715,63 @@ def accounts_salary_leave(request):
         except acnt_monthdays.DoesNotExist:
             msg = "please add month days"
             return HttpResponse(json.dumps({'msg':msg}))
-            
-            
 
 
 
 
+
+
+@csrf_exempt
+def BRadmin_projects_details(request):
+    if 'Adm_id' in request.session:
+        emp = request.POST['emp']
+        fdate = request.POST['fdate']
+        tdate = request.POST['tdate']
+        
+        names = project_taskassign.objects.filter(developer=emp,startdate__gte=fdate, enddate__lte=tdate) 
+        
+        start = datetime.strptime(fdate, '%Y-%m-%d').date()
+        end = datetime.strptime(tdate, '%Y-%m-%d').date()
+        pro = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end), submitted_date__isnull = False).filter(developer_id= emp, ).values('startdate','enddate','submitted_date', 'delay')
+        pro_false = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end), submitted_date__isnull = True).filter(developer_id= emp).values('startdate','enddate')
+        tot = 0
+        tot1 = 0
+        xx=0
+        xx1 = 0
+        for i in pro:
+            d_end = (i['enddate'])
+            d_submitted = (i['submitted_date'])
+            differ = (d_submitted - d_end).days
+            if differ == 0:
+                tot=0
+            else:
+
+                if d_submitted <= end:
+                    diff = (d_submitted - d_end).days
+                    cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=d_submitted).values('start_time').count()
+                    xx = diff - cnt
+                else:
+                    diff = (end - d_end).days
+                    cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=end).values('start_time').count()
+                    xx = diff - cnt
+            tot = tot + xx
+                
+
+        for x in pro_false:
+            d_end = (x['enddate'])
+            diff =  (end - d_end).days
+            if diff <= 0:
+                tot1=0
+            cnt =  Event.objects.filter(start_time__gte=d_end,start_time__lte=end).values('start_time').count()
+            xx1 = diff- cnt
+            tot1 = tot1 + xx1
+
+        a = tot + tot1
+
+
+        return render(request,'BRadmin_projects_details.html', {'names':names,'a':a })
+    else:
+        return redirect('/')
 
 
 
@@ -14343,7 +13889,6 @@ def accounts_filterincome(request):
 
 # add account filter income ajax
 def accounts_filterincome_ajax(request):
-
         dept_id = request.GET.get('dept_id')
         fdate = request.GET.get('fdate')
         tdate = request.GET.get('tdate')
@@ -14536,7 +14081,6 @@ def BRadmin_salaryexpense(request):
         return render(request, 'BRadmin_salaryexpense.html', {'Adm': Adm, 'dep':dep})
     else:
         return redirect('/')
-
 
 
 def verify_all_income(request):

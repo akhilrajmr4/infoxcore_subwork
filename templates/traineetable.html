@@ -19,6 +19,7 @@
                     <table class="table">
                         <thead>
                             <tr data-href="#">
+                                <th> Slno </th>
                                 <th> Name </th>
                                 <th> Department</th>
                                 <th> Join Date </th>
@@ -28,6 +29,7 @@
                         </thead>
                         <tbody  id="myTable">{% if tre %} {% for t in tre %}
                             <tr data-href="{% url 'traineedetails' t.id %}">
+                                 <td> {{forloop.counter}} </td>
                                 <td><img src=" {{t.photo.url}} " alt="image " /> &nbsp;{{t.fullname}}</td>
                                 <td> {{t.department.department}} </td>
                                 <td>{{t.joiningdate|date:"d-m-Y"}}</td>

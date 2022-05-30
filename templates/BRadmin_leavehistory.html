@@ -123,6 +123,12 @@
     </div>
 </div>
 {%endfor%}
+{% if msg_success %}
+    <script>
+        alert("{{msg_success}}")
+        javascript: history.go(-2);
+    </script>
+    {% endif %}
 <!-- js -->
 <script>
     function myFunction() {

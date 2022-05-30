@@ -1,11 +1,11 @@
 
+from inspect import classify_class_attrs
 from django.contrib import admin
 from django.urls import re_path, include
 from django.conf import settings
 from django.conf.urls.static import static, serve
 from base_app import views
 from cal import views as calviews
-
 
 
 urlpatterns = [
@@ -1017,14 +1017,6 @@ urlpatterns = [
     re_path(r'^accounts_salary_details/(?P<id>\d+)/$', views.accounts_salary_details, name='accounts_salary_details'),
     re_path(r'^logout5/$', views.logout5, name='logout5'),
     
-    # ----
-    
-    
-    # re_path(r'^accounts_leavehistory$',views.accounts_leavehistory, name="accounts_leavehistory"),
-    # re_path(r'^accounts_leavehistory_department/(?P<id>\d+)/$',views.accounts_leavehistory_department, name="accounts_leavehistory_department"),
-    # re_path(r'^accounts_leavehistory_employees/(?P<id>\d+)/(?P<id1>\d+)/$',views.accounts_leavehistory_employees, name="accounts_leavehistory_employees"),
-    # re_path(r'^accounts_emp_leavehistory/(?P<id>\d+)/$',views.accounts_emp_leavehistory, name="accounts_emp_leavehistory"),
-    
     re_path(r'^accounts_leavehistory$',views.accounts_leavehistory, name="accounts_leavehistory"),
     re_path(r'^accounts_leavehistory_department/(?P<id>\d+)/$',views.accounts_leavehistory_department, name="accounts_leavehistory_department"),
     re_path(r'^accounts_leavehistory_employees/(?P<id>\d+)/(?P<id1>\d+)/$',views.accounts_leavehistory_employees, name="accounts_leavehistory_employees"),
@@ -1035,16 +1027,7 @@ urlpatterns = [
     re_path(r'^relieveletter/(?P<id>\d+)/$', views.relieveletter, name="relieveletter"),
     re_path(r'^experienceletter/(?P<id>\d+)/$', views.experienceletter, name="experienceletter"),
    
-    # re_path(r'^accounts_internship/', views.accounts_internship, name="accounts_internship"),
-    # re_path(r'^accounts_internship_payment_pending/', views.accounts_internship_payment_pending, name="accounts_internship_payment_pending"),
-    # re_path(r'^addamount/(?P<id>\d+)/', views.addamount, name="addamount"),
-    # re_path(r'^accounts_internship_type_sel/(?P<id>\d+)/', views.accounts_internship_type_sel, name="accounts_internship_type_sel"),
-    # re_path(r'^accounts_internship_verify/(?P<id>\d+)/', views.accounts_internship_verify, name="accounts_internship_verify"),
-    # re_path(r'^accounts_internship_complete/(?P<id>\d+)/', views.accounts_internship_complete, name="accounts_internship_complete"),
-
-    # re_path(r'^accounts_internship_viewall/', views.accounts_internship_viewall, name="accounts_internship_viewall"),
-    
-re_path(r'^accounts_internship/', views.accounts_internship, name="accounts_internship"),
+    re_path(r'^accounts_internship/', views.accounts_internship, name="accounts_internship"),
     re_path(r'^accounts_internship_payment_pending/', views.accounts_internship_payment_pending, name="accounts_internship_payment_pending"),
     re_path(r'^addamount/(?P<id>\d+)/', views.addamount, name="addamount"),
     re_path(r'^accounts_internship_type_sel/(?P<id>\d+)/', views.accounts_internship_type_sel, name="accounts_internship_type_sel"),
@@ -1325,8 +1308,8 @@ re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accoun
     
     re_path(r'^project_reset/(?P<id>\d+)/$', views.project_reset, name='project_reset'),
     
-    re_path(r'^projectmanager_trainee_status$', views.projectmanager_trainee_status, name='projectmanager_trainee_status'),
-    re_path(r'^projectmanager_trainee_details$', views.projectmanager_trainee_details, name='projectmanager_trainee_details'),
+    re_path(r'^projectmanager_trainee_status/$', views.projectmanager_trainee_status, name='projectmanager_trainee_status'),
+    re_path(r'^projectmanager_trainee_details/$', views.projectmanager_trainee_details, name='projectmanager_trainee_details'),
     
     # *************************HR MODULE*******************************
 
@@ -1385,6 +1368,7 @@ re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accoun
     re_path(r'^BRadmin_leavedesgn/$', views.BRadmin_leavedesgn, name='BRadmin_leavedesgn'),
 
     re_path(r'^BRadmin_leave_details/$', views.BRadmin_leave_details, name='BRadmin_leave_details'),
+     
     re_path(r'^pm_projectcards/$', views.pm_projectcards, name='pm_projectcards'),
     re_path(r'^pm_createmodule/$', views.pm_createmodule, name='pm_createmodule'),
     re_path(r'^pm_createtable/$', views.pm_createtable, name='pm_createtable'),
@@ -1421,54 +1405,49 @@ re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accoun
     re_path(r'^ts_tl_dev_teaminvolved/(?P<id>\d+)/$', views.ts_tl_dev_teaminvolved, name='ts_tl_dev_teaminvolved'),
     re_path(r'^ts_Devlists/$', views.ts_Devlists, name='ts_Devlists'),
     re_path(r'^ts_DevDashboard/(?P<id>\d+)/$', views.ts_DevDashboard, name='ts_DevDashboard'),
-    re_path(r'^current_modules/(?P<id>\d+)/$', views.current_modules, name='current_modules'),    
-    
-    
+    re_path(r'^current_modules/(?P<id>\d+)/$', views.current_modules, name='current_modules'),
+
+   
+
     re_path(r'^calendar$', calviews.CalendarView.as_view(), name='calendar'),
     re_path(r'^event/new/$', calviews.event, name='event_new'),
     re_path(r'^event/edit/(?P<event_id>\d+)/$', calviews.event, name='event_edit'),
-    
-    
-    re_path(r'^accounts_salary_leave/$', views.accounts_salary_leave, name='accounts_salary_leave'),
-     
 
-    
-    # re_path(r'^static/(?P<path>*)$', serve,{'document_root':settings.STATIC_ROOT}),
-    #re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
-    re_path(r'^acntpaypdf/(?P<id>\d+)/(?P<tid>\d+)/$', views.acntpaypdf, name='acntpaypdf'),
-    re_path(r'^paypdf/(?P<id>\d+)/(?P<tid>\d+)/$', views.paypdf,name="paypdf"),
-    
+    re_path(r'^accounts_salary_leave/$', views.accounts_salary_leave, name='accounts_salary_leave'),
     re_path(r'^accounts_leave/$', views.accounts_leave, name='accounts_leave'),
     re_path(r'^pm_leavestatus/$', views.pm_leavestatus, name='pm_leavestatus'),
     re_path(r'^pm_leave/$', views.pm_leave, name='pm_leave'),
-    
-    
-    
-    
-    re_path(r'^accounts_paymenthead/$', views.accounts_paymenthead, name='accounts_paymenthead'),
-    re_path(r'^accounts_addpaymenthead/$', views.accounts_addpaymenthead, name='accounts_addpaymenthead'),
-    re_path(r'^accounts_viewpaymenthead/$', views.accounts_viewpaymenthead, name='accounts_viewpaymenthead'),
-    re_path(r'^accounts_income/$', views.accounts_income, name='accounts_income'),
-    re_path(r'^accounts_addincome/$', views.accounts_addincome, name='accounts_addincome'),
-    re_path(r'^accounts_viewallincome/$', views.accounts_viewallincome, name='accounts_viewallincome'),
-    re_path(r'^accounts_filterincome/$', views.accounts_filterincome, name='accounts_filterincome'),
-    re_path(r'^accounts_filterincome_ajax/$', views.accounts_filterincome_ajax, name='accounts_filterincome_ajax'),
+    re_path(r'^accounts_salary_netsalarydelay/$', views.accounts_salary_netsalarydelay, name='accounts_salary_netsalarydelay'),
+    re_path(r'^acntpaypdf/(?P<id>\d+)/(?P<tid>\d+)/$', views.acntpaypdf, name='acntpaypdf'),
+
+
+
+
+
+
+   re_path(r'^accounts_paymenthead/$', views.accounts_paymenthead, name='accounts_paymenthead'),
+   re_path(r'^accounts_addpaymenthead/$', views.accounts_addpaymenthead, name='accounts_addpaymenthead'),
+   re_path(r'^accounts_viewpaymenthead/$', views.accounts_viewpaymenthead, name='accounts_viewpaymenthead'),
+   re_path(r'^accounts_income/$', views.accounts_income, name='accounts_income'),
+   re_path(r'^accounts_addincome/$', views.accounts_addincome, name='accounts_addincome'),
+   re_path(r'^accounts_viewallincome/$', views.accounts_viewallincome, name='accounts_viewallincome'),
+   re_path(r'^accounts_filterincome/$', views.accounts_filterincome, name='accounts_filterincome'),
+   re_path(r'^accounts_filterincome_ajax/$', views.accounts_filterincome_ajax, name='accounts_filterincome_ajax'),
    
-    re_path(r'^BRadmin_income/$', views.BRadmin_income, name='BRadmin_income'),
-    re_path(r'^BRadmin_viewallincome/$', views.BRadmin_viewallincome, name='BRadmin_viewallincome'),
-    re_path(r'^BRadmin_pendingincome/$', views.BRadmin_pendingincome, name='BRadmin_pendingincome'),
-    re_path(r'^BRadmin_searchincome/$', views.BRadmin_searchincome, name='BRadmin_searchincome'),
-    re_path(r'^BRadmin_filterincome_ajax/$', views.BRadmin_filterincome_ajax, name='BRadmin_filterincome_ajax'),
+   re_path(r'^BRadmin_income/$', views.BRadmin_income, name='BRadmin_income'),
+   re_path(r'^BRadmin_viewallincome/$', views.BRadmin_viewallincome, name='BRadmin_viewallincome'),
+   re_path(r'^BRadmin_pendingincome/$', views.BRadmin_pendingincome, name='BRadmin_pendingincome'),
+   re_path(r'^BRadmin_searchincome/$', views.BRadmin_searchincome, name='BRadmin_searchincome'),
+   re_path(r'^BRadmin_filterincome_ajax/$', views.BRadmin_filterincome_ajax, name='BRadmin_filterincome_ajax'),
 
 
-    re_path(r'^accounts_mainexpenses/$', views.accounts_mainexpenses, name='accounts_mainexpenses'),
-    re_path(r'^accounts_salaryexpense/$', views.accounts_salaryexpense, name='accounts_salaryexpense'),
-    re_path(r'^accounts_salaryexpense_ajax/$', views.accounts_salaryexpense_ajax, name='accounts_salaryexpense_ajax'),
+   re_path(r'^accounts_mainexpenses/$', views.accounts_mainexpenses, name='accounts_mainexpenses'),
+   re_path(r'^accounts_salaryexpense/$', views.accounts_salaryexpense, name='accounts_salaryexpense'),
+   re_path(r'^accounts_salaryexpense_ajax/$', views.accounts_salaryexpense_ajax, name='accounts_salaryexpense_ajax'),
 
-    re_path(r'^BRadmin_mainexpenses/$', views.BRadmin_mainexpenses, name='BRadmin_mainexpenses'),
-    re_path(r'^BRadmin_salaryexpense/$', views.BRadmin_salaryexpense, name='BRadmin_salaryexpense'),
-    re_path(r'^verify_all_income/$', views.verify_all_income, name='verify_all_income'),
-
+   re_path(r'^BRadmin_mainexpenses/$', views.BRadmin_mainexpenses, name='BRadmin_mainexpenses'),
+   re_path(r'^BRadmin_salaryexpense/$', views.BRadmin_salaryexpense, name='BRadmin_salaryexpense'),
+   re_path(r'^verify_all_income/$', views.verify_all_income, name='verify_all_income'),
 
 ]
 

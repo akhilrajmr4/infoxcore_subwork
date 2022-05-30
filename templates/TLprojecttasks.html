@@ -21,9 +21,9 @@
 <div class="row mt-4">
   <div class="card">
     <div class="card-body">
-      <input type="text" class="form-control" id="search" onkeyup="myFunction()" placeholder="search...">
+      <input type="text" class="form-control" id="myInput" placeholder="search...">
       <div class="table-responsive">
-        <table class="table" id="myTable">
+        <table class="table" >
           <thead>
             <tr>
               <th scope="col" style="color:#6C7293;">Task name</th>
@@ -34,9 +34,11 @@
               <th scope="col" style="color:#6C7293;">Split Task</th>
               <th scope="col" style="color:#6C7293;">Project Details</th>
               <th scope="col" style="color:#6C7293;">Action</th>
+              <th scope="col" style="color:#6C7293;">Submission Date</th>
+              <th scope="col" style="color:#6C7293;">Delay</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="myTable">
               {% for i in tasks %}
 
               <tr>
@@ -79,6 +81,8 @@
                             </a>
                         </td>
                     {% endif %}
+                    <td style="color: white;">{{i.submitted_date|date:'d-m-Y'}}</td>
+              <td><div class="badge badge-outline-danger">{{i.delay}}</div></td>
                 
               </tr>
 
@@ -306,7 +310,7 @@
 
 
                 <td style="color:white;"><textarea type="text" name="workdone" class="form-control"
-                    style="height: 75px;"></textarea></td>
+                    style="width:180px;height: 75px;"></textarea></td>
                    
                 <td class="text-info"><input type="file" name="filed" multiple></td>
                 <td style="color:white;width:180px;"><textarea type="text" name="gitcommit" class="form-control"
@@ -402,23 +406,13 @@
     </script>
 {% endif %}
 <script>
-  function myFunction() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("search");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("myTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td")[1];
-      if (td) {
-        txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
-        }
-      }
-    }
-  }
+  $(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
 </script>
 {% endblock %}

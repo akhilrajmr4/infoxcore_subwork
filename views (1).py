@@ -5487,12 +5487,12 @@ def man_registration_form(request):
             c.skill3 = request.POST['skill3']
             c.save()
             
-            # subject = 'Greetings from iNFOX TECHNOLOGIES'
-            # message = 'Congratulations,\nYou have successfully registered iNFOX TECHNOLOGIES.\nYour login credentials \n\nEmail :'+str(email_id)+'\nPassword :'+str(passw)+'\n\nNote: This is a system generated email, do not reply to this email id.'
-            # email_from = settings.EMAIL_HOST_USER
+            subject = 'Greetings from iNFOX TECHNOLOGIES'
+            message = 'Congratulations,\nYou have successfully registered iNFOX TECHNOLOGIES.\nYour login credentials \n\nEmail :'+str(email_id)+'\nPassword :'+str(passw)+'\n\nNote: This is a system generated email, do not reply to this email id.'
+            email_from = settings.EMAIL_HOST_USER
             
-            # recipient_list = [email_id, ]
-            # send_mail(subject,message , email_from, recipient_list, fail_silently=True)
+            recipient_list = [email_id, ]
+            send_mail(subject,message , email_from, recipient_list, fail_silently=True)
             msg_success = "Registration successfully Check Your Registered Mail"
             return render(request, 'man_registration_form.html',{'msg_success': msg_success,'branch':branch})
         
@@ -5720,6 +5720,7 @@ def projectmanager_assignproject(request):
             var.user_id = prid
             var.tl_id = request.POST['pname']
             var.task = request.POST['task']
+            var.subtask = request.POST['task']
             var.description=request.POST.get('desc')
             var.startdate=request.POST.get('sdate')
             var.enddate=request.POST.get('edate')
@@ -5742,16 +5743,16 @@ def projectmanager_assignproject(request):
             v = request.POST.get('pname')
             em=user_registration.objects.get(id=v)
             
-            # subject = 'Greetings from iNFOX TECHNOLOGIES'
-            # message = 'Congratulations,\n' \
-            # 'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
-            # 'following is your Project Details\n'\
-            # 'Project : '+str(new.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.description)+'\n''Start Date : '+bb+'\n' 'End Date : '+cc+'\n'\
-            # '\n' 'Complete your project on or before Enddate \n'\
-            #     'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
-            # recepient = str(em.email)
-            # send_mail(subject, message, settings.EMAIL_HOST_USER,
-            #       [recepient], fail_silently=False)
+            subject = 'Greetings from iNFOX TECHNOLOGIES'
+            message = 'Congratulations,\n' \
+            'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
+            'following is your Project Details\n'\
+            'Project : '+str(new.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.description)+'\n''Start Date : '+bb+'\n' 'End Date : '+cc+'\n'\
+            '\n' 'Complete your project on or before Enddate \n'\
+                'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
+            recepient = str(em.email)
+            send_mail(subject, message, settings.EMAIL_HOST_USER,
+                  [recepient], fail_silently=False)
             msg_success = "Project assigned successfully"
             
             return render(request, 'projectmanager_assignproject.html',{'pro':pro,'spa':spa,'pvar':pvar,'tes':tes, 'msg_success':msg_success})
@@ -5768,7 +5769,7 @@ def projectmanager_projectstatus(request,id):
         pro = user_registration.objects.filter(id=prid)
         des = designation.objects.get(designation="team leader")
         dev = designation.objects.get(designation="developer")
-        var = project_taskassign.objects.filter(project_id=id).order_by('-id')
+        var = project_taskassign.objects.filter(project_id=id,subtask__isnull = True).order_by('-id')
         data = test_status.objects.filter(project_id=id).order_by('-id')
         data1 = tester_status.objects.filter(project_id=id).order_by('-id')
         newdata = project_taskassign.objects.filter(project_id=id,subtask__isnull = False).order_by('-id')
@@ -6693,7 +6694,7 @@ def tlprojecttasks(request,id):
             mem2 = tester_status.objects.filter(tester_id=tlid)
             time=datetime.now()
             taskstatus = test_status.objects.all()
-            display = project_taskassign.objects.filter(developer_id=tlid).filter(project_id=id)
+            display = project_taskassign.objects.filter(tl_id=tlid).filter(project_id=id)
             tasks = project_taskassign.objects.filter(project_id=id,developer_id = tlid)
             mem3 = user_registration.objects.get(id=tlid)
             display1=mem3.fullname
@@ -6809,7 +6810,7 @@ def tlgivetask(request):
         spa = user_registration.objects.filter(tl_id=dept_id.id, status="active")
         spa1 = user_registration.objects.filter(designation_id=e1, status="active")
         time=datetime.now().date()
-        tasks = project_taskassign.objects.filter(developer_id=tlid,project_id=splitid).values('task').distinct()
+        tasks = project_taskassign.objects.filter(tl_id=tlid,project_id=splitid).values('task').distinct()
         new = project.objects.get(id=splitid)
         
         if request.method =='POST':
@@ -6835,17 +6836,17 @@ def tlgivetask(request):
             var.save()
             v = request.POST.get('ename')
             em=user_registration.objects.get(id=v)
-            # print(em.email)
-            # subject = 'Greetings from iNFOX TECHNOLOGIES'
-            # message = 'Congratulations,\n' \
-            # 'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
-            # 'following is your Project Details\n'\
-            # 'Project :'+str(var.project.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.tl_description)+'\n' 'SubTask : '+str(var.subtask)+'\n''Start Date : '+bb+'\n' 'End Date : '+cc+'\n'\
-            # '\n' 'Complete your project on or before Enddate \n'\
-            #     'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
-            # recepient = str(em.email)
-            # send_mail(subject, message, settings.EMAIL_HOST_USER,
-            #       [recepient], fail_silently=False)
+            print(em.email)
+            subject = 'Greetings from iNFOX TECHNOLOGIES'
+            message = 'Congratulations,\n' \
+            'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
+            'following is your Project Details\n'\
+            'Project :'+str(var.project.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.tl_description)+'\n' 'SubTask : '+str(var.subtask)+'\n''Start Date : '+bb+'\n' 'End Date : '+cc+'\n'\
+            '\n' 'Complete your project on or before Enddate \n'\
+                'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
+            recepient = str(em.email)
+            send_mail(subject, message, settings.EMAIL_HOST_USER,
+                  [recepient], fail_silently=False)
             msg_success = "Task split successfully"
             return render(request, 'TLgivetask.html',{'msg_success':msg_success})
         else:
