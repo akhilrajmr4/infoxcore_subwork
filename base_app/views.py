@@ -23,13 +23,6 @@ from num2words import num2words
 from django.core.mail import send_mail
 
 from django.core.files.storage import FileSystemStorage
-# import qrcode.image.svg
-# from io import BytesIO
-# from django.views.generic import View
-# # from xhtml2pdf import pisa
-# # from coreapp.utils import render_to_pdf ,get_template
-# from django.db.models import Q
-# import os
 
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -3281,7 +3274,7 @@ def BRadmin_profiledash(request):
         else:
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
-        Num = user_registration.objects.count()
+        Num = user_registration.objects.filter(status="active").count()
         Num1 = project.objects.count()
         Trainer = designation.objects.get(designation='Trainer')
         trcount = user_registration.objects.filter(designation=Trainer).count()
