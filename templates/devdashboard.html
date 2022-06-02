@@ -170,44 +170,21 @@
   </div>
 
 
-
-  <!-- container-scroller -->
-  <!-- plugins:js -->
-  <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
-  <!-- endinject -->
-  <!-- Plugin js for this page -->
-  <script src="../../assets/vendors/chart.js/Chart.min.js"></script>
-  <!-- End plugin js for this page -->
-  <!-- inject:js -->
-  <script src="../../assets/js/off-canvas.js"></script>
-  <script src="../../assets/js/hoverable-collapse.js"></script>
-  <script src="../../assets/js/misc.js"></script>
-  <script src="../../assets/js/settings.js"></script>
-  <script src="../../assets/js/todolist.js"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page -->
-  <script src="../../assets/js/chart.js"></script>
-  <!-- End custom js for this page -->
-
-
   <script>
-
     var config = {
       type: 'pie',
       data: {
+        
         datasets: [{
           
           data: {{ data|safe }},
           backgroundColor: ['rgba(255, 99, 132, 0.5)',
           'rgba(54, 162, 235, 0.5)',
-          'rgba(255, 206, 86, 0.5)',
-          'rgba(75, 192, 192, 0.5)',
-          'rgba(153, 102, 255, 0.5)',
-          'rgba(255, 159, 64, 0.5)'],
-          labels: 'workperformance'
+          'rgba(255, 206, 86, 0.5)'
+          ],
         }],
         
-        labels: ['workperformance','Attitude','Creativity']
+        labels: ['workperformance','Attitude','Creativity'],
         
       },
       options: {
@@ -230,29 +207,63 @@ data: {
  labels: ['workperformance','Attitude','Creativity'],
  datasets: [
   {
-    label: "Performance",
-    backgroundColor: "#79AEC8",
-    borderColor: "#417690",
+    
     
     data: {{ data|safe }},
+    
+    
     backgroundColor: ['rgba(255, 99, 132, 0.2)',
     'rgba(54, 162, 235, 0.2)',
-    'rgba(255, 206, 86, 0.2)',
-    'rgba(75, 192, 192, 0.2)',
-    'rgba(153, 102, 255, 0.2)',
-    'rgba(255, 159, 64, 0.2)'],
+    'rgba(255, 206, 86, 0.2)'
+    
+    ],
+    
 
   }
  ]
 },
-options: {
-  title: {
-    text: "Performance",
-   display: true
+options: {   
+    legend: {
+    display: false
+    },
+   
+    scales: {
+      yAxes: [{
+          ticks: {
+              beginAtZero: true,
+                max:100
+          }
+      }]
   }
- }
+    
+    
+}
+
+    
+
+
 });
 
-  </script>
+</script>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="../../assets/vendors/chart.js/Chart.min.js"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="../../assets/js/off-canvas.js"></script>
+  <script src="../../assets/js/hoverable-collapse.js"></script>
+  <script src="../../assets/js/misc.js"></script>
+  <script src="../../assets/js/settings.js"></script>
+  <script src="../../assets/js/todolist.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="../../assets/js/chart.js"></script>
+  <!-- End custom js for this page -->
+
+
+ 
 
   {% endblock %}

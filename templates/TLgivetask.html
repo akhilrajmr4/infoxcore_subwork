@@ -91,10 +91,11 @@
           </div>
           <div class="row pt-1">
             <div class="col-md-4">
-              <div class=" mr-2 ml-3 mt-2 text-light" style="color:white ;">Date</div>
+              <div class=" mr-2 ml-3 mt-2 text-light" style="color:white ;">Start Date</div>
             </div>
             <div class="col-md-8 ">
-              <div class="mt-2 mr-2 text-info">{{time|date:"d-m-Y"}}</div>
+              <input type="date" name="start_date" id="due" class="drop form-control ml-3 mt-2 text-light" value='{{time|date:"Y-m-d"}}'' required
+              style="border:1px solid #6C7293 ;color:#6C7293;">
             </div>
           </div>
           <div class="row pt-1">
@@ -102,7 +103,7 @@
               <div class=" mr-2 ml-3 mt-2" style="color:white ;">Due Date</div>
             </div>
             <div class="col-md-8 ">
-              <input type="date" name="date" id="due" class="drop form-control ml-3 mt-2 text-light" required
+              <input type="date" name="date" id="due1" class="drop form-control ml-3 mt-2 text-light" required
                 style="border:1px solid #6C7293 ;color:#6C7293;">
             </div>
           </div>
@@ -133,21 +134,24 @@
   </script>
   {% endif %}
 <script>
-var today = new Date();
-var dd = today.getDate();
-var mm = today.getMonth() + 1; //January is 0!
-var yyyy = today.getFullYear();
+   $(function() {
+        var date = new Date();
+        var tdate = date.getDate();
+        var month = date.getMonth()+1;
+       
+        if (tdate < 10){
+            tdate = '0' + tdate;
+        }
 
-if (dd < 10) {
-   dd = '0' + dd;
-}
+        if (month < 10){
+            month = '0' + month;
+        }
+        var year = date.getUTCFullYear();
+        var minDate= year + "-" + month + "-" +tdate;
+        document.getElementById("due").setAttribute('min',minDate)
+        document.getElementById("due1").setAttribute('min',minDate)
 
-if (mm < 10) {
-   mm = '0' + mm;
-} 
-    
-today = yyyy + '-' + mm + '-' + dd;
-document.getElementById("due").setAttribute("min", today);
+    })
 </script>
 
 

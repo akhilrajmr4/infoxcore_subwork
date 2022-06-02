@@ -1470,6 +1470,12 @@ re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accoun
     re_path(r'^verify_all_income/$', views.verify_all_income, name='verify_all_income'),
 
 
+
+    re_path(r'^Teamdevelopers/$', views.TL_dev, name='TL_dev'),
+    re_path(r'^Teamdevelopers_dashboard/(?P<id>\d+)/$', views.Teamdevelopers_dashboard, name='Teamdevelopers_dashboard'),
+    re_path(r'^TL_add_dev_performance/(?P<id>\d+)/$', views.TL_add_dev_performance, name='TL_add_dev_performance'),
+
+
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -235,7 +235,7 @@ def newtraineeesteam(request):
         team = create_team.objects.all()
         mem1 = designation.objects.get(designation="trainee")
         memm = user_registration.objects.filter(designation_id=mem1)
-        print(memm)
+        
         if request.method == 'POST':
             register = user_registration.objects.get(id=tid)
             register.course =course.objects.get(id=int(request.POST['cou']))
@@ -402,7 +402,7 @@ def submit(request):
     if request.method == 'POST':
         var1 = create_team.objects.get(id=tid)
         var1.team_status = 1
-        print(var1)
+        
         var1.save()
     return redirect("new_team")
 
@@ -615,7 +615,7 @@ def savetmreplaytrnr(request):
         if request.method == 'POST':
             vars = reported_issue.objects.get(id=id)
             
-            print(vars.reply)
+            
             vars.reply = request.POST['review']
             
             vars.issuestatus = 1
@@ -638,7 +638,7 @@ def trainersolvedissue(request):
         mem = user_registration.objects.filter(
             designation_id=usernametm) .filter(fullname=usernametm1)
         des = designation.objects.get(designation='trainer')
-        print(des.id)
+        
         cut = reported_issue.objects.filter(reported_to_id=usernametm2).filter(
             designation_id=des.id).filter(issuestatus=1)
         context = {'cut': cut, 'vars': vars, 'mem': mem}
@@ -671,7 +671,7 @@ def traineesunsolved(request):
         mem = user_registration.objects.filter(
             designation_id=usernametm) .filter(fullname=usernametm1)
         des = designation.objects.get(designation='trainee')
-        # print(des.id)
+        
         cut = reported_issue.objects.filter(reported_to_id=usernametm2).filter(
             designation_id=des.id).filter(issuestatus=0)
         context = {'cut': cut, 'vars': vars, 'mem': mem}
@@ -692,7 +692,7 @@ def savetmreplytrns(request):
         id = request.GET.get('id')
         if request.method == 'POST':
             vars = reported_issue.objects.get(id=id)
-            print(vars.reply)
+            
             vars.reply = request.POST['reply']
             
             vars.issuestatus = 1
@@ -715,7 +715,7 @@ def traineessolved(request):
         mem = user_registration.objects.filter(
             designation_id=usernametm) .filter(fullname=usernametm1)
         des = designation.objects.get(designation='trainee')
-        print(des.id)
+        
         cut = reported_issue.objects.filter(reported_to_id=usernametm2).filter(
             designation_id=des.id).filter(issuestatus=1)
         context = {'cut': cut, 'vars': vars, 'mem': mem}
@@ -744,7 +744,7 @@ def reportissue(request):
         if request.method == 'POST':
           
             vars = reported_issue()
-            # print(vars.reply)
+           
             vars.issue = request.POST['issue']
             
             vars.issuestatus = 0
@@ -871,7 +871,7 @@ def Leave_rejected(request):
             vars = leave.objects.get(id=id)       
             
             vars.leave_rejected_reason = request.POST['review']
-            print(vars.leave_rejected_reason)
+            
             vars.leaveapprovedstatus = 2
            
             
@@ -895,7 +895,7 @@ def Trainee_Leave_rejected(request):
             vars = leave.objects.get(id=id)       
             
             vars.leave_rejected_reason = request.POST['review']
-            print(vars.leave_rejected_reason)
+            
             vars.leaveapprovedstatus = 2
            
             
@@ -967,7 +967,7 @@ def Requestedleave(request):
         mem = user_registration.objects.filter(
             designation_id=usernametm) .filter(fullname=usernametm1)
         des = designation.objects.get(designation='trainingmanager')
-        print(des.id)
+        
         cut = leave.objects.filter(designation_id=des.id).order_by('-id')
         context = {'cut': cut, 'vars': vars, 'mem': mem}
         return render(request,'Requestedleave.html', context)
@@ -1600,7 +1600,7 @@ def trainer_reportissue_form(request):
         cut = user_registration.objects.get(designation_id=des.id)
         mem1 = user_registration.objects.get(id=usernametrnr2)
         des1 = designation.objects.get(designation='trainer')
-        print(mem1)
+        
         if request.method == "POST":
             mem.issue = request.POST['issues']
             mem.reported_date = datetime.now()
@@ -1623,7 +1623,7 @@ def trainer_reportedissue_table(request):
         z = user_registration.objects.filter(id=usernametrnr2)
     
         des = designation.objects.get(designation='trainee')
-        print(des)
+        
         cut = reported_issue.objects.filter(reported_to_id=usernametrnr2).filter(
             designation_id=des.id).filter(issuestatus=0).order_by('-id')
     
@@ -1634,9 +1634,9 @@ def trainer_reportedissue_table(request):
 def savereplaytnee(request, id):
     if request.method == 'POST':
         vars = reported_issue.objects.get(id=id)
-        print(vars.reply)
+        
         vars.reply = request.POST['reply']
-        print('hello')
+        
         vars.issuestatus = 1
         vars.save()
     return redirect('trainer_reportedissue_table')
@@ -2064,7 +2064,7 @@ def trainer_givetask(request, id):
         d = create_team.objects.get(id=id)
         des = designation.objects.get(designation='trainee')
         var = user_registration.objects.filter(team_id=d).filter(designation_id=des.id)
-        print(var)
+        
     
         
         if request.method == 'POST':
@@ -2229,7 +2229,7 @@ def trainer_current_trainees(request):
         
         z = user_registration.objects.filter(fullname=usernametrnr1,id=usernametrnr2) 
         cut = create_team.objects.filter(trainer=usernametrnr1).values_list('id',flat=True)
-        print(cut)
+        
         des = designation.objects.get(designation='trainee')
         user = user_registration.objects.filter(designation_id=des.id,team_id__in=cut)
         
@@ -2425,10 +2425,10 @@ def save_trainee_review(request):
         
         tid = request.GET.get('tid')
         vars = topic.objects.get(id=tid)
-        print(vars.id)
+        
         vars.review = request.POST.get('review')
         vars.topic_status = 1
-        print('hello')
+        
         vars.save()
         return redirect('trainee_currentTopic')
     else:
@@ -2591,11 +2591,11 @@ def trainee_report_issue(request):
         
     
         team = create_team.objects.all()
-        print(team)
+        
         tre = designation.objects.get(designation='trainer')
         use = user_registration.objects.filter(designation_id=tre.id)
         
-        print(use)
+        
         
         
         return render(request, 'trainee_report_issue.html', {'list': mem3, 'memteam': use, 'z': z})
@@ -2986,8 +2986,8 @@ def BRadmin_designations(request):
         dept_id = request.GET.get('dept_id')
         
         br_id = department.objects.get(id=dept_id)
-        print('haii')
-        print(br_id)
+        
+        
         Desig = designation.objects.filter(~Q(designation="admin"),~Q(designation="manager"),~Q(designation="project manager"),~Q(designation="tester"),~Q(designation="trainingmanager"),~Q(designation="trainer"),~Q(designation="trainee"),~Q(designation="account"),~Q(designation="hr")).filter(branch_id=br_id.branch_id)
         return render(request,'BRadmin_designations.html',{'Adm': Adm,'Desig': Desig, })
     else:
@@ -3835,8 +3835,8 @@ def admin_emp(request):
     dept=department.objects.filter(id=dept_id)
     desi=designation.objects        .filter(id=desig_id)
     user=user_registration.objects.filter(designation_id=desig_id).filter(department_id=dept_id)
-    print(dept)
-    print(desi)
+    
+    
     return render(request, 'BRadmin_employee.html',{'user':user,'dept':dept,'desi':desi})
 
 def MAN_View_Trainers(request,id,did):
@@ -4085,8 +4085,8 @@ def man_emp(request):
     dept=department.objects.filter(id=dept_id)
     desi=designation.objects.filter(id=desig_id)
     user=user_registration.objects.filter(designation_id=desig_id, department_id=dept_id, status="active")
-    print(dept)
-    print(desi)
+    
+    
     return render(request, 'MAN_employee.html',{'user':user,'dept':dept,'desi':desi})
 
 #************************  anwar end  *********************************************
@@ -4244,7 +4244,7 @@ def BRadmin_proj_cmpltd_new(request, id):
             return redirect('/')
         Adm = user_registration.objects.filter(id=Adm_id)
         project_details=project.objects.filter(department=id)
-        print (project_details.count())
+        
         return render(request,'BRadmin_proj_cmpltd_show.html',{'project': project_details,'Adm':Adm})
     else:
         return redirect('/')
@@ -4387,7 +4387,7 @@ def MAN_proj_list(request,id):
             return redirect('/')
         mem = user_registration.objects.filter(id=m_id)
         project_details = project.objects.filter(department=id)
-        print (project_details.count())
+        
         return render(request,'MAN_proj_list.html',{'proj_det':project_details,'mem':mem})
     else:
         return redirect('/')
@@ -4485,7 +4485,7 @@ def MAN_proj_cmpltd_new(request, id):
             return redirect('/')
         mem = user_registration.objects.filter(id=m_id)
         project_details=project.objects.filter(department=id)
-        print (project_details.count())
+        
         return render(request,'MAN_proj_cmpltd_show.html',{'project': project_details,'mem':mem})
     else:
         return redirect('/')
@@ -4689,7 +4689,7 @@ def MAN_reported(request,id):
         if request.method == 'POST':
             vars = reported_issue.objects.get(id=id)
             
-            print(vars.reply)
+            
             vars.reply = request.POST['review']
             
             vars.issuestatus = 1
@@ -4742,7 +4742,7 @@ def MAN_givetask(request):
             sc5 = request.POST['start']
             sc6 = request.POST['end']
             ogo = request.FILES['img[]']
-            print(sc1,sc2)
+            
             catry = tasks(tasks=sc4,files=ogo,description=sc7,startdate=sc5, enddate=sc6,department_id = sc1,designation_id = sc2,user_id = sc3)
             catry.save()
         dept = department.objects.all()
@@ -4762,7 +4762,7 @@ def MAN_taskdesignation(request):
         mem = user_registration.objects.filter(id=m_id)   
         dept_id = request.GET.get('dept_id')
         Desig = designation.objects.all()
-        print(Desig)
+        
         return render(request, 'MAN_taskdesignation.html', {'Desig': Desig,'mem':mem})
     else:
         return redirect('/')
@@ -4777,7 +4777,7 @@ def MAN_taskemployee(request):
         dept_id = request.GET.get('dept_id')
         desig_id = request.GET.get('desig_id')
         emp = user_registration.objects.filter(designation_id=desig_id).filter(department_id=dept_id)
-        print(emp)
+        
         return render(request, 'MAN_taskemployee.html', {'emp': emp,'mem':mem})
     else:
         return redirect('/')
@@ -4835,7 +4835,7 @@ def BRadmin_givetask(request):
             sc5 = request.POST['start']
             sc6 = request.POST['end']
             ogo = request.FILES['img[]']
-            print(sc4)
+            
             catry = tasks(tasks=sc4,files=ogo,description=sc7,startdate=sc5, enddate=sc6,department_id = sc1,designation_id = sc2,user_id = sc3)
             catry.save()
         dept = department.objects.all()
@@ -4851,7 +4851,7 @@ def BRadmin_taskdesignation(request):
     dept_id = request.GET.get('dept_id')
     # Desig = designation.objects.filter(department_id=dept_id)
     Desig = designation.objects.all()
-    print(Desig)
+    
     return render(request, 'BRadmin_taskdesignation.html', {'Desig': Desig,'Adm':Adm})
     
 
@@ -4860,7 +4860,7 @@ def BRadmin_taskemployee(request):
     dept_id = request.GET.get('dept_id')
     desig_id = request.GET.get('desig_id')
     emp = user_registration.objects.filter(designation_id=desig_id).filter(department_id=dept_id)
-    print(emp)
+   
     return render(request, 'BRadmin_taskemployee.html', {'emp': emp,'Adm':Adm})
   
 
@@ -4980,7 +4980,7 @@ def BRadmin_createproject(request):
             sc5 = request.POST['start']
             sc6 = request.POST['end']
             ogo = request.FILES['img[]']
-            print(sc5,sc6,ogo,sc1)
+            
             progress=0
             catry = project(designation_id=sc2,department_id=sc1,project=sc3,
                                       description=sc4,
@@ -5013,26 +5013,26 @@ def BRadmin_seradmintraineedesi1(request):
         Adm = user_registration.objects.filter(id=Adm_id)
         dept_id = request.GET.get('dept_id')
         Desig = designation.objects.filter(~Q(designation='admin'), ~Q(designation='manager'), ~Q(designation='account'))
-        print(Desig)
+        
         return render(request, 'BRadmin_dropdown.html', {'Desig': Desig,'Adm':Adm})
     else:
         return redirect('/')
 
 def BRadmin_seradmindesig(request):
-	print("safdhar")
+	
 	dept_id = request.GET.get('dept_id')
 	Desig = designation.objects.filter(~Q(designation="admin"), ~Q(designation="manager"), ~Q(designation="account"))
-	print(Desig)
+	
 	return render(request, 'BRadmin_giveprojectdropdown.html', {'Desig': Desig})
 	
 def BRadmin_selectproject(request):
     
-    print("safdhar")
+    
     dept_id = request.GET.get('dept_id')
     desig_id = request.GET.get('desig_id')
-    print(desig_id,dept_id)
+    
     proj = project.objects.filter(department_id=dept_id)
-    print(proj)
+    
     return render(request, 'BRadmin_selectproject.html',{'project':proj})
     
 #upcoming projects -safdhar -man mod
@@ -5066,7 +5066,7 @@ def MAN_viewprojectform(request):
             sc4 = request.POST['discrip']
             sc5 = request.POST['start']
             sc6 = request.POST['end']
-            print(sc1,sc2)
+            
             progress=0
             catry = project_taskassign(project_id=sc3,description=sc4,startdate=sc5,enddate=sc6,extension='0')
             catry.save()
@@ -5113,7 +5113,7 @@ def MAN_createproject(request):
             sc5 = request.POST['start']
             sc6 = request.POST['end']
             ogo = request.FILES['img[]']
-            print(sc5,sc6,ogo,sc1)
+            
             progress=0
             catry = project(designation_id=sc2,department_id=sc1,project=sc3,
                                       description=sc4,
@@ -5146,7 +5146,7 @@ def MAN_seradmintraineedesi1(request):
         mem = user_registration.objects.filter(id=m_id)
         dept_id = request.GET.get('dept_id')
         Desig = designation.objects.filter(~Q(designation="admin"), ~Q(designation="manager"), ~Q(designation="account"))
-        print('safdhar')
+        
         return render(request, 'MAN_createprojectdropdown.html', {'Desig': Desig,'mem':mem})
     else:
         return redirect('/')
@@ -5158,22 +5158,20 @@ def MAN_seradmindesig(request):
         else:
             return redirect('/')
         mem = user_registration.objects.filter(id=m_id)
-        print("safdhar")
+        
         dept_id = request.GET.get('dept_id')
         Desig = designation.objects.filter(~Q(designation='admin'),~Q(designation='manager'),~Q(designation='account'))
-        print(Desig)
+        pr
         return render(request, 'MAN_giveprojectdropdown.html', {'Desig': Desig,'mem':mem})
     else:
         return redirect('/')
         
 def Manager_selectproject(request):
     
-    print("safdhar")
+    
     dept_id = request.GET.get('dept_id')
-    # desig_id = request.GET.get('desig_id')
-    # print(desig_id,dept_id)
     proj = project.objects.filter(department_id=dept_id)
-    print(proj)
+    
     return render(request,'manager_selectproject.html',{'project':proj})
     
     
@@ -5352,7 +5350,7 @@ def internship_save(request):
             message = "Enter all details !!!"
             return render(request, 'internship.html',{'message':message})
     else:
-        print("not")
+        
         return render(request, 'internship.html')
 
 
@@ -5709,7 +5707,7 @@ def projectmanager_assignproject(request):
         if request.method =='POST':
             
             var = project_taskassign()
-            # print("hii")
+           
             var.user_id = prid
             var.tl_id = request.POST['pname']
             var.task = request.POST['task']
@@ -6815,12 +6813,8 @@ def tlgivetask(request):
             var.tl_description=request.POST.get('description')
             var.subtask=request.POST.get('subtask')
             var.task = request.POST.get('task')
-            var.startdate= time
-            
+            var.startdate= request.POST.get('start_date')
             var.enddate= request.POST.get('date')
-            bb= (var.startdate).strftime('%d-%m-%Y')
-            
-            cc= datetime.strptime(var.enddate, '%Y-%m-%d').strftime('%d-%m-%Y')
             var.files=request.FILES['files']
             var.extension=0
             var.project_id = splitid
@@ -6833,7 +6827,7 @@ def tlgivetask(request):
             # message = 'Congratulations,\n' \
             # 'You are assigned new project from iNFOX TECHNOLOGIES.\n' \
             # 'following is your Project Details\n'\
-            # 'Project :'+str(var.project.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.tl_description)+'\n' 'SubTask : '+str(var.subtask)+'\n''Start Date : '+bb+'\n' 'End Date : '+cc+'\n'\
+            # 'Project :'+str(var.project.project)+'\n' 'Task : '+str(var.task) +'\n' 'Description : '+str(var.tl_description)+'\n' 'SubTask : '+str(var.subtask)+'\n''Start Date : '+str(var.startdate)+'\n' 'End Date : '+str(var.enddate)+'\n'\
             # '\n' 'Complete your project on or before Enddate \n'\
             #     'NOTE : THIS IS A SYSTEM GENETATED MAIL PLEASE DO NOT REPLY' 
             # recepient = str(em.email)
@@ -8848,11 +8842,7 @@ def accounts_acntpay(request):
         dept_id = int(request.POST['depmt'])
         desig_id = int(request.POST['desi'])  
         names = acntspayslip.objects.filter(fromdate__range=(fdate,tdate),designation_id= desig_id, department_id= dept_id)
-        print(fdate)
-        print(tdate)
-        print(dept_id)
-        print(desig_id)
-        print(names)
+       
                 
         return render(request,'accounts_acntpay.html', {'names':names})
     else:
@@ -8894,7 +8884,7 @@ def acntpaypdf(request, id, tid):
     date = datetime.now()
     user = user_registration.objects.get(id=tid)
     acc = acntspayslip.objects.get(id=id)
-    print
+    
     f_date = acc.fromdate
     year = f_date.year
     month = f_date.month
@@ -8905,9 +8895,9 @@ def acntpaypdf(request, id, tid):
                                        month_todate__month__lte=month)
     mm = leave.month_workingdays
     m = leave.month_holidays
-    print(mm)
+    
     abc = int(user.confirm_salary)
-    print(abc)
+    
     c = abc - acc.net_salary
     if c == 0:
         c=0
@@ -9457,7 +9447,7 @@ def SuperAdmin_proj_list(request,id):
                 SAdm_id = request.session['SAdm_id']
         users = User.objects.filter(id=SAdm_id)
         project_details = project.objects.filter(department=id)
-        print (project_details.count())
+        
         return render(request,'SuperAdmin_proj_list.html',{'users':users,'proj_det':project_details})
     else:
         return redirect('/')
@@ -9557,7 +9547,7 @@ def SuperAdmin_proj_cmpltd_new(request, id):
                 SAdm_id = request.session['SAdm_id']
         users = User.objects.filter(id=SAdm_id)
         project_details=project.objects.filter(department=id)
-        print (project_details.count())
+        
         return render(request,'SuperAdmin_proj_cmpltd_show.html',{'users':users,'project': project_details})
     else:
         return redirect('/')
@@ -10188,7 +10178,7 @@ def trainer_currentprogress(request,id):
         
         if request.method == 'POST':
             mm = previousTeam.objects.get(user=id,teamname=var.team_id)
-            print(mm.user)
+            
             mm.progress = request.POST['sele1']
             mm.save()
             
@@ -10209,7 +10199,7 @@ def trainer_currentprogress(request,id):
         
         if request.method == 'POST':
             mm = previousTeam.objects.get(user=id,teamname=var.team_id)
-            print(mm.user)
+            
             mm.progress = request.POST['sele1']
             mm.save()
             
@@ -11132,10 +11122,7 @@ def projectmanager_projects_details(request):
         fdate = request.POST['fdate']
         tdate = request.POST['tdate']
         names = project_taskassign.objects.filter(developer=emp,startdate__gte=fdate, enddate__lte=tdate).order_by('-id')
-        print(emp)
-        print(fdate)
-        print(tdate)
-        print(names)
+        
         year = date.today().year
         month = date.today().month
 
@@ -11587,8 +11574,6 @@ def trainer_leavehistory(request):
         mem = user_registration.objects.filter(id=usernametrnr2)
         tr = user_registration.objects.filter(team_id=usernametrnr3)
         ids = tr.values_list('id', flat="true")
-        print('haiiii')
-        print(usernametrnr3)
         des = designation.objects.get(designation='trainee')
         le = leave.objects.filter(
             designation_id=des.id, leaveapprovedstatus=0).all().order_by('-id')
@@ -12084,20 +12069,20 @@ def accounts_accout_salary_slip(request, id):
     date = datetime.now()
     user = user_registration.objects.get(id=id)
     acc = acntspayslip.objects.get(user_id=id)
-    print(acc)
+    
     year = date.today().year
     month = date.today().month
 
     leave = acnt_monthdays.objects.get(month_fromdate__year__gte=year, month_fromdate__month__gte=month,
                                        month_todate__year__lte=year, month_todate__month__lte=month)
     mm = leave.month_workingdays
-    print(mm)
+   
     abc = int(user.confirm_salary)
-    print(abc)
+    
     c = abc/mm
     v = acc.leavesno
     mem = mm-v
-    print(v)
+    
     conf = abc-c
     template_path = 'accounts_accout_salary_slip.html'
     context = {'acc': acc, 'user': user, 'c': c, 'mm': mm, 'mem': mem, 'conf': conf, 'media_url': settings.MEDIA_URL, 'date': date,
@@ -12175,7 +12160,7 @@ def accounts_download_promissory(request, id):
            c = None
            msg_success="No Data in Database Pleace Add Promissory"
            return render(request, 'accounts_promissory.html', {'z': z,'msg_success':msg_success})
-        print(c)
+        
     return render(request, 'accounts_download_promissory.html', {'z': z, 'user': user, 'c': c})
 
 def accounts_promissory_complete_pfd(request, id):
@@ -12241,7 +12226,7 @@ def accounts_promissory_add(request, id):
         z = user_registration.objects.filter(id=usernameacnt2)
     mem = user_registration.objects.get(id=id)
 
-    print(mem)
+    
     if request.method == "POST":
 
         user = Promissory()
@@ -12472,7 +12457,7 @@ def paypdf(request,id,tid):
     date = datetime.now()  
     user = user_registration.objects.get(id=tid)
     acc = acntspayslip.objects.get(id=id)
-    print(acc)
+    
     # year = date.today().year
     # month = date.today().month
 
@@ -12487,14 +12472,14 @@ def paypdf(request,id,tid):
     mam = mm-v
     leaves_tot = acc.delay+acc.leavesno
     wrk_days = mm -leaves_tot
-    print(mm)
+    
     abc = int(user.confirm_salary)
-    print(abc)
+    
     c = abc - acc.net_salary
     
    
     
-    print(v)
+    
     
     add = acc.basic_salary+ int(acc.conveyns)+acc.hra+acc.pf_tax+acc.pf+int(acc.esi)+acc.delay+acc.leavesno+acc.incentives
     conf = add-c
@@ -13104,7 +13089,7 @@ def HR_imagesettings(request):
         if request.session.has_key('hr_id'):
            hr_id = request.session['hr_id']
         mem = user_registration.objects.filter(id=hr_id)
-        print('hr_id')
+        
         return render(request,'hr_module/HR_accountsettings.html', {'mem': mem})
     else:
         return redirect('/')
@@ -13178,7 +13163,7 @@ def probations(request):
             pb.team=create_team.objects.get(id=int(request.POST['team']))
             ut=create_team.objects.get(id=int(request.POST['team']))
             pb.trainer_id=ut.trainer_id
-            print(pb.trainer_id)
+            
             pb.reason=request.POST['extend_reason']
             pb.startdate=request.POST['startdate']
             pb.enddate=request.POST['enddate']
@@ -13562,7 +13547,7 @@ def pm_createmodule(request):
         pro = user_registration.objects.filter(id=prid)
         project_data = project.objects.filter(projectmanager_id=prid)
         # return render(request, 'pm_createmodule.html',{'pro':pro,'project_data':project_data})
-        print(project_data)
+        
         if request.method =='POST':
             var = project_module_assign()
             var.project_name = project.objects.get(id=int(request.POST['project_id']))
@@ -14051,10 +14036,10 @@ def tl_devattendanceview(request):
         mem = user_registration.objects.filter(id=tlid)
         pro_id = request.GET.get('dept_id')
         x=int(pro_id)
-        print(x)
-        print(type(x))
+        
+        
         Desig = attendance.objects.filter(user_id= x).order_by('-id')
-        print(Desig)
+        
         return render(request,'tl_devattendenceview.html',{'mem': mem,'Desig':Desig})
     else:
         return redirect('/')
@@ -14142,8 +14127,8 @@ def accounts_salary_leave(request):
                 end = datetime.strptime(tdate, '%Y-%m-%d').date()
                 pro = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end), submitted_date__isnull = True).filter(developer_id= his_id, ).values('startdate','enddate')
                 pro_start = project_taskassign.objects.filter(startdate__range=(start,end),enddate__range=(start,end),submitted_date__isnull = False).filter(developer_id= his_id, ).values('startdate','enddate','submitted_date')
-                print(pro)
-                print(pro_start)
+                
+                
                 leave_emp = leave.objects.filter(user_id = his_id,from_date__gte = start,to_date__lte = end).values('from_date','to_date')
                 k1=0
                 for k in leave_emp:
@@ -14183,7 +14168,7 @@ def accounts_salary_leave(request):
                         
                         if d11 <= end:
                             diff = (d11 - d10).days
-                            print(diff)
+                            
                             cnt =  Event.objects.filter(start_time__gte=d10,start_time__lte=d11).values('start_time').count()
                             d18 = diff - cnt
                             
@@ -14191,10 +14176,10 @@ def accounts_salary_leave(request):
                             diff = (end - d10).days
                             cnt =  Event.objects.filter(start_time__gte=d10,start_time__lte=end).values('start_time').count()
                             d18 = diff - cnt
-                            print(d18)
+                            
                     d19 = d19 + d18
                     
-                print(d18)  
+                  
                 delay_total = d19+d20 
                 total_delay =delay_total+k1
                 conf = user_registration.objects.get(id=his_id)
@@ -14543,5 +14528,61 @@ def verify_all_income(request):
 
         msg_success = "verify All Income successfully"
         return render(request, 'BRadmin_pendingincome.html', {'Adm': Adm, 'msg_success':msg_success})
+    else:
+        return redirect('/')
+
+
+#Team leader view developers list
+def TL_dev(request):
+    if 'tlid' in request.session:
+        if request.session.has_key('tlid'):
+            tlid = request.session['tlid']
+        else:
+            return redirect('/')
+        mem = user_registration.objects.filter(id=tlid)
+        man = user_registration.objects.filter(tl_id=tlid, status="active")
+        return render(request, 'TL_dev.html', { 'mem': mem, 'man': man})
+    else:
+        return redirect('/')
+
+
+#Team leader view indivigual developers 
+def Teamdevelopers_dashboard(request,id):
+    if 'tlid' in request.session:
+        if request.session.has_key('tlid'):
+            tlid = request.session['tlid']
+        else:
+            return redirect('/')
+        mem = user_registration.objects.filter(id=tlid)
+        man = user_registration.objects.get(id=id)
+        labels = []
+        data = []
+        queryset = user_registration.objects.filter(id=id)
+        for i in queryset:
+            labels=[i.workperformance,i.attitude,i.creativity]
+            data=[i.workperformance,i.attitude,i.creativity]
+        return render(request, 'TL_dev_dashboard.html',{'labels':labels,'data':data,'mem':mem,'man':man})
+    else:
+        return redirect('/')
+
+#Team leader add indivigual performance of a developers 
+def TL_add_dev_performance(request,id):
+    if 'tlid' in request.session:
+        if request.session.has_key('tlid'):
+            tlid = request.session['tlid']
+        else:
+            return redirect('/')
+        mem = user_registration.objects.filter(id=tlid)
+        man = user_registration.objects.get(id=id)
+        if request.method == 'POST':
+            man.attitude = request.POST['sele1']
+            man.creativity = request.POST['sele2']
+            man.workperformance = request.POST['sele3']
+            man.save()
+            msg_success = "Performance added successfully"
+            
+            return render(request, 'TL_add_dev_performance.html', {'mem': mem, 'man':man, 'msg_success':msg_success})
+        else:
+            return render(request, 'TL_add_dev_performance.html',{'mem':mem,'man':man})
     else:
         return redirect('/')
