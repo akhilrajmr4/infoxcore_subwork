@@ -548,7 +548,7 @@ def Trainee(request):
             return redirect('/')
         mem = user_registration.objects.filter(designation_id=usernametm).filter(fullname=usernametm1)
         des = designation.objects.get(designation='trainee')
-        tre = user_registration.objects.filter(designation=des.id).all().order_by('-id')
+        tre = user_registration.objects.filter(designation=des.id, status="active").all().order_by('-id')
     
         return render(request, 'traineetable.html', {'tre': tre, 'vars': vars,'mem':mem})
     else:

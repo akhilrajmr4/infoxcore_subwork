@@ -11,6 +11,7 @@
                     <div class="form-group">
                         <label>Select Trainees</label>
                         <select class="form-control" id="empname" style="color:white;" name="emp">
+                            <option value="" selected disabled>--Not Selected--</option>
                             {% for i in var%}
                             <option value="{{i.id}}">{{i.fullname}}</option>
                             {% endfor %}
