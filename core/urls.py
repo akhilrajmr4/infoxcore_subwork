@@ -2,7 +2,8 @@
 from django.contrib import admin
 from django.urls import re_path, include
 from django.conf import settings
-from django.conf.urls.static import static, serve
+from django.conf.urls.static import static
+from django.views.static import serve
 from base_app import views
 from cal import views as calviews
 
@@ -1474,6 +1475,8 @@ re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accoun
     re_path(r'^Teamdevelopers/$', views.TL_dev, name='TL_dev'),
     re_path(r'^Teamdevelopers_dashboard/(?P<id>\d+)/$', views.Teamdevelopers_dashboard, name='Teamdevelopers_dashboard'),
     re_path(r'^TL_add_dev_performance/(?P<id>\d+)/$', views.TL_add_dev_performance, name='TL_add_dev_performance'),
+    
+    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
 
 
 ]
