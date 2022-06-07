@@ -1475,7 +1475,13 @@ re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accoun
     re_path(r'^Teamdevelopers/$', views.TL_dev, name='TL_dev'),
     re_path(r'^Teamdevelopers_dashboard/(?P<id>\d+)/$', views.Teamdevelopers_dashboard, name='Teamdevelopers_dashboard'),
     re_path(r'^TL_add_dev_performance/(?P<id>\d+)/$', views.TL_add_dev_performance, name='TL_add_dev_performance'),
-    
+
+
+    re_path(r'^tm_leave_status/$', views.tm_leave_status, name='tm_leave_status'),
+    re_path(r'^tm_designation/$', views.tm_designation, name='tm_designation'),
+    re_path(r'^tm_emp_ajax/$', views.tm_emp_ajax, name='tm_emp_ajax'),
+    re_path(r'^tm_leave/$', views.tm_leave, name='tm_leave'),
+
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
 
 

@@ -29,7 +29,7 @@
                         <thead>
                             <tr data-href="#">
 
-                                <th> Task Name </th>
+                                <th> Topic </th>
                                 <th> Start Date </th>
                                 <th> End Date</th>
                                 <th> Status</th>
@@ -39,7 +39,7 @@
                             {% if vars %} {% for t in vars %}
                             <tr data-href="#">
 
-                                <td> {{t.taskname}}</td>
+                                <td> {{t.topic}}</td>
                                 <td> {{t.startdate|date:"d-m-Y"}}</td>
                                 <td> {{t.enddate|date:"d-m-Y"}}</td>
                                 <td>

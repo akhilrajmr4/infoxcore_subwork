@@ -17,7 +17,8 @@
     <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}">
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
     <!--searchbar link-->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+        integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <!-- End plugin css for this page -->
 
     <!-- Layout styles -->
@@ -61,7 +62,7 @@
                     <div class="profile-desc">
                         <div class="profile-pic">
                             <div class="count-indicator">
-                            
+
                                 {% for mem in mem %}
                                 <img class="img-xs rounded-circle " src="{{mem.photo.url}}" alt="">
                                 <span class="count bg-success"></span>
@@ -73,17 +74,19 @@
                             </div>
 
                         </div>
-                        <a href="" id="profile-dropdown" data-bs-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
-                        <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
+                        <a href="" id="profile-dropdown" data-bs-toggle="dropdown"><i
+                                class="mdi mdi-dots-vertical"></i></a>
+                        <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list"
+                            aria-labelledby="profile-dropdown">
                             <a href="{% url 'account_tr_mg' %}" class="dropdown-item preview-item">
                                 <div class="preview-thumbnail">
-                                    
+
                                     <div class="preview-icon bg-dark rounded-circle">
                                         <i class="mdi mdi-settings text-primary"></i>
                                     </div>
                                 </div>
                                 <div class="preview-item-content">
-                                   
+
                                     <p class="preview-subject ellipsis mb-1 text-small">Account settings</p>
                                 </div>
                             </a>
@@ -99,7 +102,7 @@
                                 </div>
                             </a>
 
-                            
+
                         </div>
                     </div>
                 </li>
@@ -109,56 +112,56 @@
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'Dashboard' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-speedometer"></i>
-              </span>
+                            <i class="mdi mdi-speedometer"></i>
+                        </span>
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'trainer' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-laptop"></i>
-              </span>
+                            <i class="mdi mdi-laptop"></i>
+                        </span>
                         <span class="menu-title">Trainers</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'Trainee' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-account-group"></i>
-              </span>
+                            <i class="mdi mdi-account-group"></i>
+                        </span>
                         <span class="menu-title">Trainees</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'reportedissue' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-file-document-box"></i>
-              </span>
+                            <i class="mdi mdi-file-document-box"></i>
+                        </span>
                         <span class="menu-title">Reported Issues</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'attendance_tm' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-chart-bar"></i>
-              </span>
+                            <i class="mdi mdi-chart-bar"></i>
+                        </span>
                         <span class="menu-title">Attendance</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'trainingmanager_payment_list' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-cash-usd"></i>
-              </span>
+                            <i class="mdi mdi-cash-usd"></i>
+                        </span>
                         <span class="menu-title">Payements</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'Applyleave' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-message-plus"></i>
-              </span>
+                            <i class="mdi mdi-message-plus"></i>
+                        </span>
                         <span class="menu-title">Apply Leaves</span>
 
                     </a>
@@ -166,41 +169,49 @@
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="#">
                         <span class="menu-icon">
-                <i class="mdi mdi-bell-ring"></i>
-              </span>
+                            <i class="mdi mdi-bell-ring"></i>
+                        </span>
                         <span class="menu-title">Notification</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'new_team' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-folder-plus"></i>
-              </span>
+                            <i class="mdi mdi-folder-plus"></i>
+                        </span>
                         <span class="menu-title">New Team</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'Newtrainees' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-account-multiple-plus"></i>
-              </span>
+                            <i class="mdi mdi-account-multiple-plus"></i>
+                        </span>
                         <span class="menu-title">New Trainees</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'probations' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-account-multiple-plus"></i>
-              </span>
+                            <i class="mdi mdi-account-multiple-plus"></i>
+                        </span>
                         <span class="menu-title">Probation</span>
                     </a>
                 </li>
                 <li class="nav-item menu-items">
                     <a class="nav-link" href="{% url 'tm_trainee_status' %}">
                         <span class="menu-icon">
-                <i class="mdi mdi-account-multiple-plus"></i>
-              </span>
+                            <i class="mdi mdi-account-multiple-plus"></i>
+                        </span>
                         <span class="menu-title">Trainee Status</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'tm_leave_status' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple-plus"></i>
+                        </span>
+                        <span class="menu-title">Leave Status</span>
                     </a>
                 </li>
             </ul>
@@ -211,13 +222,15 @@
             <nav class="navbar p-0 fixed-top d-flex flex-row">
                 <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
                     <a class="sidebar-brand brand-logo-mini text-light text-decoration-none" href="Dashboard">
-                        <p style="color: white; opacity: 1; font-size: 35px;margin-top: 3vh;padding-left: 100px;">iNFOX</p>
+                        <p style="color: white; opacity: 1; font-size: 35px;margin-top: 3vh;padding-left: 100px;">iNFOX
+                        </p>
                     </a>
                 </div>
                 <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-              <span class="mdi mdi-menu"></span>
-            </button>
+                    <button class="navbar-toggler navbar-toggler align-self-center" type="button"
+                        data-toggle="minimize">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
                     <ul class="navbar-nav w-100"></ul>
                     <ul class="navbar-nav navbar-nav-right">
                         <li class="nav-item dropdown">
@@ -228,7 +241,8 @@
                                     <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                                 </div>
                             </a>
-                            <div id="log" class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                            <div id="log" class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                                aria-labelledby="profileDropdown">
                                 <h6 class="p-3 mb-0">Profile</h6>
                                 <div class="dropdown-divider"></div>
                                 <div class="dropdown-divider"></div>
@@ -246,9 +260,10 @@
                             </div>
                         </li>
                     </ul>
-                    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-              <span class="mdi mdi-format-line-spacing"></span>
-            </button>
+                    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                        data-toggle="offcanvas">
+                        <span class="mdi mdi-format-line-spacing"></span>
+                    </button>
                 </div>
             </nav>
             <!-- partial -->

@@ -1286,7 +1286,7 @@ def Previous_Assigned(request, id):
         mem = user_registration.objects.filter(
             designation_id=usernametm) .filter(fullname=usernametm1)
         d = create_team.objects.get(id=id)
-        vars = trainer_task.objects. filter(id=d.id)
+        vars = topic.objects.filter(id=d.id)
         return render(request, 'Trainer_Previous_Assigned.html', {'vars': vars, 'mem': mem})
 
     else:
@@ -14586,3 +14586,67 @@ def TL_add_dev_performance(request,id):
             return render(request, 'TL_add_dev_performance.html',{'mem':mem,'man':man})
     else:
         return redirect('/')
+
+
+
+# Training manager Leave status
+def tm_leave_status(request):
+    if 'usernametm2' in request.session:
+
+        if request.session.has_key('usernametm2'):
+            usernametm2 = request.session['usernametm2']
+
+        mem = user_registration.objects.filter(id=usernametm2)
+        dept  = user_registration.objects.get(id=usernametm2)
+
+        dep = department.objects.filter(id=dept.department_id)
+        des = designation.objects.all()
+        return render(request, 'tm_leave_status.html', {'mem': mem, 'dep':dep,'des':des})
+    else:
+        return redirect('/')
+
+
+@csrf_exempt
+def tm_designation(request):
+    if 'usernametm2' in request.session:
+        if request.session.has_key('usernametm2'):
+            usernametm2 = request.session['usernametm2']
+        else:
+            return redirect('/')
+        mem = user_registration.objects.filter(id=usernametm2)
+
+        dept_id = request.GET.get('dept_id')
+        
+        br_id = department.objects.get(id=dept_id)
+        Desig = designation.objects.filter(~Q(designation="admin"),~Q(designation="manager"),~Q(designation="project manager"),~Q(designation="trainingmanager"),~Q(designation="developer"),~Q(designation="team leader"),~Q(designation="tester"),~Q(designation="account"), ~Q(designation="hr")).filter(branch_id=br_id.branch_id)
+        return render(request,'tm_designation.html',{'mem':mem,'Desig': Desig, })
+    else:
+        return redirect('/')
+
+
+@csrf_exempt
+def tm_emp_ajax(request):
+    if 'usernametm2' in request.session:
+        if request.session.has_key('usernametm2'):
+            usernametm2 = request.session['usernametm2']
+        else:
+            return redirect('/')
+        mem = user_registration.objects.filter(id=usernametm2)
+
+        dept_id = request.GET.get('dept_id')
+        desigId = request.GET.get('desigId')
+        Desig = user_registration.objects.filter(department_id=dept_id, designation_id=desigId, status="active")
+
+        return render(request,'tm_emp_ajax.html',{'mem':mem,'Desig': Desig,})
+    else:
+        return redirect('/')
+
+
+@csrf_exempt
+def tm_leave(request):
+    
+    emp = request.GET.get('emp')
+    fdate = request.GET.get('fdate')
+    tdate = request.GET.get('tdate')
+    leaves = leave.objects.filter(user_id=emp,from_date__gte=fdate,to_date__lte=tdate)
+    return render(request,'tm_leave.html', {'names':leaves})
