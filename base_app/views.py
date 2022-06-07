@@ -5850,28 +5850,21 @@ def projectmanager_table(request):
     else:
         return redirect('/')
 
-def projectmanager_table(request):
-    if 'prid' in request.session:
-        if request.session.has_key('prid'):
-            prid = request.session['prid']
-        else:
-           return redirect('/')
-        pro = user_registration.objects.filter(id=prid)
-        projects = project.objects.filter(status__isnull = True).order_by('-id')
-        return render(request, 'projectmanager_table.html',{'pro':pro,'projects':projects})
-    else:
-        return redirect('/')
 
 def proMAN_acceptproj(request,id):
-    pro_sts = project.objects.filter(id=id).update(status="accepted")
+    
     if 'prid' in request.session:
         if request.session.has_key('prid'):
             prid = request.session['prid']
         else:
            return redirect('/')
+        pro_sts = project.objects.filter(id=id).update(status="accepted")
+
         pro = user_registration.objects.filter(id=prid)
-        projects = project.objects.filter(status__isnull = True).order_by('-id')
-        return render(request, 'projectmanager_table.html',{'pro':pro,'projects':projects})
+        msg_success = "Project accepted successfully"
+        return render(request, 'projectmanager_table.html',{'pro':pro,'msg_success':msg_success})
+    else:
+        return redirect('/')
 
 def proMAN_rejectproj(request,id):
    
@@ -5880,14 +5873,20 @@ def proMAN_rejectproj(request,id):
             prid = request.session['prid']
         else:
             return redirect('/')
+
+        pro = user_registration.objects.filter(id=prid)
         if request.method == 'POST':
             user_reason=request.POST.get('reply')
             rejectdate = datetime.now()
             pro_sts = project.objects.filter(id=id).update(user_reason= user_reason,status ='rejected',rejectdate=rejectdate)
-        
-        pro = user_registration.objects.filter(id=prid)
-        projects = project.objects.filter(status__isnull = True).order_by('-id')
-        return render(request, 'projectmanager_table.html',{'pro':pro,'projects':projects})
+            msg_success_sub = "Project Rejected successfully"
+            return render(request, 'projectmanager_table.html',{'pro':pro,'msg_success_sub':msg_success_sub})
+        else:
+            
+            projects = project.objects.filter(status__isnull = True).order_by('-id')
+            return render(request, 'projectmanager_table.html',{'pro':pro,'projects':projects})
+    else:
+        return redirect('/')
 
 
 def projectmanager_upprojects(request):
