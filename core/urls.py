@@ -748,6 +748,7 @@ urlpatterns = [
     re_path(r'^manindex/$', views.manindex, name='manindex'),
     re_path(r'^projectmanEmp/$', views.projectmanEmp, name='projectmanEmp'),
     re_path(r'^projectmanDev/$', views.projectmanDev, name='projectmanDev'),
+    re_path(r'^projectman_trainees/$', views.projectman_trainees, name='projectman_trainees'),
     re_path(r'^projectmanDevDashboard/(?P<id>\d+)/$', views.projectmanDevDashboard, name='projectmanDevDashboard'),
     re_path(r'^projectman_developer_attendance/(?P<id>\d+)/$', views.projectman_developer_attendance, name='projectman_developer_attendance'),
 

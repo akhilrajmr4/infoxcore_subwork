@@ -1124,16 +1124,16 @@ def Trainer_Currenttrainee(request, id):
     
         mem = user_registration.objects.filter(
             designation_id=usernametm) .filter(fullname=usernametm1)
-        d = create_team.objects.get(id=id)
+        d = previousTeam.objects.filter(teamname_id=id)
         des = designation.objects.get(designation='trainee')
-        vars = user_registration.objects.filter(team=d.id,designation=des.id).order_by('-id')
+        # vars = user_registration.objects.filter(team=d.id,designation=des.id).order_by('-id')
         # .filter(designation=des.id)
         # for item in vars:
         #     import pdb;pdb.set_trace()
         #     item['avg']=(item['attitude']+item['creativity']+item['workperformance'])/100
     
     
-        return render(request, 'Trainer_Currenttrainees.html', {'vars': vars, 'mem': mem})
+        return render(request, 'Trainer_Currenttrainees.html', {'d': d, 'mem': mem})
     else:
         return redirect('/')
 
@@ -6004,6 +6004,19 @@ def projectmanDev(request):
         return render(request, 'projectman_dev.html',{'pro':pro,'man':man})
     else:
         return redirect('/')
+def projectman_trainees(request):
+    if 'prid' in request.session:
+        if request.session.has_key('prid'):
+            prid = request.session['prid']
+        else:
+           return redirect('/')
+        pro = user_registration.objects.filter(id=prid)
+        pro_dep = user_registration.objects.get(id=prid)
+        des_id = designation.objects.get(designation="trainee")
+        man = user_registration.objects.filter(designation_id=des_id.id).filter(department_id=pro_dep.department_id,status="active").order_by("-id")
+        return render(request, 'projectman_trainees.html',{'pro':pro,'man':man})
+    else:
+        return redirect('/')
 
 def projectmanDevDashboard(request,id):
     if 'prid' in request.session:
@@ -7095,7 +7108,7 @@ def TLgivetasks(request,id):
            return redirect('/')
         mem = user_registration.objects.filter(id=tlid)
         time = datetime.now()
-        task = project_taskassign.objects.filter(tl_id=tlid).filter(id=id)
+        task = project_taskassign.objects.filter(developer_id=tlid).filter(id=id)
         return render(request, 'TLgivetasks.html', {'mem': mem, 'task': task, 'time': time})
     else:
         return redirect('/')
@@ -7107,7 +7120,7 @@ def TLgavetask(request,id):
         else:
            return redirect('/')
         mem = user_registration.objects.filter(id=tlid)
-        task = project_taskassign.objects.filter(tl_id=tlid).filter(id=id)
+        task = project_taskassign.objects.filter(developer_id=tlid).filter(id=id)
         return render(request, 'TLgavetask.html', {'mem': mem, 'task': task})
     else:
         return redirect('/')
