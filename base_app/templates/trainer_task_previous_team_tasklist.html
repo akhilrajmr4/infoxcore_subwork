@@ -7,8 +7,7 @@
 </style>
 
 <div class="row" style="padding-top: 20px;">
-    <div class="col-12 col-sm-2 col-md-2 col-lg-2"></div>
-    <div class="col-12 col-sm-8 col-md-8 col-lg-8 grid-margin ">
+    <div class="col-12 col-sm-8 col-md-8 col-lg-12 grid-margin ">
         <div class="card">
             <div class="card-body" style="height:auto">
 
@@ -33,10 +32,17 @@
                                 <th class="text-white">SNo.</th>
 
                                 <th class="text-white">
+                                    Name
+                                </th>
+                                <th class="text-white">
                                     Task
                                 </th>
-                                <th class="text-white">Deadline</th>
-                                <th class="text-white">Attached Files</th>
+                                <th class="text-white">Start Date</th>
+                                <th class="text-white">End Date</th>
+                                <th class="text-white">Submitted Date</th>
+                                <th class="text-white">Trainer File</th>
+                                <th class="text-white">Trainee Files</th>
+                                <th class="text-white">Delay</th>
 
                             </tr>
                         </thead>
@@ -49,10 +55,28 @@
                                 </td>
 
                                 <td>
+                                    {{i.user}}
+                                </td>
+                                <td>
                                     {{i.taskname}}
                                 </td>
                                 <td>
+                                    {{i.startdate|date:"d-m-Y"}}
+                                </td>
+                                <td>
                                     {{i.enddate|date:"d-m-Y"}}
+                                </td>
+                                <td>
+                                    {{i.submitteddate|date:"d-m-Y"}}
+                                </td>
+                                <td>
+
+                                {% if i.files %}
+                               
+                                    <a href="{{i.files.url}}" class="btn btn-outline-primary mdi mdi-format-vertical-align-bottom"
+                                    style="font-size: 15px;overflow: hidden  mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100;" download>Download</a>
+                                
+                                {% endif %}
                                 </td>
                                 <td>
 
@@ -62,6 +86,9 @@
                                     style="font-size: 15px;overflow: hidden  mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100;" download>Download</a>
                                 
                                 {% endif %}
+                                </td>
+                                 <td>
+                                     <a href="#" class="btn btn-outline-danger">{{i.delay}}</a>
                                 </td>
                             </tr>
                             {% endfor %}{% else %}
@@ -74,7 +101,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 
 

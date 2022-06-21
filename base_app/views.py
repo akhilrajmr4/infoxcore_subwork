@@ -2081,7 +2081,8 @@ def trainer_givetask(request, id):
             vars = trainer_task(user_id=list,taskname=name,description=desc,files=files,startdate=start,
                     enddate=end,task_status=task_status, team_name_id=team_name_id)
             vars.save()
-            return render(request, 'trainer_givetask.html', {'z': z, 'var': var})
+            msg_success = "Task Assigned Successfully"
+            return render(request, 'trainer_givetask.html', {'z': z, 'var': var, 'msg_success':msg_success})
         else:
             return render(request, 'trainer_givetask.html', {'z': z, 'var': var})
 

@@ -24,10 +24,14 @@
                             <tr data-href="#">
                                 <th> Trainee Name </th>
                                 <th> Task</th>
-                                <th style="padding-left: 40px;"> Attached File</th>
-                                <th style="padding-left: 55px;"> Status</th>
+                                <th> Start Date</th>
+                                <th> End Date</th>
+                                <th> Trainer File</th>
+                                <th> User File</th>
+                                <th> Status</th>
                                 <th>Task_Progress</th>
                                 <th>Progress</th>
+                                <th>Delay</th>
                             </tr>
                         </thead>
                         <tbody>{% if mem1 %} {% for i in tsk %}
@@ -35,6 +39,18 @@
                                 <td><img src="{{i.user.photo.url}}" alt="image" /> &nbsp;{{i.user}}
                                 </td>
                                 <td> {{i.taskname}}</td>
+                                <td> {{i.startdate|date:'d-m-Y'}}</td>
+                                <td> {{i.enddate|date:'d-m-Y'}}</td>
+                                <td>
+                                    {% if i.files %}
+                                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mt-1">
+                                        <a href="{{i.files.url}}"
+                                            class="btn btn-outline-success mdi mdi-format-vertical-align-bottom"
+                                            style="font-size: 15px;overflow: hidden  mr-2 ml-6 mt-2"
+                                            style="font-size: 15px; font-weight: 100;" download>Download</a>
+                                    </div>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {% if i.user_files %}
                                     <div class="col-6 col-sm-6 col-md-6 col-lg-6 mt-1">
@@ -74,14 +90,21 @@
                                     <button type="button" disabled class="btn btn-outline-primary btn-icon-text"
                                         data-toggle="modal" data-target="#myModal{{i.id}}">
                                         Progress
-                                    </button> {% else %}
+                                    </button> 
+                                    {% else %}
                                     <button type="button" class="btn btn-outline-primary btn-icon-text"
                                         data-toggle="modal" data-target="#myModal{{i.id}}">
                                         Progress
                                     </button>
+                                    {% endif %}
+                                </td>
+                                 <td>
+                                        <a href="#"
+                                            class="btn btn-outline-danger ">{{i.delay}}</a>
+                        
                                 </td>
 
-                            </tr>{% endif %} 
+                            </tr>
                             {% endfor %}{% else %}
                             <h5>Nothing to display...</h5>
                             {% endif %}

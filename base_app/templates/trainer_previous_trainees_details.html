@@ -12,7 +12,7 @@
                             <h4 class="card-description"> Personal Information </h4>
                         </div>
                         <div class="col-4 col-sm-4 col-md-2 col-lg-2">
-                            <img src="{{mem.photo.url}}" class="img-fluid rounded-circle mb-3 " alt="image" style="margin-right:20px">
+                            <img src="{{mem.photo.url}}" class="img-fluid rounded-circle mb-3 " alt="image" style="border-radius:50%;margin-right:20px">
                         </div>
                     </div>
                     <p class="card-description"> Personal details </p>
@@ -189,23 +189,21 @@
     </div>
 
     <script>
-
-        var config = {
+  
+var config = {
           type: 'pie',
           data: {
+            
             datasets: [{
               
               data: {{ data|safe }},
               backgroundColor: ['rgba(255, 99, 132, 0.5)',
               'rgba(54, 162, 235, 0.5)',
-              'rgba(255, 206, 86, 0.5)',
-              'rgba(75, 192, 192, 0.5)',
-              'rgba(153, 102, 255, 0.5)',
-              'rgba(255, 159, 64, 0.5)'],
-              label: 'workperformance'
+              'rgba(255, 206, 86, 0.5)'
+              ],
             }],
             
-            labels: ['workperformance','Attitude','Creativity']
+            labels: ['workperformance','Attitude','Creativity'],
             
           },
           options: {
@@ -217,39 +215,53 @@
           var ctx = document.getElementById('pie-chart').getContext('2d');
           window.myPie = new Chart(ctx, config);
         };
-  
+    
       </script>
       <script>
-  
-  let ctx = document.getElementById("chart").getContext("2d");
-  let chart = new Chart(ctx, {
+    
+    let ctx = document.getElementById("chart").getContext("2d");
+    let chart = new Chart(ctx, {
     type: "bar",
     data: {
      labels: ['workperformance','Attitude','Creativity'],
      datasets: [
       {
-        label: "Performance",
-        backgroundColor: "#79AEC8",
-        borderColor: "#417690",
+        
         
         data: {{ data|safe }},
+        
+        
         backgroundColor: ['rgba(255, 99, 132, 0.2)',
         'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)'],
-  
+        'rgba(255, 206, 86, 0.2)'
+        
+        ],
+        
+
       }
      ]
     },
-    options: {
-      title: {
-        text: "Performance",
-       display: true
-      }
-     }
-  });
+    options: {   
+        legend: {
+        display: false
+        },
+       
+        scales: {
+        	yAxes: [{
+            	ticks: {
+                	beginAtZero: true,
+                    max:100
+            	}
+        	}]
+    	}
+        
+        
+    }
   
-      </script>
+        
+    
+    
+});
+
+    </script>
     {%endblock%}
