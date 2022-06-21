@@ -19,7 +19,7 @@
             <div class="col-md-4">
               <div class="mr-2 ml-3 mt-2" style="color: white;">Task</div>
             </div>
-              
+
             <div class="col-md-8 ">
               <h4 class="mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100;color:white;">{{ta.task}}</h4>
               </select>
@@ -30,7 +30,8 @@
               <div class="mr-2 ml-3 mt-2" style="color:white;">Submission Date </div>
             </div>
             <div class="col-md-8 ">
-              <h4 class="mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100; color: white;">{{time|date:"d-m-Y"}}</h4>
+              <h4 class="mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100; color: white;">{{time|date:"d-m-Y"}}
+              </h4>
               </select>
             </div>
           </div>
@@ -39,11 +40,12 @@
               <div class=" mr-2 ml-3 mt-2 " style="color:white;">Due Date </div>
             </div>
             <div class="col-md-8 ">
-              <h4 class="mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100;color:white;">{{ta.enddate|date:"d-m-Y"}}</h4>
+              <h4 class="mr-2 ml-6 mt-2" style="font-size: 15px; font-weight: 100;color:white;">
+                {{ta.enddate|date:"d-m-Y"}}</h4>
               </select>
             </div>
           </div>
-                        
+
           {% endfor %}
 
           <div class="row pt-1">
@@ -72,8 +74,8 @@
 
             </div>
             <div class="col-md-8 ">
-              <input type="text"class="form-control" style="color:#ffffff; width: 100%;" name="gitlink" placeholder="Paste your Git link here"
-                required></input>
+              <input type="text" class="form-control" style="color:#ffffff; width: 100%;" name="gitlink"
+                placeholder="Paste your Git link here" required></input>
             </div>
           </div>
 
@@ -90,5 +92,22 @@
 
   </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if msg_success %}
+<script>
+  Swal.fire({
+    position: 'center',
+    icon: 'success',
+    text: '{{ msg_success }}',
+    showConfirmButton: false,
+    timer: 2000
+  }).then(function () {
+    javascript: history.go(-4);
+  })
 
+</script>
+{% endif %}
 {% endblock %}

@@ -7018,22 +7018,18 @@ def TLtaskformsubmit(request,id):
             task.status = 'submitted'
             x = task.enddate
             y = var
-            event = Event.objects.values_list('start_time',flat=True)
-            z = 0
-            day_delta = timedelta(days=1)
-            for i in range((var-task.enddate).days):
-                n = (x + i*day_delta)
-                if n in event:
-                    z=z+1
+            event = Event.objects.filter(start_time__range=(task.enddate,datetime.now().date())).count()
+            
             delta = datetime.now().date() - task.enddate
-            delay = delta.days - z
+            delay = delta.days - event
             if delay > 0:
                 task.delay = delay
                 task.save()
             else:
                 task.delay = 0
                 task.save()
-            
+            msg_success = "Task submitted successfully"
+            return render(request, 'TLgivetasks.html', {'mem': mem, 'msg_success': msg_success})
         return render(request, 'TLsuccess.html', {'mem': mem, 'task': task})
     else:
         return redirect('/')
@@ -7689,21 +7685,18 @@ def DEVtaskformsubmit(request, id):
         var = datetime.now().date()
         x = task.enddate
         y = var
-        event = Event.objects.values_list('start_time',flat=True)
-        z = 0
-        day_delta = timedelta(days=1)
-        for i in range((var-task.enddate).days):
-            n = (x + i*day_delta)
-            if n in event:
-                z=z+1
+        event = Event.objects.filter(start_time__range=(task.enddate,datetime.now().date())).count()
+       
         delta = datetime.now().date() - task.enddate
-        delay = delta.days - z
+        delay = delta.days - event
         if delay > 0:
             task.delay = delay
             task.save()
         else:
             task.delay = 0
             task.save()
+        msg_success = "Task submitted successfully"
+        return render(request, 'DEVtaskform.html', {'dev': dev, 'msg_success': msg_success})
     return render(request, 'DEVtasksumitted.html', {'dev': dev, 'task': task})
 
 def DEVtask(request, id):

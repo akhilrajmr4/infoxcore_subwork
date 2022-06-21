@@ -127,12 +127,24 @@
   </div>
   <div class="col-md-2"></div>
 </div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% if msg_success %}
-  <script>
-   alert('{{msg_success}}')
-     javascript: history.go(-3);
-  </script>
-  {% endif %}
+<script>
+  Swal.fire({
+    position: 'center',
+    icon: 'success',
+    text: '{{ msg_success }}',
+    showConfirmButton: false,
+    timer: 2000
+  }).then(function () {
+    javascript: history.go(-3);
+  })
+
+</script>
+{% endif %}
 <script>
    $(function() {
         var date = new Date();
