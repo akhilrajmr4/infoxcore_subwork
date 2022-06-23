@@ -6611,101 +6611,16 @@ def TLdashboard(request):
         user_id = user_registration.objects.get(id=tlid)
         conf_sal = int(user_id.confirm_salary)
 
+        previous_sal_main = 0
+        this_month_sal_main = 0
+
         if conf_sal > 0:
+            prev_current = 0
 
             last_day_of_prev_month = date.today().replace(day=1) - timedelta(days=1)
             start_day_of_prev_month = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month.day)
+
            
-            holly_day = Event.objects.filter(start_time__range=(start_day_of_prev_month,last_day_of_prev_month)).count()
-            # print("Holly day:", holly_day)
-            working_days = ((last_day_of_prev_month - start_day_of_prev_month).days - holly_day) + 1
-
-            one_day_sal = conf_sal / working_days
-            # print(one_day_sal)
-
-            # print("First day of prev month:", start_day_of_prev_month)
-            # print("Last day of prev month:", last_day_of_prev_month)
-
-            pro = project_taskassign.objects.filter(startdate__range=(start_day_of_prev_month,last_day_of_prev_month),enddate__range=(start_day_of_prev_month,last_day_of_prev_month), submitted_date__isnull = True).filter(developer_id= tlid).values('startdate','enddate')
-            pro_sub = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_prev_month,last_day_of_prev_month))).filter(enddate__range=(start_day_of_prev_month,last_day_of_prev_month), submitted_date__isnull = True).filter(developer_id= tlid).values('startdate','enddate')
-            pro_start = project_taskassign.objects.filter(startdate__range=(start_day_of_prev_month,last_day_of_prev_month),enddate__range=(start_day_of_prev_month,last_day_of_prev_month),submitted_date__isnull = False).filter(developer_id= tlid).values('startdate','enddate','submitted_date')
-            pro_start_sub = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_prev_month,last_day_of_prev_month))).filter(enddate__range=(start_day_of_prev_month,last_day_of_prev_month),submitted_date__isnull = False).filter(developer_id= tlid).values('startdate','enddate','submitted_date')
-
-
-            print("pre work indo :", pro.count())
-            prev = 0
-            for pro in pro:
-                end_date =  (pro['enddate'])
-                month_last = last_day_of_prev_month
-                holy = Event.objects.filter(start_time__range=(end_date,month_last)).count()
-                delay_days = (month_last - end_date).days
-                work_days = delay_days - holy
-
-                prev = prev +  work_days
-            print("work Sub :", pro_sub.count())
-            for pro_sub in pro_sub:
-                end_date =  (pro_sub['enddate'])
-                month_last = last_day_of_prev_month
-                holy = Event.objects.filter(start_time__range=(end_date,month_last)).count()
-                delay_days = (month_last - end_date).days
-                work_days = delay_days - holy
-
-                prev = prev +  work_days
-            # print(prev)
-
-            yes_sub = 0
-
-            for pro_start in pro_start:
-                end_date =  (pro_start['enddate'])
-                submitted_date =  (pro_start['submitted_date'])
-                month_last = last_day_of_prev_month
-
-                if submitted_date >= last_day_of_prev_month:
-                    
-                    holy = Event.objects.filter(start_time__range=(end_date,month_last)).count()
-                    delay_days = (month_last - end_date).days
-                    work_days = delay_days - holy
-
-                    yes_sub = yes_sub + work_days
-                else:
-                    holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
-                    delay_days = (submitted_date - end_date).days
-                    work_days = delay_days - holy
-
-                    yes_sub = yes_sub + work_days
-
-            for pro_start_sub in pro_start_sub:
-                end_date =  (pro_start_sub['enddate'])
-                submitted_date =  (pro_start_sub['submitted_date'])
-                month_last = last_day_of_prev_month
-
-                if submitted_date >= last_day_of_prev_month:
-                    
-                    holy = Event.objects.filter(start_time__range=(end_date,month_last)).count()
-                    delay_days = (month_last - end_date).days
-                    work_days = delay_days - holy
-
-                    yes_sub = yes_sub + work_days
-                else:
-                    holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
-                    delay_days = (submitted_date - end_date).days
-                    work_days = delay_days - holy
-
-                    yes_sub = yes_sub + work_days
-            # print(yes_sub)
-            pre_tot_delay = prev + yes_sub
-            delay_sal = one_day_sal * pre_tot_delay
-            # print(delay_sal)
-
-            previous_sal_main = conf_sal - delay_sal 
-            if previous_sal_main <= 0:
-                previous_sal_main = 0
-
-
-
-
-
-            
 
             start_day_of_this_month = date.today().replace(day=1)
 
@@ -6716,43 +6631,76 @@ def TLdashboard(request):
                 return next_month - timedelta(days=next_month.day)
 
             last_day_of_this_month = last_day_of_month(date.today())
-            print("First day of This  month:", start_day_of_this_month)
-            print("Last day of This month:", last_day_of_this_month)
+            # print("First day of This  month:", start_day_of_this_month)
+            # print("Last day of This month:", last_day_of_this_month)
 
             holly_day_current = Event.objects.filter(start_time__range=(start_day_of_this_month,last_day_of_this_month)).count()
-            print("Holly day:", holly_day_current)
+            # print("Holly day:", holly_day_current)
             working_days_current = ((last_day_of_this_month - start_day_of_this_month).days - holly_day_current) + 1
-            print("Current Month day:", working_days_current)
-            one_day_sal_current = conf_sal / working_days
-            print("One Day:", one_day_sal_current)
+            # print("Current Month day:", working_days_current)
+            one_day_sal_current = round((conf_sal / working_days_current), 2)
+            # print("One Day:", one_day_sal_current)
+
+            This_month_leave_count = leave.objects.filter(from_date__gte = start_day_of_this_month, to_date__lte = date.today(), user_id = tlid).count()
+            This_month_leave_count_sub = leave.objects.filter(from_date__range=(start_day_of_this_month,date.today()),to_date__range=(start_day_of_this_month,date.today()), user_id = tlid).values('from_date','to_date')
+            this_month_leave = 0
+            this_month_leave_in_work = 0
+
+            if This_month_leave_count >= 1:
+
+                for This_month_leave_count_sub in This_month_leave_count_sub:
+
+                    from_date = (This_month_leave_count_sub['from_date'])
+                    to_date =  (This_month_leave_count_sub['to_date'])
+
+                    tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
+                    days_leave = (to_date - from_date).days
+                    if days_leave >= 1:
+                        days_leave = days_leave + 1
+                    tot_days = days_leave - tot_hollyday
+                    this_month_leave = this_month_leave + tot_days
+
+            print("This month leave count", this_month_leave )
 
 
             pro_current = project_taskassign.objects.filter(startdate__range=(start_day_of_this_month,date.today()),enddate__range=(start_day_of_this_month,date.today()), submitted_date__isnull = True).filter(developer_id= tlid).values('startdate','enddate')
-            pro_current_sub = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_this_month,date.today()))).filter(enddate__range=(start_day_of_this_month,date.today()), submitted_date__isnull = True).filter(developer_id= tlid).values('startdate','enddate')
             pro_start_current = project_taskassign.objects.filter(startdate__range=(start_day_of_this_month,date.today()),enddate__range=(start_day_of_this_month,date.today()),submitted_date__isnull = False).filter(developer_id= tlid).values('startdate','enddate','submitted_date')
+            pro_current_sub = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_this_month,date.today()))).filter(enddate__range=(start_day_of_this_month,date.today()), submitted_date__isnull = True).filter(developer_id= tlid).values('startdate','enddate')
             pro_start_current_sub = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_this_month,date.today()))).filter(enddate__range=(start_day_of_this_month,date.today()),submitted_date__isnull = False).filter(developer_id= tlid).values('startdate','enddate','submitted_date')
 
+            
+            pro_this_month_have_submission = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_this_month,date.today())), ~Q(enddate__range=(start_day_of_this_month,date.today())),submitted_date__range=(start_day_of_this_month,date.today())).filter(developer_id= tlid).values('submitted_date')
+            pro_this_month_have_not_submission = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_this_month,date.today())), ~Q(enddate__range=(start_day_of_this_month,date.today())),submitted_date__isnull = True).filter(developer_id= tlid).values('startdate','enddate')
 
-            prev_current = 0
-
+            yes_current = 0
+            print("From date and to date are in this month it does not have submission date  :", pro_current.count())
             for pro_current in pro_current:
                 end_date =  (pro_current['enddate'])
                 holy = Event.objects.filter(start_time__range=(end_date,date.today())).count()
                 delay_days = (date.today() - end_date).days
                 work_days = delay_days - holy
 
-                prev_current = prev_current +  work_days
+                yes_current = yes_current +  work_days
 
-            for pro_current_sub in pro_current_sub:
-                end_date =  (pro_current_sub['enddate'])
-                holy = Event.objects.filter(start_time__range=(end_date,date.today())).count()
-                delay_days = (date.today() - end_date).days
-                work_days = delay_days - holy
+                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,date.today()),to_date__range=(end_date,date.today()), user_id = tlid).values('from_date','to_date')
+                # for leaves_in_work in leaves_in_work:
+                #     from_date = (leaves_in_work['from_date'])
+                #     to_date =  (leaves_in_work['to_date'])
+                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
+                #     days_leave = (to_date - from_date).days
+                #     tot_days = days_leave - tot_hollyday
 
-                prev_current = prev_current +  work_days
-            
-            yes_current = 0
+                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
 
+
+
+
+
+
+
+
+
+            print("From date and to date are in this month it does have submission date :", pro_start_current.count())
             for pro_start_current in pro_start_current:
                 end_date =  (pro_start_current['enddate'])
                 submitted_date =  (pro_start_current['submitted_date'])
@@ -6761,24 +6709,114 @@ def TLdashboard(request):
                 work_days = delay_days - holy
 
                 yes_current = yes_current + work_days
+
+
+                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,submitted_date),to_date__range=(end_date,submitted_date), user_id = tlid).values('from_date','to_date')
+                # for leaves_in_work in leaves_in_work:
+                #     from_date = (leaves_in_work['from_date'])
+                #     to_date =  (leaves_in_work['to_date'])
+                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
+                #     days_leave = (to_date - from_date).days
+                #     tot_days = days_leave - tot_hollyday
+
+                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
+
+            print("End date this month it does not have submission date  :", pro_current_sub.count())
+            for pro_current_sub in pro_current_sub:
+                end_date =  (pro_current_sub['enddate'])
+                holy = Event.objects.filter(start_time__range=(end_date,date.today())).count()
+                delay_days = (date.today() - end_date).days
+                work_days = delay_days - holy
+
+                yes_current = yes_current +  work_days
+
                 
-            print("This work indo :", pro_start_current_sub.count())
+                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,date.today()),to_date__range=(end_date,date.today()), user_id = tlid).values('from_date','to_date')
+                # for leaves_in_work in leaves_in_work:
+                #     from_date = (leaves_in_work['from_date'])
+                #     to_date =  (leaves_in_work['to_date'])
+                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
+                #     days_leave = (to_date - from_date).days
+                #     tot_days = days_leave - tot_hollyday
+
+                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
+            
+
+           
+                
+            print("End date this month it have submission date :", pro_start_current_sub.count())
             for pro_start_current_sub in pro_start_current_sub:
-                end_date =  (pro_start_current['enddate'])
-                submitted_date =  (pro_start_current['submitted_date'])
+                end_date =  (pro_start_current_sub['enddate'])
+                submitted_date =  (pro_start_current_sub['submitted_date'])
                 holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
                 delay_days = (submitted_date - end_date).days
                 work_days = delay_days - holy
 
                 yes_current = yes_current + work_days
 
-            print(yes_current)
-            current_tot_delay = prev_current + yes_current
-            print(current_tot_delay)
-            delay_sal_current = one_day_sal_current * current_tot_delay
-            print(delay_sal_current)
-            this_month_sal_main = conf_sal - delay_sal_current
-            print(this_month_sal_main)
+                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,submitted_date),to_date__range=(end_date,submitted_date), user_id = tlid).values('from_date','to_date')
+                # for leaves_in_work in leaves_in_work:
+                #     from_date = (leaves_in_work['from_date'])
+                #     to_date =  (leaves_in_work['to_date'])
+                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
+                #     days_leave = (to_date - from_date).days
+                #     tot_days = days_leave - tot_hollyday
+
+                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
+
+
+            print("End date and start date not in this month but  submission date in this :", pro_this_month_have_submission.count())
+            for pro_this_month_have_submission in pro_this_month_have_submission:
+                submitted_date =  (pro_this_month_have_submission['submitted_date'])
+                holy = Event.objects.filter(start_time__range=(submitted_date,date.today())).count()
+                delay_days = (date.today() - submitted_date).days
+                work_days = delay_days - holy
+
+                yes_current = yes_current + work_days
+
+
+                # leaves_in_work =  leave.objects.filter(from_date__range=(start_day_of_this_month,submitted_date),to_date__range=(start_day_of_this_month,submitted_date), user_id = tlid).values('from_date','to_date')
+                # for leaves_in_work in leaves_in_work:
+                #     from_date = (leaves_in_work['from_date'])
+                #     to_date =  (leaves_in_work['to_date'])
+                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
+                #     days_leave = (to_date - from_date).days
+                #     tot_days = days_leave - tot_hollyday
+
+                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
+
+
+            print("From date and to date are not in this month it does not have submission date :", pro_this_month_have_not_submission.count())
+            for pro_this_month_have_not_submission in pro_this_month_have_not_submission:
+                end_date = (pro_this_month_have_not_submission['enddate'])
+
+                if end_date <= date.today():
+
+                    holy = Event.objects.filter(start_time__range=(start_day_of_this_month,date.today())).count()
+                    delay_days = (date.today() - start_day_of_this_month).days
+                    work_days = delay_days - holy
+
+                    yes_current = yes_current + work_days
+
+
+                    # leaves_in_work =  leave.objects.filter(from_date__range=(start_day_of_this_month,date.today()),to_date__range=(start_day_of_this_month,date.today()), user_id = tlid).values('from_date','to_date')
+                    # for leaves_in_work in leaves_in_work:
+                    #     from_date = (leaves_in_work['from_date'])
+                    #     to_date =  (leaves_in_work['to_date'])
+                    #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
+                    #     days_leave = (to_date - from_date).days
+                    #     tot_days = days_leave - tot_hollyday
+
+                    #     this_month_leave_in_work = this_month_leave_in_work + tot_days
+
+
+
+            print("This month work in leave count", this_month_leave_in_work)
+            print("Current Month Delay", yes_current)
+            delay_sal_current = round((one_day_sal_current * yes_current), 2)
+            print("Delay salary Cut", delay_sal_current)
+            this_month_sal_main = round((conf_sal - delay_sal_current), 2)
+            print("This month total salary",this_month_sal_main)
 
             if this_month_sal_main <= 0:
                 this_month_sal_main = 0
