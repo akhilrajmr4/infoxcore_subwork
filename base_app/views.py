@@ -6609,7 +6609,24 @@ def TLdashboard(request):
             return redirect('/')
 
         user_id = user_registration.objects.get(id=tlid)
-        conf_sal = int(user_id.confirm_salary)
+        conf_sal = user_id.confirm_salary
+        if conf_sal == "":
+            conf_sal = 0
+        else:
+            conf_sal = int(user_id.confirm_salary)
+
+        last_day_of_prev_month = date.today().replace(day=1) - timedelta(days=1)
+        start_day_of_prev_month = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month.day)
+
+        start_day_of_this_month = date.today().replace(day=1)
+
+        def last_day_of_month(any_day):
+            # get close to the end of the month for any day, and add 4 days 'over'
+            next_month = any_day.replace(day=28) + timedelta(days=4)
+            # subtract the number of remaining 'overage' days to get last day of current month, or said programattically said, the previous day of the first of next month
+            return next_month - timedelta(days=next_month.day)
+
+        last_day_of_this_month = last_day_of_month(date.today())
 
         previous_sal_main = 0
         this_month_sal_main = 0
@@ -6645,7 +6662,8 @@ def TLdashboard(request):
 
 
             prev_current_delay = 0
-            print("From date and to date are in previous month it does not have submission date  :", pre_current.count())
+            prev_current_delay = 0
+            print("TL From date and to date are in previous month it does not have submission date  :", pre_current.count())
             for pre_current in pre_current:
                 end_date =  (pre_current['enddate'])
                 holy = Event.objects.filter(start_time__range=(end_date,last_day_of_prev_month)).count()
@@ -6654,23 +6672,24 @@ def TLdashboard(request):
 
                 prev_current_delay = prev_current_delay +  work_days
 
-       
+        
 
-            print("From date and to date are in previous month it does have submission date :", pre_start_current.count())
+            print("TL From date and to date are in previous month it does have submission date :", pre_start_current.count())
             for pre_start_current in pre_start_current:
                 end_date =  (pre_start_current['enddate'])
                 submitted_date =  (pre_start_current['submitted_date'])
+
                 if submitted_date <= end_date:
                     work_days = 0
-                    prev_current_delay = prev_current_delay + work_days
+                    prev_current_delay = prev_current_delay +  work_days
                 else:
                     holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
                     delay_days = (submitted_date - end_date).days
                     work_days = delay_days - holy
+                    
+                    prev_current_delay = prev_current_delay +  work_days
 
-                    prev_current_delay = prev_current_delay + work_days
-
-            print("End date previous month it does not have submission date  :", pre_current_sub.count())
+            print("TL End date previous month it does not have submission date  :", pre_current_sub.count())
             for pre_current_sub in pre_current_sub:
                 end_date =  (pre_current_sub['enddate'])
                 holy = Event.objects.filter(start_time__range=(end_date,last_day_of_prev_month)).count()
@@ -6681,13 +6700,14 @@ def TLdashboard(request):
 
                 
                 
-            print("End date previous month it have submission date is previous month :", pre_start_current_sub.count())
+            print("TL End date previous month it have submission date is previous month :", pre_start_current_sub.count())
             for pre_start_current_sub in pre_start_current_sub:
                 end_date =  (pre_start_current_sub['enddate'])
                 submitted_date =  (pre_start_current_sub['submitted_date'])
 
                 if submitted_date <= end_date:
                     work_days = 0
+                    prev_current_delay = prev_current_delay +  work_days
                 else:
                     holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
                     delay_days = (submitted_date - end_date).days
@@ -6695,33 +6715,32 @@ def TLdashboard(request):
 
                     prev_current_delay = prev_current_delay +  work_days
 
-             
+                
 
 
-            print("End date and start date not in previous month but submission date in previous month :", pre_this_month_have_submission.count())
+            print("TL End date and start date not in previous month but submission date in previous month :", pre_this_month_have_submission.count())
             for pre_this_month_have_submission in pre_this_month_have_submission:
                 submitted_date =  (pre_this_month_have_submission['submitted_date'])
-
                 if start_day_of_prev_month <= submitted_date:
 
                     holy = Event.objects.filter(start_time__range=(start_day_of_prev_month,submitted_date )).count()
-                    delay_days = (submitted_date - start_day_of_prev_month).days
+                    delay_days = (submitted_date - start_day_of_prev_month).days + 1
                     work_days = delay_days - holy
 
                     prev_current_delay = prev_current_delay + work_days
 
 
-      
+        
 
 
-            print("From date and to date are not in previous month it does not have submission date :", pre_this_month_have_not_submission.count())
+            print("TL From date and to date are not in previous month it does not have submission date :", pre_this_month_have_not_submission.count())
             for pre_this_month_have_not_submission in pre_this_month_have_not_submission:
                 end_date = (pre_this_month_have_not_submission['enddate'])
 
                 if end_date <= last_day_of_prev_month:
 
                     holy = Event.objects.filter(start_time__range=(start_day_of_prev_month,last_day_of_prev_month)).count()
-                    delay_days = (last_day_of_prev_month - start_day_of_prev_month).days + 1
+                    delay_days = (last_day_of_prev_month - start_day_of_prev_month).days  + 1
                     work_days = delay_days - holy
 
                     prev_current_delay = prev_current_delay + work_days
@@ -6799,22 +6818,6 @@ def TLdashboard(request):
 
                 yes_current = yes_current +  work_days
 
-                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,date.today()),to_date__range=(end_date,date.today()), user_id = tlid).values('from_date','to_date')
-                # for leaves_in_work in leaves_in_work:
-                #     from_date = (leaves_in_work['from_date'])
-                #     to_date =  (leaves_in_work['to_date'])
-                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
-                #     days_leave = (to_date - from_date).days
-                #     tot_days = days_leave - tot_hollyday
-
-                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
-
-
-
-
-
-
-
 
 
             print("From date and to date are in this month it does have submission date :", pro_start_current.count())
@@ -6832,15 +6835,7 @@ def TLdashboard(request):
                     yes_current = yes_current + work_days
 
 
-                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,submitted_date),to_date__range=(end_date,submitted_date), user_id = tlid).values('from_date','to_date')
-                # for leaves_in_work in leaves_in_work:
-                #     from_date = (leaves_in_work['from_date'])
-                #     to_date =  (leaves_in_work['to_date'])
-                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
-                #     days_leave = (to_date - from_date).days
-                #     tot_days = days_leave - tot_hollyday
 
-                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
 
             print("End date this month it does not have submission date  :", pro_current_sub.count())
             for pro_current_sub in pro_current_sub:
@@ -6852,16 +6847,7 @@ def TLdashboard(request):
                 yes_current = yes_current +  work_days
 
                 
-                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,date.today()),to_date__range=(end_date,date.today()), user_id = tlid).values('from_date','to_date')
-                # for leaves_in_work in leaves_in_work:
-                #     from_date = (leaves_in_work['from_date'])
-                #     to_date =  (leaves_in_work['to_date'])
-                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
-                #     days_leave = (to_date - from_date).days
-                #     tot_days = days_leave - tot_hollyday
 
-                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
-            
 
            
                 
@@ -6872,6 +6858,7 @@ def TLdashboard(request):
 
                 if submitted_date <= end_date:
                     work_days = 0
+                    yes_current = yes_current + work_days
                 else:
 
                     holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
@@ -6880,38 +6867,22 @@ def TLdashboard(request):
 
                     yes_current = yes_current + work_days
 
-                # leaves_in_work =  leave.objects.filter(from_date__range=(end_date,submitted_date),to_date__range=(end_date,submitted_date), user_id = tlid).values('from_date','to_date')
-                # for leaves_in_work in leaves_in_work:
-                #     from_date = (leaves_in_work['from_date'])
-                #     to_date =  (leaves_in_work['to_date'])
-                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
-                #     days_leave = (to_date - from_date).days
-                #     tot_days = days_leave - tot_hollyday
 
-                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
 
 
             print("End date and start date not in this month but  submission date in this :", pro_this_month_have_submission.count())
             for pro_this_month_have_submission in pro_this_month_have_submission:
 
-               if start_day_of_this_month <= submitted_date:
+            
                 submitted_date =  (pro_this_month_have_submission['submitted_date'])
-                holy = Event.objects.filter(start_time__range=(submitted_date,start_day_of_this_month)).count()
-                delay_days = (start_day_of_this_month - submitted_date).days
+                holy = Event.objects.filter(start_time__range=(start_day_of_this_month,submitted_date )).count()
+                delay_days = (submitted_date - start_day_of_this_month).days + 1
                 work_days = delay_days - holy
 
                 yes_current = yes_current + work_days
 
 
-                # leaves_in_work =  leave.objects.filter(from_date__range=(start_day_of_this_month,submitted_date),to_date__range=(start_day_of_this_month,submitted_date), user_id = tlid).values('from_date','to_date')
-                # for leaves_in_work in leaves_in_work:
-                #     from_date = (leaves_in_work['from_date'])
-                #     to_date =  (leaves_in_work['to_date'])
-                #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
-                #     days_leave = (to_date - from_date).days
-                #     tot_days = days_leave - tot_hollyday
 
-                #     this_month_leave_in_work = this_month_leave_in_work + tot_days
 
 
             print("From date and to date are not in this month it does not have submission date :", pro_this_month_have_not_submission.count())
@@ -6927,15 +6898,7 @@ def TLdashboard(request):
                     yes_current = yes_current + work_days
 
 
-                    # leaves_in_work =  leave.objects.filter(from_date__range=(start_day_of_this_month,date.today()),to_date__range=(start_day_of_this_month,date.today()), user_id = tlid).values('from_date','to_date')
-                    # for leaves_in_work in leaves_in_work:
-                    #     from_date = (leaves_in_work['from_date'])
-                    #     to_date =  (leaves_in_work['to_date'])
-                    #     tot_hollyday = Event.objects.filter(start_time__range=(from_date,to_date)).count()
-                    #     days_leave = (to_date - from_date).days
-                    #     tot_days = days_leave - tot_hollyday
-
-                    #     this_month_leave_in_work = this_month_leave_in_work + tot_days
+    
 
 
 
@@ -7696,7 +7659,24 @@ def devdashboard(request):
 
 
     user_id = user_registration.objects.get(id=devid)
-    conf_sal = int(user_id.confirm_salary)
+    conf_sal = user_id.confirm_salary
+    if conf_sal == "":
+        conf_sal = 0
+    else:
+        conf_sal = int(user_id.confirm_salary)
+
+    last_day_of_prev_month = date.today().replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month.day)
+
+    start_day_of_this_month = date.today().replace(day=1)
+
+    def last_day_of_month(any_day):
+        # get close to the end of the month for any day, and add 4 days 'over'
+        next_month = any_day.replace(day=28) + timedelta(days=4)
+        # subtract the number of remaining 'overage' days to get last day of current month, or said programattically said, the previous day of the first of next month
+        return next_month - timedelta(days=next_month.day)
+
+    last_day_of_this_month = last_day_of_month(date.today())
 
     previous_sal_main = 0
     this_month_sal_main = 0
@@ -7704,8 +7684,7 @@ def devdashboard(request):
     if conf_sal > 0:
         
 
-        last_day_of_prev_month = date.today().replace(day=1) - timedelta(days=1)
-        start_day_of_prev_month = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month.day)
+        
 
 
         prev_holly_day = Event.objects.filter(start_time__range=(start_day_of_prev_month,last_day_of_prev_month)).count()
@@ -7731,8 +7710,14 @@ def devdashboard(request):
 
 
 
+        pre_month_leave_count = Event.objects.filter(start_time__gte = "2022-05-01", start_time__lte = "2022-05-27").count()   
+        print("pre hollyday in gte lte", pre_month_leave_count)
+        pre_month_leave_count_sub = Event.objects.filter(start_time__range=("2022-05-01", "2022-05-27")).count()
+        print("pre hollyday in range", pre_month_leave_count_sub)    
+
+
         prev_current_delay = 0
-        print("From date and to date are in previous month it does not have submission date  :", pre_current.count())
+        print("dev From date and to date are in previous month it does not have submission date  :", pre_current.count())
         for pre_current in pre_current:
             end_date =  (pre_current['enddate'])
             holy = Event.objects.filter(start_time__range=(end_date,last_day_of_prev_month)).count()
@@ -7741,23 +7726,22 @@ def devdashboard(request):
 
             prev_current_delay = prev_current_delay +  work_days
 
-    
-
-        print("From date and to date are in previous month it does have submission date :", pre_start_current.count())
+        print("dev From date and to date are in previous month it does have submission date :", pre_start_current.count())
         for pre_start_current in pre_start_current:
             end_date =  (pre_start_current['enddate'])
             submitted_date =  (pre_start_current['submitted_date'])
-            if submitted_date <= end_date:
+
+            delay_days = (submitted_date - end_date).days
+            if delay_days <= 0:
                 work_days = 0
-                prev_current_delay = prev_current_delay + work_days
+                prev_current_delay = prev_current_delay +  work_days
             else:
-                holy = Event.objects.filter(start_time__range=(start_day_of_prev_month,submitted_date)).count()
-                delay_days = (submitted_date - start_day_of_prev_month).days
+                delay_days = (submitted_date - end_date).days
+                holy = Event.objects.filter(start_time__gte=end_date,start_time__lte = submitted_date).count()
                 work_days = delay_days - holy
-
-                prev_current_delay = prev_current_delay + work_days
-
-        print("End date previous month it does not have submission date  :", pre_current_sub.count())
+                prev_current_delay = prev_current_delay +  work_days
+                
+        print("dev End date previous month it does not have submission date  :", pre_current_sub.count())
         for pre_current_sub in pre_current_sub:
             end_date =  (pre_current_sub['enddate'])
             holy = Event.objects.filter(start_time__range=(end_date,last_day_of_prev_month)).count()
@@ -7768,13 +7752,14 @@ def devdashboard(request):
 
             
             
-        print("End date previous month it have submission date is previous month :", pre_start_current_sub.count())
+        print("dev End date previous month it have submission date is previous month :", pre_start_current_sub.count())
         for pre_start_current_sub in pre_start_current_sub:
             end_date =  (pre_start_current_sub['enddate'])
             submitted_date =  (pre_start_current_sub['submitted_date'])
 
             if submitted_date <= end_date:
                 work_days = 0
+                prev_current_delay = prev_current_delay +  work_days
             else:
                 holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
                 delay_days = (submitted_date - end_date).days
@@ -7785,13 +7770,13 @@ def devdashboard(request):
             
 
 
-        print("End date and start date not in previous month but submission date in previous month :", pre_this_month_have_submission.count())
+        print("dev End date and start date not in previous month but submission date in previous month :", pre_this_month_have_submission.count())
         for pre_this_month_have_submission in pre_this_month_have_submission:
             submitted_date =  (pre_this_month_have_submission['submitted_date'])
             if start_day_of_prev_month <= submitted_date:
 
                 holy = Event.objects.filter(start_time__range=(start_day_of_prev_month,submitted_date )).count()
-                delay_days = (submitted_date - start_day_of_prev_month).days
+                delay_days = (submitted_date - start_day_of_prev_month).days + 1
                 work_days = delay_days - holy
 
                 prev_current_delay = prev_current_delay + work_days
@@ -7800,17 +7785,18 @@ def devdashboard(request):
     
 
 
-        print("From date and to date are not in previous month it does not have submission date :", pre_this_month_have_not_submission.count())
+        print("dev From date and to date are not in previous month it does not have submission date :", pre_this_month_have_not_submission.count())
         for pre_this_month_have_not_submission in pre_this_month_have_not_submission:
             end_date = (pre_this_month_have_not_submission['enddate'])
 
             if end_date <= last_day_of_prev_month:
 
                 holy = Event.objects.filter(start_time__range=(start_day_of_prev_month,last_day_of_prev_month)).count()
-                delay_days = (last_day_of_prev_month - start_day_of_prev_month).days + 1
+                delay_days = (last_day_of_prev_month - start_day_of_prev_month).days  + 1
                 work_days = delay_days - holy
 
                 prev_current_delay = prev_current_delay + work_days
+
 
         previous_sal_main
         print("prev_current_delay", prev_current_delay)
@@ -7825,15 +7811,7 @@ def devdashboard(request):
 
         
 
-        start_day_of_this_month = date.today().replace(day=1)
-
-        def last_day_of_month(any_day):
-            # get close to the end of the month for any day, and add 4 days 'over'
-            next_month = any_day.replace(day=28) + timedelta(days=4)
-            # subtract the number of remaining 'overage' days to get last day of current month, or said programattically said, the previous day of the first of next month
-            return next_month - timedelta(days=next_month.day)
-
-        last_day_of_this_month = last_day_of_month(date.today())
+        
         # print("First day of This  month:", start_day_of_this_month)
         # print("Last day of This month:", last_day_of_this_month)
 
@@ -7856,7 +7834,7 @@ def devdashboard(request):
         pro_this_month_have_not_submission = project_taskassign.objects.filter(~Q(startdate__range=(start_day_of_this_month,date.today())), ~Q(enddate__range=(start_day_of_this_month,date.today())),submitted_date__isnull = True).filter(developer_id= devid).values('startdate','enddate')
 
         yes_current = 0
-        print("From date and to date are in this month it does not have submission date  :", pro_current.count())
+        print("dev From date and to date are in this month it does not have submission date  :", pro_current.count())
         for pro_current in pro_current:
             end_date =  (pro_current['enddate'])
             holy = Event.objects.filter(start_time__range=(end_date,date.today())).count()
@@ -7866,7 +7844,7 @@ def devdashboard(request):
             yes_current = yes_current +  work_days
 
 
-        print("From date and to date are in this month it does have submission date :", pro_start_current.count())
+        print("dev From date and to date are in this month it does have submission date :", pro_start_current.count())
         for pro_start_current in pro_start_current:
             end_date =  (pro_start_current['enddate'])
             submitted_date =  (pro_start_current['submitted_date'])
@@ -7883,7 +7861,7 @@ def devdashboard(request):
 
     
 
-        print("End date this month it does not have submission date  :", pro_current_sub.count())
+        print("dev End date this month it does not have submission date  :", pro_current_sub.count())
         for pro_current_sub in pro_current_sub:
             end_date =  (pro_current_sub['enddate'])
             holy = Event.objects.filter(start_time__range=(end_date,date.today())).count()
@@ -7897,13 +7875,14 @@ def devdashboard(request):
 
         
             
-        print("End date this month it have submission date :", pro_start_current_sub.count())
+        print("dev End date this month it have submission date :", pro_start_current_sub.count())
         for pro_start_current_sub in pro_start_current_sub:
             end_date =  (pro_start_current_sub['enddate'])
             submitted_date =  (pro_start_current_sub['submitted_date'])
 
             if submitted_date <= end_date:
                 work_days = 0
+                yes_current = yes_current + work_days
             else:
 
                 holy = Event.objects.filter(start_time__range=(end_date,submitted_date)).count()
@@ -7915,13 +7894,13 @@ def devdashboard(request):
          
 
 
-        print("End date and start date not in this month but submission date in this :", pro_this_month_have_submission.count())
+        print("dev End date and start date not in this month but submission date in this :", pro_this_month_have_submission.count())
         for pro_this_month_have_submission in pro_this_month_have_submission:
             
             if start_day_of_this_month <= submitted_date:
                 submitted_date =  (pro_this_month_have_submission['submitted_date'])
                 holy = Event.objects.filter(start_time__range=(submitted_date,start_day_of_this_month)).count()
-                delay_days = (start_day_of_this_month - submitted_date).days
+                delay_days = (submitted_date - start_day_of_this_month ).days + 1
                 work_days = delay_days - holy
 
                 yes_current = yes_current + work_days
@@ -7930,7 +7909,7 @@ def devdashboard(request):
         
 
 
-        print("From date and to date are not in this month it does not have submission date :", pro_this_month_have_not_submission.count())
+        print("dev From date and to date are not in this month it does not have submission date :", pro_this_month_have_not_submission.count())
         for pro_this_month_have_not_submission in pro_this_month_have_not_submission:
             end_date = (pro_this_month_have_not_submission['enddate'])
 

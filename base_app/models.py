@@ -130,7 +130,7 @@ class user_registration(models.Model):
     relieveqr = models.CharField(max_length=500, default='',null=True,blank=True)
     expqr = models.CharField(max_length=500, default='',null=True,blank=True)
     hrmanager = models.CharField(max_length=500, default='',null=True,blank=True)
-    confirm_salary = models.CharField(max_length=255, default='')
+    confirm_salary = models.IntegerField(default='')
     confirm_salary_status = models.CharField(max_length=255, default='0')
     payment_file_downlod = models.FileField(upload_to = 'images/', null=True, blank=True)
     total_amount=models.IntegerField(default='0')
