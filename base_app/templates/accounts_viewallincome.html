@@ -60,8 +60,9 @@
                                     <form action="" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="paymenthead" value="{{t.id}}">
-                                        <button onclick="return confirm('Are you sure?')" type="submit" name="submit"  class="btn btn-outline-danger btn-icon-text" >Delete </button> </td>
+                                        <button onclick="return confirm('Are you sure?')" type="submit" name="submit"  class="btn btn-outline-danger btn-icon-text" >Delete </button>
                                     </form>
+                                    <a  href="{% url 'accounts_updateincome' t.id  %}"  class="btn btn-outline-info btn-icon-text mt-2" >Update </a>
                                     {%endif%}
                                 </td>
                             </tr>

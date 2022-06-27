@@ -18,12 +18,12 @@
                 <h4 class="page-title">PROMISSORY</h4>
               </div>
               <div class="col-6 col-sm-2 col-md-2 col-lg-2">
-                <a href="/accounts_promissory_add/{{user.id}}" class="btn btn-outline-primary btn-icon-text" style="height: 30px;width: 100px;">Update</a>
+                <a href="{% url 'accounts_promissory_update' user.id%}" class="btn btn-outline-primary btn-icon-text" style="height: 30px;width: 100px;">Update</a>
                             
               </div>
               <div class="col-6 col-sm-2 col-md-2 col-lg-2 ml-2">               
                 
-                <a href="/test/{{user.id}}" class="btn btn-outline-primary btn-icon-text" style="height: 30px;width: 100px;">Complete</a>
+                <a onclick="return confirm('Are you sure?')" href="/test/{{user.id}}" class="btn btn-outline-primary btn-icon-text" style="height: 30px;width: 100px;">Complete</a>
               </div>
             </div>
                 <div class="table-responsive">
@@ -38,10 +38,7 @@
                                     Course
                                 </th>
                                 <th class="text-white  text-center">
-                                    Total
-                                </th>
-                                <th class="text-white text-center">
-                                    Balance
+                                    Total paid Amount
                                 </th>
                                 
                                 <th class="text-white text-center">
@@ -62,9 +59,6 @@
                                    {{user.course.name}}
                                 </td>
                                 <td class="text-center">{{user.total_pay}}</td>
-                                <td class=" text-center">
-                                    {{user.payment_balance}}
-                                </td>
                                 
                                 <td class=" text-center">
                                     {%if c.complete_status == '0' %}
@@ -74,6 +68,8 @@
                                         <a class="btn btn-outline-primary   mt-2" style="font-size: 13px;width: 100px; font-weight: 80;" href="{% url 'accounts_promissory_complete_pfd' user.id %} "download>
                                             <i class="mdi mdi-format-vertical-align-bottom ">Download</i></a>
                                     {%endif%}
+                                    <a onclick="return confirm('Are you sure?')" class="btn btn-outline-danger   mt-2" style="font-size: 13px;width: 100px; font-weight: 80;" href="{% url 'accounts_promissory_delete' user.id %} " >
+                                        Delete</a>
                                    
                                     </a>
                                 </td>                                

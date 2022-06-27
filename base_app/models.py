@@ -573,23 +573,25 @@ class Promissory(models.Model):
     inital_paid_date=models.CharField(max_length=100,null=True, blank=True ,default='')
     inital_balance_amount=models.CharField(max_length=100,null=True, blank=True,default='')
     inital_due_date=models.CharField(max_length=100,null=True, blank=True ,default='')
-    inital_total_payment=models.CharField(max_length=100,null=True, blank=True,default='')
+    inital_total_payment=models.IntegerField(default='0')
     
     second_amount=models.CharField(max_length=100,null=True, blank=True,default='')
+    second_due_date_on=models.CharField(max_length=100,null=True, blank=True ,default='')
     second_due_on=models.CharField(max_length=100,null=True, blank=True ,default='')
     second_paid_amount=models.CharField(max_length=100,null=True, blank=True,default='')
     second_paid_date=models.CharField(max_length=100,null=True, blank=True ,default='')
     second_balance_amount=models.CharField(max_length=100,null=True, blank=True,default='')
     second_due_date=models.CharField(max_length=100,null=True, blank=True ,default='')
-    second_total_payment=models.CharField(max_length=100,null=True, blank=True,default='')
+    second_total_payment=models.IntegerField(default='0')
     
     final_amount=models.CharField(max_length=100,null=True, blank=True,default='')
+    final_due_date_on=models.CharField(max_length=100,null=True, blank=True ,default='')
     final_due_on=models.CharField(max_length=100,null=True, blank=True ,default='')
     final_paid_amount=models.CharField(max_length=100,null=True, blank=True,default='')
     final_paid_date=models.CharField(max_length=100,null=True, blank=True ,default='')
     final_balance_amount=models.CharField(max_length=100,null=True, blank=True,default='')
     final_due_date=models.CharField(max_length=100,null=True, blank=True ,default='')
-    final_total_payment=models.CharField(max_length=100,null=True, blank=True,default='') 
+    final_total_payment=models.IntegerField(default='0')
 
     complete_status=models.CharField(max_length=100,null=True, blank=True,default='0')     
     

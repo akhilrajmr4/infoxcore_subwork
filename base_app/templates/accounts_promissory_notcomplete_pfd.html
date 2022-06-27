@@ -91,7 +91,7 @@
                                         <div><p style="color: black; width: 200px;"><b>Date:&nbsp;{{date|date:'d-m-Y'}}</b></p></div>
                                         <div>Name:&nbsp;{{mem.user_id.fullname}}</div>
                                         <div>Department:&nbsp;{{mem.user_id.department.department}}</div>
-                                        <div>INSTALLMENTS – Employee shall pay {{a}} Only INR (<span class="WebRupee">Rs</span>{{mem.user_id.total_pay}} )
+                                        <div>INSTALLMENTS – Employee shall pay {{a|title}} Only INR (<span class="WebRupee">Rs</span> {{mem.user_id.course.total_fee}} )
                                             a monthly basis with any remaining balance payable on the Due Date.
                                             In the event the Employee fails to pay the note in-full on the Due Date, on the
                                             basis unpaid principal Management can terminate the contract of Employee</div>
@@ -118,9 +118,9 @@
                                                 <tr>
                                                     <td>Paid on<br>{{mem.inital_paid_on}}</td>
                                                     <td>{{mem.inital_paid_amount}}</td>
-                                                    <td>Due on<br> {{mem.second_due_on}} </td>
+                                                    <td>Due on<br> {{mem.second_due_date_on}} </td>
                                                     <td>{{mem.second_paid_amount}}<br>{{mem.second_paid_date}}</td>
-                                                    <td>Due on <br>{{mem.final_due_on}}</td>
+                                                    <td>Due on <br>{{mem.final_due_date_on}}</td>
                                                     <td>{{mem.final_paid_amount}}<br>{{mem.final_paid_date}}</td>
                                                     
                                                 </tr>
@@ -140,9 +140,9 @@
                                                     <td>Total Payments</td>
                                                     <td>{{mem.inital_total_payment}}</td>
                                                     <td></td>
-                                                    <td>{{mem.second_total_payment}}</td>
+                                                    <td>{% if mem.second_total_payment > 0  %}{{mem.second_total_payment}}{%endif%}</td>
                                                     <td></td>
-                                                    <td>{{mem.final_total_payment}}</td>
+                                                    <td>{% if mem.final_total_payment > 0  %}{{mem.final_total_payment}}{%endif%}</td>
         
                                                     
                                                 </tr>

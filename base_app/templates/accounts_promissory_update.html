@@ -27,7 +27,7 @@
                                         <label class="text-muted" style="padding-left:4px ;padding-top:10px; width:130px;"> INITIAL AMOUNT</label>
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                        <input type="number" class="form-control text-light" name="in_amt" >
+                                        <input type="number" class="form-control text-light" name="in_amt" value="{{prom_data.inital_amount}}" >
 
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
@@ -35,26 +35,26 @@
                                             style="padding-left:4px ;padding-top:10px;width:200px;">BALANCE AMOUNT</label>
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3 ">
-                                        <input type="number" class="form-control text-light" name="in_bal_amt" >
+                                        <input type="number" class="form-control text-light" name="in_bal_amt" value="{{prom_data.inital_balance_amount}}" >
                                     </div><br><br>
                                 </div>
                                 <div class="row">
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                         <label class="text-muted"
-                                            style="padding-left:4px ;padding-top:10px; width:130px;">PAID ON</label>
+                                            style="padding-left:4px ;padding-top:10px; width:130px;">PAID ON <br>({{prom_data.inital_paid_on}})</label>
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                        <input type="date" class="form-control text-light" name="in_paid_on" id="date" >
+                                        <input type="date" class="form-control text-light" name="in_paid_on" id="date"  >
                                     </div><br><br>
 
 
 
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                         <label class="text-muted"
-                                            style="padding-left:4px ;padding-top:10px;width:200px;"> PAID DATE</label>
+                                            style="padding-left:4px ;padding-top:10px;width:200px;"> PAID DATE ({{prom_data.inital_paid_date}})</label>
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                        <input type="DATE" class="form-control text-light" name="in_paid_date" >
+                                        <input type="DATE" class="form-control text-light" name="in_paid_date"  >
                                     </div><br><br>
 
 
@@ -66,14 +66,14 @@
                                             style="padding-left:4px ;padding-top:10px; width:130px;">PAID AMOUNT</label>
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                        <input type="number" class="form-control text-light" name="in_paid_amt" id="date" >
+                                        <input type="number" class="form-control text-light" name="in_paid_amt" id="date" value="{{prom_data.inital_paid_amount}}" >
                                     </div><br><br>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                         <label class="text-muted"
-                                            style="padding-left:4px ;padding-top:10px;width:200px;">Due Date</label>
+                                            style="padding-left:4px ;padding-top:10px;width:200px;">Due Date ({{prom_data.inital_due_date}})</label>
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                        <input type="date" class="form-control text-light" name="in_due_date" >
+                                        <input type="date" class="form-control text-light" name="in_due_date"  >
                                     </div><br><br>
                                 </div>
                                 <div class="row">
@@ -82,7 +82,7 @@
                                             style="padding-left:4px ;padding-top:10px; width:110px;">Total Payments</label>
                                     </div>
                                     <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                        <input type="number" class="form-control text-light" name="in_tot_pay" ><br><br>
+                                        <input type="number" class="form-control text-light" name="in_tot_pay" value="{{prom_data.inital_total_payment}}" ><br><br>
                                     </div>
                                 
                                     
@@ -105,7 +105,7 @@
                                 <label class="text-muted" style="padding-left:4px ;padding-top:10px; width:130px;"> INITIAL AMOUNT</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="number" class="form-control text-light" name="sec_amt" >
+                                <input type="number" class="form-control text-light" name="sec_amt" value="{{prom_data.second_amount}}" >
 
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
@@ -113,23 +113,23 @@
                                     style="padding-left:4px ;padding-top:10px;width:200px;">BALANCE AMOUNT</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3 ">
-                                <input type="number" class="form-control text-light" name="sec_bal_amt" >
+                                <input type="number" class="form-control text-light" name="sec_bal_amt" value="{{prom_data.second_balance_amount}}" >
                             </div><br><br>
                         </div>
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px; width:130px;">PAID ON</label>
+                                    style="padding-left:4px ;padding-top:10px; width:130px;">PAID ON <br>({{prom_data.second_due_on}})</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="date" class="form-control text-light" name="sec_paid_on" id="date" >
+                                <input type="date" class="form-control text-light" name="sec_paid_on" id="date"  >
                             </div><br><br>
 
 
 
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px;width:200px;"> PAID DATE</label>
+                                    style="padding-left:4px ;padding-top:10px;width:200px;"> PAID DATE ({{prom_data.second_paid_date}})</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <input type="DATE" class="form-control text-light" name="sec_paid_date" >
@@ -144,20 +144,20 @@
                                     style="padding-left:4px ;padding-top:10px; width:130px;">PAID AMOUNT</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="number" class="form-control text-light" name="sec_paid_amt" id="date" >
+                                <input type="number" class="form-control text-light" name="sec_paid_amt" id="date" value="{{prom_data.second_paid_amount}}" >
                             </div><br><br>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px;width:200px;">Due Date</label>
+                                    style="padding-left:4px ;padding-top:10px;width:200px;">Due Date {{prom_data.second_due_date}}</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="date" class="form-control text-light" name="sec_due_date" >
+                                <input type="date" class="form-control text-light" name="sec_due_date"  >
                             </div><br><br>
                         </div>
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px; width:110px;">Second Due on</label>
+                                    style="padding-left:4px ;padding-top:10px; width:110px;">Second Due on ({{prom_data.second_due_date_on}})</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <input type="date" class="form-control text-light" name="second_due_date_on" ><br><br>
@@ -167,7 +167,7 @@
                                     style="padding-left:4px ;padding-top:10px; width:110px;">Total Payments</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="number" class="form-control text-light" name="sec_tot_pay" value="0" ><br><br>
+                                <input type="number" class="form-control text-light" name="sec_tot_pay" value="{{prom_data.second_total_payment}}" ><br><br>
                             </div>
                         
                             
@@ -192,7 +192,7 @@
                                 <label class="text-muted" style="padding-left:4px ;padding-top:10px; width:130px;"> INITIAL AMOUNT</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="number" class="form-control text-light" name="fnl_amt" >
+                                <input type="number" class="form-control text-light" name="fnl_amt" value="{{prom_data.final_amount}}"  >
 
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
@@ -200,26 +200,26 @@
                                     style="padding-left:4px ;padding-top:10px;width:200px;">BALANCE AMOUNT</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3 ">
-                                <input type="number" class="form-control text-light" name="fnl_bal_amt" >
+                                <input type="number" class="form-control text-light" name="fnl_bal_amt" value="{{prom_data.final_balance_amount}}"  >
                             </div><br><br>
                         </div>
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px; width:130px;">PAID ON</label>
+                                    style="padding-left:4px ;padding-top:10px; width:130px;">PAID ON <br>({{prom_data.final_paid_date}})</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="date" class="form-control text-light" name="fnl_paid_on" id="date" >
+                                <input type="date" class="form-control text-light" name="fnl_paid_on" id="date" value="{{prom_data.final_paid_date}}"  >
                             </div><br><br>
 
 
 
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px;width:200px;"> PAID DATE</label>
+                                    style="padding-left:4px ;padding-top:10px;width:200px;"> PAID DATE ({{prom_data.final_paid_date}})</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="DATE" class="form-control text-light" name="fnl_paid_date" >
+                                <input type="DATE" class="form-control text-light" name="fnl_paid_date"  >
                             </div><br><br>
 
 
@@ -231,20 +231,20 @@
                                     style="padding-left:4px ;padding-top:10px; width:130px;">PAID AMOUNT</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="number" class="form-control text-light" name="fnl_paid_amt" id="date" >
+                                <input type="number" class="form-control text-light" name="fnl_paid_amt" id="date" value="{{prom_data.final_balance_amount}}"  >
                             </div><br><br>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px;width:200px;">Due Date</label>
+                                    style="padding-left:4px ;padding-top:10px;width:200px;">Due Date ({{prom_data.final_due_date}})</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="date" class="form-control text-light" name="fnl_due_date" >
+                                <input type="date" class="form-control text-light" name="fnl_due_date"   >
                             </div><br><br>
                         </div>
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <label class="text-muted"
-                                    style="padding-left:4px ;padding-top:10px; width:110px;">Final Due on</label>
+                                    style="padding-left:4px ;padding-top:10px; width:110px;">Final Due on <br>({{prom_data.final_due_date_on}})</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
                                 <input type="date" class="form-control text-light" name="fnl_due_date_on" ><br><br>
@@ -254,7 +254,7 @@
                                     style="padding-left:4px ;padding-top:10px; width:110px;">Total Payments</label>
                             </div>
                             <div class="col-12 col-sm-12 col-md-3 col-lg-3">
-                                <input type="number" class="form-control text-light" name="fnl_tot_pay"  value="0" ><br><br>
+                                <input type="number" class="form-control text-light" name="fnl_tot_pay" value="{{prom_data.final_total_payment}}"  ><br><br>
                             </div>
                         
                             
@@ -292,7 +292,7 @@
     showConfirmButton: false,
     timer: 1500
   }).then(function () {
-    javascript: history.go(-2);
+    javascript: history.go(-4);
   })
 </script>
 {% endif %}

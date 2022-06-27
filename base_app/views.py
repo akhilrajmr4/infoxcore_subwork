@@ -12015,6 +12015,19 @@ def accounts_month_viewdays(request):
         return render(request, 'accounts_month_viewdays.html', {'z': z, 'mem': mem})
     else:
         return redirect('/')
+        
+def accounts_month_viewdays_delete(request, id):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        mem = acnt_monthdays.objects.get(id=id)
+        mem.delete()
+        msg_success = "Month days deleted Successfully"
+
+        return render(request, 'accounts_month_viewdays.html', {'z': z, 'msg_success': msg_success})
+    else:
+        return redirect('/')
 
 def SuperAdmin_leavehistory(request):
     if 'SAdm_id' in request.session:
@@ -12769,6 +12782,20 @@ def accounts_download_promissory(request, id):
         
     return render(request, 'accounts_download_promissory.html', {'z': z, 'user': user, 'c': c})
 
+def accounts_promissory_delete(request, id):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        user = user_registration.objects.get(id=id)
+        
+        del_id = Promissory.objects.get(user_id_id =id)
+        del_id.delete()
+        msg_success="Promissory deleted Successfully"
+        return render(request, 'accounts_promissory.html', {'z': z,'msg_success':msg_success})
+        
+    return render(request, 'accounts_download_promissory.html', {'z': z, 'user': user})
+
 def accounts_promissory_complete_pfd(request, id):
     date = datetime.now()
     mem = Promissory.objects.filter(user_id=id).latest('id')
@@ -12799,7 +12826,7 @@ def accounts_promissory_complete_pfd(request, id):
 def accounts_promissory_notcomplete_pfd(request, id):
     date = datetime.now()
     mem = Promissory.objects.filter(user_id=id).latest('id')
-    a = num2words(mem.user_id.total_pay)
+    a = num2words(30000)
     b = (u'u20B9')
 
     template_path = 'accounts_promissory_notcomplete_pfd.html'
@@ -12824,7 +12851,7 @@ def accounts_promissory_notcomplete_pfd(request, id):
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
-
+import re
 def accounts_promissory_add(request, id):
     if 'usernameacnt2' in request.session:
         if request.session.has_key('usernameacnt2'):
@@ -12834,37 +12861,168 @@ def accounts_promissory_add(request, id):
 
     
     if request.method == "POST":
+        def change_date_format(dt):
+            return re.sub(r'(\d{4})-(\d{1,2})-(\d{1,2})', '\\3-\\2-\\1', dt)
 
         user = Promissory()
         user.user_id = user_registration.objects.get(id=id)
         user.inital_amount = request.POST['in_amt']
-        user.inital_paid_on = request.POST['in_paid_on']
-        user.inital_paid_amount = request.POST['in_paid_amt']
-        user.inital_paid_date = request.POST['in_paid_date']
-        user.inital_balance_amount = request.POST['in_bal_amt']
-        user.inital_due_date = request.POST['in_due_date']
-        user.inital_total_payment = request.POST['in_tot_pay']
+        if request.POST['in_paid_on'] is not None:
+            user.inital_paid_on = change_date_format(request.POST['in_paid_on'])
 
+        user.inital_paid_amount = request.POST['in_paid_amt']
+
+        if request.POST['in_paid_date'] is not None:
+            user.inital_paid_date = change_date_format(request.POST['in_paid_date'])
+
+        user.inital_balance_amount = request.POST['in_bal_amt']
+        
+        if request.POST['in_due_date'] is not None:
+            user.inital_due_date = change_date_format(request.POST['in_due_date'])
+
+        user.inital_total_payment = request.POST['in_tot_pay']
         user.second_amount = request.POST['sec_amt']
-        user.second_due_on = request.POST['sec_paid_on']
+
+        if request.POST['sec_paid_on'] is not None:
+            user.second_due_on = change_date_format(request.POST['sec_paid_on'])
+
         user.second_paid_amount = request.POST['sec_paid_amt']
-        user.second_paid_date = request.POST['sec_paid_date']
+
+        if request.POST['sec_paid_date'] is not None:
+            user.second_paid_date = change_date_format(request.POST['sec_paid_date'])
+
+  
         user.second_balance_amount = request.POST['sec_bal_amt']
-        user.second_due_date = request.POST['sec_due_date']
+
+        if request.POST['sec_due_date'] is not None:
+            user.second_due_date = change_date_format(request.POST['sec_due_date'])
+
+        
         user.second_total_payment = request.POST['sec_tot_pay']
 
+
+        if request.POST['second_due_date_on'] is not None:
+            user.second_due_date_on = change_date_format(request.POST['second_due_date_on'])
+
         user.final_amount = request.POST['fnl_amt']
-        user.final_due_on = request.POST['fnl_paid_on']
+
+        if request.POST['fnl_paid_on'] is not None:
+            user.final_due_on = change_date_format(request.POST['fnl_paid_on'])
+
+ 
         user.final_paid_amount = request.POST['fnl_paid_amt']
-        user.final_paid_date = request.POST['fnl_paid_date']
+
+        if request.POST['fnl_paid_date'] is not None:
+            user.final_paid_date = change_date_format(request.POST['fnl_paid_date'])
+
         user.final_balance_amount = request.POST['fnl_bal_amt']
-        user.final_due_date = request.POST['fnl_due_date']
+
+        if request.POST['fnl_due_date'] is not None:
+            user.final_due_date = change_date_format(request.POST['fnl_due_date'])
+
         user.final_total_payment = request.POST['fnl_tot_pay']
+
+        if request.POST['fnl_due_date_on'] is not None:
+            user.final_due_date_on = change_date_format(request.POST['fnl_due_date_on'])
         user.save()
+
+        user_pay = user_registration.objects.get(id=id)
+        
+        user_pay.total_pay = user.final_total_payment + user.second_total_payment + user.inital_total_payment
+        user_pay.save() 
+        user.save()
+
         msg_success = "Add Successfully"
         return render(request, 'accounts_promissory_add.html', {'z': z, 'msg_success': msg_success})
 
     return render(request, 'accounts_promissory_add.html', {'z': z})
+
+def accounts_promissory_update(request, id):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+    mem = user_registration.objects.get(id=id)
+
+    prom_data = Promissory.objects.get(user_id = id)
+
+    
+    if request.method == "POST":
+
+        def change_date_format(dt):
+            return re.sub(r'(\d{4})-(\d{1,2})-(\d{1,2})', '\\3-\\2-\\1', dt)
+
+        user = Promissory.objects.get(user_id = id)
+        user.user_id = user_registration.objects.get(id=id)
+        user.inital_amount = request.POST['in_amt']
+        if request.POST['in_paid_on'] is not None:
+            user.inital_paid_on = change_date_format(request.POST['in_paid_on'])
+
+        user.inital_paid_amount = request.POST['in_paid_amt']
+
+        if request.POST['in_paid_date'] is not None:
+            user.inital_paid_date = change_date_format(request.POST['in_paid_date'])
+
+        user.inital_balance_amount = request.POST['in_bal_amt']
+        
+        if request.POST['in_due_date'] is not None:
+            user.inital_due_date = change_date_format(request.POST['in_due_date'])
+
+        user.inital_total_payment = request.POST['in_tot_pay']
+        user.second_amount = request.POST['sec_amt']
+
+        if request.POST['sec_paid_on'] is not None:
+            user.second_due_on = change_date_format(request.POST['sec_paid_on'])
+
+        user.second_paid_amount = request.POST['sec_paid_amt']
+
+        if request.POST['sec_paid_date'] is not None:
+            user.second_paid_date = change_date_format(request.POST['sec_paid_date'])
+
+  
+        user.second_balance_amount = request.POST['sec_bal_amt']
+
+        if request.POST['sec_due_date'] is not None:
+            user.second_due_date = change_date_format(request.POST['sec_due_date'])
+
+        
+        user.second_total_payment = request.POST['sec_tot_pay']
+
+
+        if request.POST['second_due_date_on'] is not None:
+            user.second_due_date_on = change_date_format(request.POST['second_due_date_on'])
+
+        user.final_amount = request.POST['fnl_amt']
+
+        if request.POST['fnl_paid_on'] is not None:
+            user.final_due_on = change_date_format(request.POST['fnl_paid_on'])
+
+ 
+        user.final_paid_amount = request.POST['fnl_paid_amt']
+
+        if request.POST['fnl_paid_date'] is not None:
+            user.final_paid_date = change_date_format(request.POST['fnl_paid_date'])
+
+        user.final_balance_amount = request.POST['fnl_bal_amt']
+
+        if request.POST['fnl_due_date'] is not None:
+            user.final_due_date = change_date_format(request.POST['fnl_due_date'])
+
+        user.final_total_payment = request.POST['fnl_tot_pay']
+
+        if request.POST['fnl_due_date_on'] is not None:
+            user.final_due_date_on = change_date_format(request.POST['fnl_due_date_on'])
+       
+
+        user_pay = user_registration.objects.get(id=id)
+        user_pay.total_pay = int(user.final_total_payment) + int(user.second_total_payment) + int(user.inital_total_payment)
+        user_pay.save()
+        user.save()
+
+        msg_success = "Update Successfully"
+        return render(request, 'accounts_promissory_update.html', {'z': z, 'msg_success': msg_success, 'prom_data':prom_data})
+
+    return render(request, 'accounts_promissory_update.html', {'z': z, 'prom_data':prom_data})
 
 
 def test(request, id):
@@ -14896,6 +15054,31 @@ def accounts_addincome(request):
     else:
         return redirect('/')
 
+def accounts_updateincome(request, id):
+    if 'usernameacnt2' in request.session:
+        if request.session.has_key('usernameacnt2'):
+            usernameacnt2 = request.session['usernameacnt2']
+        z = user_registration.objects.filter(id=usernameacnt2)
+        dep = department.objects.all()
+        pay_head = payment_head.objects.all()
+        income_tab = income.objects.get(id =id)
+        if request.method == "POST":
+            income_tab = income.objects.get(id =id)
+            income_tab.pay_date = request.POST.get('paydate')
+            income_tab.party_name = request.POST.get('pay_name')
+            income_tab.amount = request.POST.get('pay_amount')
+            income_tab.pay_method = request.POST.get('pay_method')
+            income_tab.pay_description = request.POST.get('pay_description')
+            income_tab.department_id = request.POST.get('pay_department')
+            income_tab.payment_head_id = request.POST.get('pay_type')
+            income_tab.save()
+            msg_success = "Income Update successfully"
+            return render(request, 'accounts_updateincome.html', {'z': z, 'msg_success':msg_success})
+        else:
+            return render(request, 'accounts_updateincome.html', {'z': z, 'pay_head':pay_head,'dep':dep,'income_tab':income_tab })
+    else:
+        return redirect('/')
+
 
 # add account view all income
 def accounts_viewallincome(request):
@@ -14903,7 +15086,14 @@ def accounts_viewallincome(request):
         if request.session.has_key('usernameacnt2'):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
-        
+
+        if request.method == "POST":
+            delete_id = request.POST.get('paymenthead')
+            del_data = income.objects.get(id=delete_id)
+            del_data.delete()
+            msg_success = "Income deleted successfully"
+            return render(request, 'accounts_viewallincome.html', {'z': z, 'msg_success':msg_success})
+
         inc = income.objects.all().order_by('-id')
         return render(request, 'accounts_viewallincome.html', {'z': z, 'inc':inc})
     else:
